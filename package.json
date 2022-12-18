@@ -31,7 +31,7 @@
     "clean": "rm -rf dist",
     "dev": "NODE_ENV=development webpack --watch",
     "build": "yarn clean && NODE_ENV=production webpack",
-    "serve": "NODE_ENV=production node dist/index.js",
+    "serve": "NODE_ENV=production PORT=8080 node dist/index.js",
     "lint": "eslint src"
   },
   "dependencies": {},
