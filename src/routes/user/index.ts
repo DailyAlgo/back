@@ -1,8 +1,8 @@
 import express from 'express'
-import find from './find'
+import { getUserById } from '../../controller/user'
 
 const router = express.Router()
 
-router.get('/:id', find)
+router.get('/:id', getUserById)
 
 export default router

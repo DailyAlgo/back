@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
-import user from '../../service/user'
+import user from '../service/user'
 
-const handler = (req: Request, res: Response, next: NextFunction) => {
+export const getUserById = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params['id']
     res.status(200).json(user.find(id))
@@ -9,5 +13,3 @@ const handler = (req: Request, res: Response, next: NextFunction) => {
     next(error)
   }
 }
-
-export default handler
