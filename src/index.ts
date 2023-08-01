@@ -9,6 +9,9 @@ app.listen(port, () => {
   console.log(`> Ready on http://localhost:8080`)
 })
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
 console.log('init middleware')
 
 app.use('/user', user)

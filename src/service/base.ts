@@ -1,4 +1,9 @@
-import mysql, { PoolOptions, Pool, RowDataPacket } from 'mysql2'
+import mysql, {
+  PoolOptions,
+  Pool,
+  RowDataPacket,
+  ResultSetHeader,
+} from 'mysql2'
 import { Pool as promisePool } from 'mysql2/promise'
 
 export abstract class Base {
@@ -31,6 +36,17 @@ export abstract class Base {
     const row = rows[0]
 
     return row
+  }
+
+  protected async _create(
+    sql: string,
+    values: { [param: string]: string | boolean | Date }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+
+    if (result.affectedRows !== 1) {
+      throw new Error('CREATE FAILED')
+    }
   }
   // protected async _save() {}
 }
