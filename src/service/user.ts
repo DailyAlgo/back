@@ -2,7 +2,7 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 
-type UserType = {
+export type UserType = {
   id: string
   password: string
   name: string

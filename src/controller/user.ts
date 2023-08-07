@@ -3,10 +3,15 @@ import userService from '../service/user'
 import * as bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-export const findUser = (req: Request, res: Response, next: NextFunction) => {
+export const findUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const id = req.params['id']
-    res.status(200).json(userService.find(id))
+    const user = await userService.find(id)
+    res.status(200).json(user)
   } catch (error) {
     next(error)
   }
