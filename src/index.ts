@@ -1,6 +1,7 @@
 import express from 'express'
 
 import user from './routes/user'
+import article from './routes/article'
 
 const port: number = parseInt(process.env.PORT!, 10) || 8080
 const app = express()
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: false }))
 console.log('init middleware')
 
 app.use('/user', user)
+app.use('/article', article)
 
 console.log('init router')
 
