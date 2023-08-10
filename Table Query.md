@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS user (
 
 - User ID
 - salt
-- stretching
 - 비밀번호
   - renewed (메일로 임시 비밀번호를 보내 비밀번호 초기화 후 변경을 강제할 때 필요)
 
@@ -33,7 +32,6 @@ CREATE TABLE IF NOT EXISTS user (
 CREATE TABLE IF NOT EXISTS password (
 	user_id VARCHAR(20) NOT NULL COMMENT 'USER ID (PK)',
     salt VARCHAR(10) NOT NULL COMMENT 'salt',
-    stretching INT NOT NULL COMMENT 'stretching',
     password VARCHAR(255) NOT NULL COMMENT '비밀번호',
     PRIMARY KEY (user_id)
 ) COMMENT '비밀번호'
