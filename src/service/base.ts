@@ -40,7 +40,7 @@ export abstract class Base {
 
   protected async _create(
     sql: string,
-    values: { [param: string]: string | boolean | Date }
+    values: { [param: string]: string | boolean | Date | number }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
@@ -49,4 +49,15 @@ export abstract class Base {
     }
   }
   // protected async _save() {}
+
+  protected async _update(
+    sql: string,
+    values: { [param: string]: string | boolean | Date | number }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+    
+    if (result.affectedRows !== 1) {
+      throw new Error('UPDATE FAILED')
+    }
+  }
 }

@@ -1,11 +1,21 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import passwordService from '../service/password'
 
 export type UserType = {
   id: string
-  password: string
   name: string
+  nickname: string
+  email: string
+}
+
+type UserCreationType = {
+  id: string
+  name: string
+  nickname: string
+  email: string
+  password : string
 }
 
 export class User extends Base {
@@ -18,18 +28,24 @@ export class User extends Base {
     const row = await this._find(sql, { id: id })
     return {
       id: row['id'],
-      password: row['password'],
       name: row['name'],
+      nickname: row['nickname'],
+      email: row['email'],
     }
   }
 
-  async create(user: UserType): Promise<void> {
+  async create(user: UserCreationType): Promise<void> {
     const sql =
-      'INSERT INTO user (id, password, name) VALUES (:id, :password, :name)'
+      'INSERT INTO user (id, name, nickname, email) VALUES (:id, :name, :nickname, :email)'
     await this._create(sql, {
       id: user.id,
-      password: user.password,
       name: user.name,
+      nickname: user.nickname,
+      email: user.email,
+    })
+    passwordService.create({
+      user_id: user.id,
+      password: user.password,
     })
   }
 }

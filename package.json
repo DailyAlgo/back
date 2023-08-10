@@ -13,6 +13,7 @@
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
     "compression-webpack-plugin": "^10.0.0",
+    "dotenv-webpack": "^8.0.1",
     "eslint": "^8.30.0",
     "eslint-plugin-react": "^7.31.11",
     "express": "^4.18.2",
@@ -42,7 +43,8 @@
     "cookie-parser": "^1.4.6",
     "jsonwebtoken": "^9.0.1",
     "mysql2": "^3.5.2",
-    "qs": "^6.11.2"
+    "qs": "^6.11.2",
+    "win-node-env": "^0.6.1"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss}": [
