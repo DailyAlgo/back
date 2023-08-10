@@ -28,8 +28,8 @@ const getConfig = (): Config => ({
     password: '1234',
   },
   oauth: {
-    CLIENT_ID:'219272200879-bk59njugfdecjh5c63i7pc1i1me5pt1c.apps.googleusercontent.com',
-    CLIENT_SECRET:'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',
+    CLIENT_ID:'-',
+    CLIENT_SECRET:'-',
     RESPONSE_TYPE:'code',
     REDIRECT_URL:'http://localhost:8080/oauth/google/callback',
     REDIRECT_SIGNUP_URL:'http://localhost:8080/oauth/google/sign_up',
