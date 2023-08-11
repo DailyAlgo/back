@@ -38,15 +38,13 @@ export class User extends Base {
   }
 
   async create(user: UserCreationType): Promise<void> {
-    const created_time = Date.now();
     const sql =
-      'INSERT INTO user (id, name, nickname, email, created_time) VALUES (:id, :name, :nickname, :email, :created_time)'
+      'INSERT INTO user (id, name, nickname, email) VALUES (:id, :name, :nickname, :email)'
     await this._create(sql, {
       id: user.id,
       name: user.name,
       nickname: user.nickname,
       email: user.email,
-      created_time,
       
     })
     passwordService.create({

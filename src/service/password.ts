@@ -7,7 +7,7 @@ export type PasswordType = {
   user_id: string
   salt: string
   password: string
-  created_time: Date
+  created_time?: Date
   modified_time?: Date
 }
 
@@ -44,16 +44,14 @@ export class Password extends Base {
   }
 
   async create(password: PasswordCreationType): Promise<void> {
-    const created_time = Date.now();
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password.password, salt)
     const sql =
-      'INSERT INTO password (user_id, salt, password, created_time) VALUES (:user_id, :salt, :password, :created_time)'
+      'INSERT INTO password (user_id, salt, password) VALUES (:user_id, :salt, :password)'
     await this._create(sql, {
       user_id: password.user_id,
       salt,
       password: hashedPassword,
-      created_time,
     })
   }
 }
