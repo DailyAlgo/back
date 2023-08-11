@@ -13,7 +13,7 @@ export type AnswerType = {
 }
 
 type AnswerCreationType = {
-  id: number
+  id?: number
   question_id: number
   user_id: string
   content: string
@@ -64,6 +64,8 @@ export class Answer extends Base {
   }
 
   async update(answer: AnswerCreationType): Promise<void> {
+    if (!answer.id) return
+    
     const modified_time = Date.now();
     const sql =
       'UPDATE answer SET content = :content, like_cnt = :like_cnt, modified_time = :modified_time WHERE id = :id'

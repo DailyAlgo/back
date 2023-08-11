@@ -21,7 +21,7 @@ export abstract class Base {
 
   protected async _find(
     sql: string,
-    values: { [param: string]: string | boolean | Date }
+    values: { [param: string]: string | boolean | Date | number }
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
@@ -67,12 +67,13 @@ export abstract class Base {
   protected async _create(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
-  ): Promise<void> {
+  ): Promise<string | number> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
     if (result.affectedRows !== 1) {
       throw new Error('CREATE FAILED')
     }
+    return result.insertId
   }
   // protected async _save() {}
 
@@ -84,6 +85,17 @@ export abstract class Base {
     
     if (result.affectedRows !== 1) {
       throw new Error('UPDATE FAILED')
+    }
+  }
+
+  protected async _delete(
+    sql: string,
+    values: { [param: string]: string | boolean | Date | number }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+    
+    if (result.affectedRows !== 1) {
+      throw new Error('DELETE FAILED')
     }
   }
 }

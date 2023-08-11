@@ -139,6 +139,7 @@ export const googleOauth = async (
           name: userInfo.name,
           nickname: userInfo.given_name,
           email: userInfo.email,
+          created_time: userInfo.created_time,
         }
       }
       const token = jwt.sign(user, secretKey, {

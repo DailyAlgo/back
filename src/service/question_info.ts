@@ -48,6 +48,32 @@ export class QuestionInfo extends Base {
       question_id: question_info.question_id,
     })
   }
+
+  async view(question_id: number): Promise<void> {
+    const sql =
+      'UPDATE question_info SET view_cnt = view_cnt+1 WHERE question_id = :question_id'
+    await this._update(sql, {
+      question_id,
+    })
+  }
+
+  async like(question_id: number, type: number): Promise<void> {
+    let sql
+    if (type === 1) {
+      // 좋아요
+      sql =
+      'UPDATE question_info SET like_cnt = like_cnt+1 WHERE question_id = :question_id'
+    }
+    else if (type === 2) {
+      // 좋아요 취소
+      sql =
+      'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id'
+    }
+    else return;
+    await this._update(sql, {
+      question_id,
+    })
+  }
 }
 
 export default new QuestionInfo(getConfig().db)

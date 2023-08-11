@@ -13,7 +13,7 @@ export type QuestionCommentType = {
 }
 
 type QuestionCommentCreationType = {
-  id: number
+  id?: number
   question_id: number
   user_id: string
   content: string
@@ -64,6 +64,8 @@ export class QuestionComment extends Base {
   }
 
   async update(comment: QuestionCommentCreationType): Promise<void> {
+    if (!comment.id) return;
+    
     const modified_time = Date.now();
     const sql =
       'UPDATE question_comment SET content = :content, modified_time = :modified_time WHERE id = :id'
