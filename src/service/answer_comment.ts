@@ -8,12 +8,11 @@ export type AnswerCommentType = {
   user_id: string
   content: string
   like_cnt: number
-  created_time: Date
+  created_time?: Date
   modified_time?: Date
 }
 
 type AnswerCommentCreationType = {
-  id?: number
   answer_id: number
   user_id: string
   content: string
@@ -52,20 +51,16 @@ export class AnswerComment extends Base {
   }
 
   async create(comment: AnswerCommentCreationType): Promise<void> {
-    const created_time = Date.now();
     const sql =
-      'INSERT INTO answer_comment (answer_id, user_id, content, created_time) VALUES (:answer_id, :user_id, :content, :created_time)'
+      'INSERT INTO answer_comment (answer_id, user_id, content) VALUES (:answer_id, :user_id, :content)'
     await this._create(sql, {
       answer_id: comment.answer_id,
       user_id: comment.user_id,
       content: comment.content,
-      created_time: created_time,
     })
   }
 
-  async update(comment: AnswerCommentCreationType): Promise<void> {
-    if (!comment.id) return;
-    
+  async update(comment: AnswerCommentType): Promise<void> {
     const modified_time = Date.now();
     const sql =
       'UPDATE answer_comment SET content = :content, modified_time = :modified_time WHERE id = :id'

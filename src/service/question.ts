@@ -11,12 +11,11 @@ export type QuestionType = {
   type: number
   content: string
   code: string
-  created_time: Date
+  created_time?: Date
   modified_time?: Date
 }
 
 type QuestionCreationType = {
-  id?: number
   title: string
   user_id: string
   source: string
@@ -91,9 +90,8 @@ export class Question extends Base {
   }
 
   async create(question: QuestionCreationType): Promise<void> {
-    const created_time = Date.now();
     const sql =
-      'INSERT INTO question (title, user_id, source, type, content, code, created_time) VALUES (:title, :user_id, :source, :type, :content, :code, :created_time)'
+      'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
     const question_id = await this._create(sql, {
       title: question.title,
       user_id: question.user_id,
@@ -101,12 +99,11 @@ export class Question extends Base {
       type: question.type,
       content: question.content,
       code: question.code,
-      created_time,
     })
     question_info.create(Number(question_id))
   }
 
-  async update(question: QuestionCreationType): Promise<void> {
+  async update(question: QuestionType): Promise<void> {
     if (!question.id) return
 
     const modified_time = Date.now();
