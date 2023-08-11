@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 import questionService from '../service/question'
 
+const userValidation = (req: Request): boolean => {
+  return req.credentials?.user?.id === req.params['id']
+}
+
 export const findQuestion = (
   req: Request,
   res: Response,
@@ -52,9 +56,11 @@ export const updateQuestion = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!userValidation(req)) return
+  const id = req.params['id']
   try {
     questionService.update({
-      id: req.body.id,
+      id: Number(id),
       title: req.body.title,
       user_id: req.body.user_id,
       source: req.body.source,
@@ -73,8 +79,10 @@ export const deleteQuestion = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!userValidation(req)) return
+  const id = req.params['id']
   try {
-    questionService.delete(req.body.id)
+    questionService.delete(Number(id))
     res.status(200).json({ message: 'Question deleted successfully' })
   } catch (error) {
     next(error)
