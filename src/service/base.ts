@@ -38,6 +38,32 @@ export abstract class Base {
     return row
   }
 
+  protected async _findListPage(
+    sql: string,
+    values: { [param: string]: number }
+  ): Promise<any> {
+    const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
+
+    if (rows.length == 0) {
+      throw new Error('NOT_FOUND')
+    }
+
+    return rows
+  }
+
+  protected async _findListAll(
+    sql: string,
+    values: { [param: string]: string | number }
+  ): Promise<any> {
+    const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
+
+    if (rows.length == 0) {
+      throw new Error('NOT_FOUND')
+    }
+
+    return rows
+  }
+
   protected async _create(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
