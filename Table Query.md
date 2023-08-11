@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS user (
     name VARCHAR(20) NOT NULL COMMENT '이름',
     nickname VARCHAR(20) NOT NULL COMMENT '별명',
     email VARCHAR(50) NOT NULL COMMENT '이메일',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    modified_time DATETIME NULL COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '유저'
 ```
@@ -33,6 +35,8 @@ CREATE TABLE IF NOT EXISTS password (
 	user_id VARCHAR(20) NOT NULL COMMENT 'USER ID (PK)',
     salt VARCHAR(10) NOT NULL COMMENT 'salt',
     password VARCHAR(255) NOT NULL COMMENT '비밀번호',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    modified_time DATETIME NULL COMMENT '수정시간',
     PRIMARY KEY (user_id)
 ) COMMENT '비밀번호'
 ```
@@ -55,7 +59,7 @@ CREATE TABLE IF NOT EXISTS password (
 CREATE TABLE IF NOT EXISTS question (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     title VARCHAR(100) NOT NULL COMMENT '제목',
-    writer VARCHAR(20) NOT NULL COMMENT '작성자',
+    user_id VARCHAR(20) NOT NULL COMMENT '작성자',
     source VARCHAR(50) NOT NULL COMMENT '출처',
     type VARCHAR(2) NOT NULL COMMENT '질문 유형',
     code VARCHAR(3000) NULL COMMENT '코드',
@@ -97,6 +101,7 @@ CREATE TABLE IF NOT EXISTS question_info (
 - Question ID
 - User ID
 - 답변내용
+- 좋아요 수
 - 생성시간
 - 수정시간
 
@@ -106,25 +111,11 @@ CREATE TABLE IF NOT EXISTS answer (
 	question_id INT NOT NULL COMMENT 'Question ID',
 	user_id VARCHAR(20) NOT NULL COMMENT 'User ID',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
+    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     modified_time DATETIME NULL COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '답변'
-```
-
-
-
-### answer_info
-
-- Answer ID
-- 좋아요 수
-
-```mysql
-CREATE TABLE IF NOT EXISTS answer_info (
-	answer_id INT NOT NULL COMMENT 'Answer ID (PK)',
-    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    PRIMARY KEY (answer_id)	
-) COMMENT '답변 정보'
 ```
 
 
@@ -134,8 +125,8 @@ CREATE TABLE IF NOT EXISTS answer_info (
 - ID
 - Question ID
 - User ID
-
 - 내용
+- 좋아요 수
 - 생성시간
 - 수정시간
 
@@ -145,25 +136,11 @@ CREATE TABLE IF NOT EXISTS question_comment (
 	question_id INT NOT NULL COMMENT 'Question ID',
 	user_id VARCHAR(20) NOT NULL COMMENT 'User ID',
     content VARCHAR(200) NOT NULL COMMENT '내용',
+    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     modified_time DATETIME NULL COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '질문 댓글'
-```
-
-
-
-### question_comment_info
-
-- Comment ID
-- 좋아요 수
-
-```mysql
-CREATE TABLE IF NOT EXISTS question_comment_info (
-	question_comment_id INT NOT NULL COMMENT 'Question Comment ID (PK)',
-    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    PRIMARY KEY (question_comment_id)	
-) COMMENT '질문 댓글 정보'
 ```
 
 
@@ -173,8 +150,8 @@ CREATE TABLE IF NOT EXISTS question_comment_info (
 - ID
 - AnswerID
 - User ID
-
 - 내용
+- 좋아요 수
 - 생성시간
 - 수정시간
 
@@ -184,24 +161,9 @@ CREATE TABLE IF NOT EXISTS answer_comment (
 	question_id INT NOT NULL COMMENT 'Answer ID',
 	user_id VARCHAR(20) NOT NULL COMMENT 'User ID',
     content VARCHAR(200) NOT NULL COMMENT '내용',
+    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     modified_time DATETIME NULL COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '답변 댓글'
 ```
-
-
-
-### answer_comment_info
-
-- Comment ID
-- 좋아요 수
-
-```mysql
-CREATE TABLE IF NOT EXISTS answer_comment_info (
-	answer_comment_id INT NOT NULL COMMENT 'Answer Comment ID (PK)',
-    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    PRIMARY KEY (answer_comment_id)	
-) COMMENT '답변 댓글 정보'
-```
-

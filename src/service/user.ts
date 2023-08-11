@@ -8,6 +8,8 @@ export type UserType = {
   name: string
   nickname: string
   email: string
+  created_time: Date
+  modified_time?: Date
 }
 
 type UserCreationType = {
@@ -31,17 +33,21 @@ export class User extends Base {
       name: row['name'],
       nickname: row['nickname'],
       email: row['email'],
+      created_time: row['created_time'],
     }
   }
 
   async create(user: UserCreationType): Promise<void> {
+    const created_time = Date.now();
     const sql =
-      'INSERT INTO user (id, name, nickname, email) VALUES (:id, :name, :nickname, :email)'
+      'INSERT INTO user (id, name, nickname, email, created_time) VALUES (:id, :name, :nickname, :email, :created_time)'
     await this._create(sql, {
       id: user.id,
       name: user.name,
       nickname: user.nickname,
       email: user.email,
+      created_time,
+      
     })
     passwordService.create({
       user_id: user.id,
