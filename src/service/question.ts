@@ -104,17 +104,13 @@ export class Question extends Base {
   }
 
   async update(question: QuestionType): Promise<void> {
-    if (!question.id) return
-
-    const modified_time = Date.now();
     const sql =
-      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code, modified_time = :modified_time WHERE id = :id'
+      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id'
     await this._update(sql, {
       title: question.title,
       source: question.source,
       type: question.type,
       content: question.content,
-      modified_time,
       id: question.id,
     })
   }

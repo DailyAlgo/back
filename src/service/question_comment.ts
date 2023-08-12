@@ -61,12 +61,10 @@ export class QuestionComment extends Base {
   }
 
   async update(comment: QuestionCommentType): Promise<void> {
-    const modified_time = Date.now();
     const sql =
-      'UPDATE question_comment SET content = :content, modified_time = :modified_time WHERE id = :id'
+      'UPDATE question_comment SET content = :content WHERE id = :id'
     await this._update(sql, {
       content: comment.content,
-      modified_time,
       id: comment.id
     })
   }

@@ -31,15 +31,13 @@ export class Password extends Base {
   }
 
   async changePassword(user_id: string, password: string): Promise<void> {
-    const modified_time = Date.now();
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
-    const sql = 'UPDATE password SET salt = :salt, password = :password, modified_time = :modified_time where user_id = :user_id'
+    const sql = 'UPDATE password SET salt = :salt, password = :password where user_id = :user_id'
     await this._update(sql, {
       user_id,
       salt,
       password: hashedPassword,
-      modified_time,
     })
   }
 

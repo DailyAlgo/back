@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import userService from '../service/user'
+import passwordService from '../service/password'
 import jwt from 'jsonwebtoken'
 import axios from 'axios'
 import getConfig from '../config/config'
@@ -80,7 +81,7 @@ export const googleRedirect = async (
 
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
-const getToken = async (code) => {
+const getGoogleToken = async (code) => {
   try {
     const tokenApi = await axios.post(GOOGLE_TOKEN_URL, {
       code,
@@ -98,7 +99,7 @@ const getToken = async (code) => {
 
 const GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo'
 
-const getUserInfo = async (accessToken) => {
+const getGoogleUserInfo = async (accessToken) => {
   try {
     const userInfoApi = await axios.get(GOOGLE_USER_INFO_URL, {
         headers: {
@@ -121,8 +122,8 @@ export const googleOauth = async (
   try {
     const query = req.query
     if (query && query.code) {
-      const accessToken = await getToken(query.code)
-      const userInfo = await getUserInfo(accessToken)
+      const accessToken = await getGoogleToken(query.code)
+      const userInfo = await getGoogleUserInfo(accessToken)
       let user = await userService.find('google'+userInfo.id)
 
       if (user === null) {
@@ -149,6 +150,63 @@ export const googleOauth = async (
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
     }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    userService.update({
+      id: id,
+      nickname: req.body.nickname,
+    })
+    res.status(200).json({ message: 'User updated successfully' })
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    userService.delete(id)
+    res.status(200).json({ message: 'User deleted successfully' })
+  } catch (error) {
+    next(error)
+  }
+};
+
+export const changePassword =async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    passwordService.changePassword(req.body.user_id, req.body.password)
+    res.status(200).json({ message: 'Password changed successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findIdByEmail =async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.params['email']
+    res.status(200).json(userService.findIdByEmail(email))
   } catch (error) {
     next(error)
   }
