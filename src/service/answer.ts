@@ -63,12 +63,10 @@ export class Answer extends Base {
   }
 
   async update(answer: AnswerType): Promise<void> {
-    const modified_time = Date.now();
     const sql =
-      'UPDATE answer SET content = :content, like_cnt = :like_cnt, modified_time = :modified_time WHERE id = :id'
+      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id'
     await this._update(sql, {
       content: answer.content,
-      modified_time,
       id: answer.id
     })
   }

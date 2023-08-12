@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS user (
     nickname VARCHAR(20) NOT NULL COMMENT '별명',
     email VARCHAR(50) NOT NULL COMMENT '이메일',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '유저'
 ```
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS password (
     salt VARCHAR(10) NOT NULL COMMENT 'salt',
     password VARCHAR(255) NOT NULL COMMENT '비밀번호',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (user_id)
 ) COMMENT '비밀번호'
 ```
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS question (
     code VARCHAR(3000) NULL COMMENT '코드',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '질문'
 ```
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS answer (
     content VARCHAR(3000) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '답변'
 ```
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS question_comment (
     content VARCHAR(200) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '질문 댓글'
 ```
@@ -162,8 +162,8 @@ CREATE TABLE IF NOT EXISTS answer_comment (
 	user_id VARCHAR(20) NOT NULL COMMENT 'User ID',
     content VARCHAR(200) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time DATETIME NULL COMMENT '수정시간',
+    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',
+    modified_time TIMESTAMP NULL CURRENT_TIMESTAMP ON UPDATE COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '답변 댓글'
 ```

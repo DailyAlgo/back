@@ -20,6 +20,11 @@ type UserCreationType = {
   password : string
 }
 
+type UserUpdateType = {
+  id: string
+  nickname: string
+}
+
 export class User extends Base {
   constructor(options: PoolOptions) {
     super(options)
@@ -27,7 +32,7 @@ export class User extends Base {
 
   async find(id: string): Promise<UserType> {
     const sql = 'SELECT * FROM user WHERE id = :id'
-    const row = await this._find(sql, { id: id })
+    const row = await this._find(sql, { id })
     return {
       id: row['id'],
       name: row['name'],
@@ -35,6 +40,12 @@ export class User extends Base {
       email: row['email'],
       created_time: row['created_time'],
     }
+  }
+
+  async findIdByEmail(email: string): Promise<string> {
+    const sql = 'SELECT id FROM user WHERE email = :email'
+    const row = await this._find(sql, { email })
+    return row['id']
   }
 
   async create(user: UserCreationType): Promise<void> {
@@ -50,6 +61,23 @@ export class User extends Base {
     passwordService.create({
       user_id: user.id,
       password: user.password,
+    })
+  }
+
+  async update(user: UserUpdateType): Promise<void> {
+    const sql =
+      'UPDATE user SET nickname = :nickname WHERE id = :id'
+    await this._update(sql, {
+      nickname: user.nickname,
+      id: user.id,
+    })
+  }
+
+  async delete(id: string): Promise<void> {
+    const sql =
+      'DELETE FROM user WHERE id = :id'
+    await this._delete(sql, {
+      id,
     })
   }
 }
