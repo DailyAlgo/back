@@ -79,7 +79,7 @@ export class Question extends Base {
     offset: number,
   ): Promise<QuestionListType[]> {
     const limit = 10
-    const sql = 'SELECT q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, qi.last_answer_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE  ORDERS LIMIT :limit OFFSET :offset'
+    const sql = 'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, qi.last_answer_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
     const rows = await this._findListPage(sql, { offset, limit })
 
     if (rows.length == 0) {
@@ -92,7 +92,7 @@ export class Question extends Base {
   async create(question: QuestionCreationType): Promise<void> {
     const sql =
       'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
-    const question_id = await Number(this._create(sql, {
+    const question_id = Number(await this._create(sql, {
       title: question.title,
       user_id: question.user_id,
       source: question.source,
@@ -111,6 +111,7 @@ export class Question extends Base {
       source: question.source,
       type: question.type,
       content: question.content,
+      code: question.code,
       id: question.id,
     })
   }

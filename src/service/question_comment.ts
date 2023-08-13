@@ -71,7 +71,7 @@ export class QuestionComment extends Base {
 
   async delete(id: number): Promise<void> {
     const sql =
-      'DELETE question_comment WHERE id = :id'
+      'DELETE FROM question_comment WHERE id = :id'
     await this._delete(sql, { id })
   }
 

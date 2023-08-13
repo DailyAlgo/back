@@ -10,7 +10,7 @@ const middleware = async (req: Request, _: Response, next: NextFunction) => {
     if (await passwordService.compare(req.body.id, req.body.password)) {
       next()
     } else {
-      new Error('Password is not matched')
+      throw new Error('Password is not matched')
     }
   } catch (error) {
     next(error)
