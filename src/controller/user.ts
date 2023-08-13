@@ -27,7 +27,7 @@ export const signUp = async (
   next: NextFunction
 ) => {
   try {
-    userService.create({
+    await userService.create({
       id: req.body.id,
       name: req.body.name,
       nickname: req.body.nickname,
@@ -60,11 +60,11 @@ export const login = async (
 }
 
 const OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
-                + `?client_id=${oauth.CLIENT_ID}`
-                + `&response_type=${oauth.RESPONSE_TYPE}`
-                + `&redirect_uri=${oauth.REDIRECT_URL}`
-                + `&scope=${oauth.SCOPE}`
-                + `&access_type=${oauth.ACCESS_TYPE}`;
+                + `?client_id=${oauth.GOOGLE_CLIENT_ID}`
+                + `&response_type=${oauth.GOOGLE_RESPONSE_TYPE}`
+                + `&redirect_uri=${oauth.GOOGLE_REDIRECT_URL}`
+                + `&scope=${oauth.GOOGLE_SCOPE}`
+                + `&access_type=${oauth.GOOGLE_ACCESS_TYPE}`;
 
 export const googleRedirect = async (
   req: Request,
@@ -85,9 +85,9 @@ const getGoogleToken = async (code) => {
   try {
     const tokenApi = await axios.post(GOOGLE_TOKEN_URL, {
       code,
-      client_id: oauth.CLIENT_ID,
-      client_secret: oauth.CLIENT_SECRET,
-      redirect_uri: oauth.REDIRECT_URL,
+      client_id: oauth.GOOGLE_CLIENT_ID,
+      client_secret: oauth.GOOGLE_CLIENT_SECRET,
+      redirect_uri: oauth.GOOGLE_REDIRECT_URL,
       grant_type: 'authorization_code'
     });
     const accessToken = tokenApi.data.access_token;
@@ -124,29 +124,39 @@ export const googleOauth = async (
     if (query && query.code) {
       const accessToken = await getGoogleToken(query.code)
       const userInfo = await getGoogleUserInfo(accessToken)
-      let user = await userService.find('google'+userInfo.id)
 
-      if (user === null) {
-        // 회원가입
-        userService.create({
-          id: 'google'+userInfo.id,
-          name: userInfo.name,
-          nickname: userInfo.given_name,
-          email: userInfo.email,
-          password: userInfo.email,
+      try {
+        // 로그인
+        const user = await userService.find('google'+userInfo.id)
+        const token = jwt.sign(user, secretKey, {
+          expiresIn: '1h',
         })
-        user = {
-          id: 'google'+userInfo.id,
-          name: userInfo.name,
-          nickname: userInfo.given_name,
-          email: userInfo.email,
-          created_time: userInfo.created_time,
+        res.status(200).json({ message: 'Google login succeeded', token })
+      } catch (error) {
+        if (error instanceof Error && error.message === 'NOT_FOUND') {
+          // 회원가입
+          userService.create({
+            id: 'google'+userInfo.id,
+            name: userInfo.name,
+            nickname: userInfo.given_name,
+            email: userInfo.email,
+            password: userInfo.email,
+          })
+          const user = {
+            id: 'google'+userInfo.id,
+            name: userInfo.name,
+            nickname: userInfo.given_name,
+            email: userInfo.email,
+            created_time: userInfo.created_time,
+          }
+          const token = jwt.sign(user, secretKey, {
+            expiresIn: '1h',
+          })
+          res.status(200).json({ message: 'Google Signup succeeded', token })
+        } else {
+          next(error)
         }
       }
-      const token = jwt.sign(user, secretKey, {
-        expiresIn: '1h',
-      })
-      res.status(200).json({ message: 'Google login succeeded', token })
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
     }
@@ -186,13 +196,14 @@ export const deleteUser = async (
   }
 };
 
-export const changePassword =async (
+export const changePassword = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
   try {
-    passwordService.changePassword(req.body.user_id, req.body.password)
+    await passwordService.changePassword(req.credentials.user.id, req.body.newPassword)
     res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
     next(error)

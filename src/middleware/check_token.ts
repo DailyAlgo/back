@@ -6,11 +6,13 @@ const middleware = async (req: Request, _: Response, next: NextFunction) => {
     const token = req.headers['authorization'] || ''
     const bearerToken = token.slice(7)
     const decoded = jwt.verify(bearerToken, 'DA_JWT')
-    req.credentials && {
+    req.credentials = {
       user: {
         id: decoded['id'],
-        password: decoded['password'],
         name: decoded['name'],
+        nickname: decoded['nickname'],
+        email: decoded['emaail'],
+        created_time: decoded['created_time']
       },
     }
     next()

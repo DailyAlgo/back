@@ -22,7 +22,7 @@ export class Password extends Base {
   }
 
   async compare(id: string, password: string): Promise<boolean> {
-    const sql = 'SELECT * FROM user WHERE id = :id'
+    const sql = 'SELECT * FROM password WHERE user_id = :id'
     const row = await this._find(sql, { id: id })
     const userPassword = row['password']
     const salt = row['salt']

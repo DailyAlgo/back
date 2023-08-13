@@ -3,27 +3,27 @@ import questionService from '../service/question'
 import questionInfoService from '../service/question_info'
 import questionCommentService from '../service/question_comment'
 
-export const findQuestion = (
+export const findQuestion = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const id = Number(req.params['id'])
-    res.status(200).json(questionService.find(id))
+    res.status(200).json(await questionService.find(id))
   } catch (error) {
     next(error)
   }
 }
 
-export const findQuestionList = (
+export const findQuestionList = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(questionService.findList(offset))
+    res.status(200).json(await questionService.findList(offset))
   } catch (error) {
     next(error)
   }
@@ -94,21 +94,21 @@ export const likeQuestion = async (
 ) => {
   try {
     const id = Number(req.params['id'])
-    questionInfoService.like(id, req.body.type)
+    await questionInfoService.like(id, req.body.type)
     res.status(200).json({ message: 'Question liked successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const findQuestionCommentList = (
+export const findQuestionCommentList = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const id = Number(req.params['id'])
-    res.status(200).json(questionCommentService.findList(id))
+    res.status(200).json(await questionCommentService.findList(id))
   } catch (error) {
     next(error)
   }
@@ -142,7 +142,7 @@ export const updateQuestionComment = async (
     if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
     const question_id = Number(req.params['id'])
-    questionCommentService.update({
+    await questionCommentService.update({
       id,
       question_id,
       user_id: req.credentials?.user?.id,
@@ -162,7 +162,7 @@ export const deleteQuestionComment = async (
 ) => {
   try {
     const id = Number(req.body.id)
-    questionCommentService.delete(id)
+    await questionCommentService.delete(id)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)

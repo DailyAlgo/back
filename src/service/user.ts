@@ -58,7 +58,7 @@ export class User extends Base {
       email: user.email,
       
     })
-    passwordService.create({
+    await passwordService.create({
       user_id: user.id,
       password: user.password,
     })

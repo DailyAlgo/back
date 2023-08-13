@@ -67,7 +67,7 @@ export class QuestionInfo extends Base {
     else if (type === false) {
       // 좋아요 취소
       sql =
-      'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id'
+      'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id AND like_cnt > 0'
     }
     else return;
     await this._update(sql, {
