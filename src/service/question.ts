@@ -92,15 +92,15 @@ export class Question extends Base {
   async create(question: QuestionCreationType): Promise<void> {
     const sql =
       'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
-    const question_id = await this._create(sql, {
+    const question_id = await Number(this._create(sql, {
       title: question.title,
       user_id: question.user_id,
       source: question.source,
       type: question.type,
       content: question.content,
       code: question.code,
-    })
-    question_info.create(Number(question_id))
+    }))
+    question_info.create(question_id)
   }
 
   async update(question: QuestionType): Promise<void> {

@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import questionService from '../service/question'
+import questionInfoService from '../service/question_info'
+import questionCommentService from '../service/question_comment'
 
 export const findQuestion = (
   req: Request,
@@ -7,8 +9,8 @@ export const findQuestion = (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
-    res.status(200).json(questionService.find(Number(id)))
+    const id = Number(req.params['id'])
+    res.status(200).json(questionService.find(id))
   } catch (error) {
     next(error)
   }
@@ -33,9 +35,10 @@ export const insertQuestion = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
     questionService.create({
       title: req.body.title,
-      user_id: req.body.user_id,
+      user_id: req.credentials?.user?.id,
       source: req.body.source,
       type: req.body.type,
       content: req.body.content,
@@ -53,11 +56,12 @@ export const updateQuestion = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    const id = Number(req.params['id'])
     questionService.update({
-      id: Number(id),
+      id,
       title: req.body.title,
-      user_id: req.body.user_id,
+      user_id: req.credentials?.user?.id,
       source: req.body.source,
       type: req.body.type,
       content: req.body.content,
@@ -75,9 +79,91 @@ export const deleteQuestion = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
-    questionService.delete(Number(id))
+    const id = Number(req.params['id'])
+    questionService.delete(id)
     res.status(200).json({ message: 'Question deleted successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const likeQuestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.params['id'])
+    questionInfoService.like(id, req.body.type)
+    res.status(200).json({ message: 'Question liked successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findQuestionCommentList = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.params['id'])
+    res.status(200).json(questionCommentService.findList(id))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const insertQuestionComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    const id = Number(req.params['id'])
+    questionCommentService.create({
+      question_id: id,
+      user_id: req.credentials?.user?.id,
+      content: req.body.content,
+    })
+    res.status(200).json({ message: 'Comment created successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updateQuestionComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    const id = Number(req.body.id)
+    const question_id = Number(req.params['id'])
+    questionCommentService.update({
+      id,
+      question_id,
+      user_id: req.credentials?.user?.id,
+      content: req.body.content,
+      like_cnt: -1,
+    })
+    res.status(200).json({ message: 'Comment updated successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const deleteQuestionComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = Number(req.body.id)
+    questionCommentService.delete(id)
+    res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)
   }
