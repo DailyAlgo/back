@@ -23,7 +23,7 @@ export class QuestionComment extends Base {
     super(options)
   }
 
-  async find(id: string): Promise<QuestionCommentType> {
+  async find(id: number): Promise<QuestionCommentType> {
     const sql = 'SELECT * FROM question_comment WHERE id = :id'
     const row = await this._find(sql, { id: id })
     return {
@@ -67,6 +67,12 @@ export class QuestionComment extends Base {
       content: comment.content,
       id: comment.id
     })
+  }
+
+  async delete(id: number): Promise<void> {
+    const sql =
+      'DELETE question_comment WHERE id = :id'
+    await this._delete(sql, { id })
   }
 
   async like(question_comment: QuestionCommentType, type: boolean): Promise<void> {

@@ -1,5 +1,5 @@
 import express from 'express'
-import { deleteQuestion, findQuestion, findQuestionList, insertQuestion, updateQuestion } from '../../controller/question'
+import { deleteQuestion, deleteQuestionComment, findQuestion, findQuestionCommentList, findQuestionList, insertQuestion, insertQuestionComment, likeQuestion, updateQuestion, updateQuestionComment } from '../../controller/question'
 import check_token from '../../middleware/check_token'
 import compare_userId from '../../middleware/compare_userId'
 
@@ -10,10 +10,10 @@ router.get('/', findQuestionList)
 router.get('/:id', findQuestion)
 router.put('/:id', check_token, compare_userId, updateQuestion)
 router.delete('/:id', check_token, compare_userId, deleteQuestion)
-router.put('/:id/like') // todo
-router.get('/:id/comment') // todo
-router.post('/:id/comment') // todo
-router.put('/:id/comment') // todo
-router.delete('/:id/comment') // todo
+router.put('/:id/like', check_token, likeQuestion)
+router.get('/:id/comment', findQuestionCommentList) // 댓글 조회
+router.post('/:id/comment', check_token, insertQuestionComment) // 댓글 작성
+router.put('/:id/comment', check_token, compare_userId, updateQuestionComment) // 댓글 수정
+router.delete('/:id/comment', check_token, compare_userId, deleteQuestionComment) // 댓글 삭제
 
 export default router
