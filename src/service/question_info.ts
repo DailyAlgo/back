@@ -57,14 +57,14 @@ export class QuestionInfo extends Base {
     })
   }
 
-  async like(question_id: number, type: number): Promise<void> {
+  async like(question_id: number, type: boolean): Promise<void> {
     let sql
-    if (type === 1) {
+    if (type === true) {
       // 좋아요
       sql =
       'UPDATE question_info SET like_cnt = like_cnt+1 WHERE question_id = :question_id'
     }
-    else if (type === 2) {
+    else if (type === false) {
       // 좋아요 취소
       sql =
       'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id'

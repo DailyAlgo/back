@@ -69,15 +69,22 @@ export class AnswerComment extends Base {
     })
   }
 
-  async like(answer_comment: AnswerCommentType): Promise<number> {
-    const like_cnt = answer_comment.like_cnt + 1
-    const sql =
-    'UPDATE answer_comment SET like_cnt = :like_cnt WHERE id = :id'
+  async like(answer_comment: AnswerCommentType, type: boolean): Promise<void> {
+    let sql
+    if (type === true) {
+      // 좋아요
+      sql =
+      'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
+    }
+    else if (type === false) {
+      // 좋아요 취소
+      sql =
+      'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
+    }
+    else return
     await this._update(sql, {
-      like_cnt,
-      id: answer_comment.id
+      id: answer_comment.id,
     })
-    return like_cnt
   }
 }
 

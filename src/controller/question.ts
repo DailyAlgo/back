@@ -20,7 +20,7 @@ export const findQuestionList = (
   next: NextFunction
 ) => {
   try {
-    const offset = req.params['offset'] ? Number(req.params['offset']) : 0
+    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.status(200).json(questionService.findList(offset))
   } catch (error) {
     next(error)
