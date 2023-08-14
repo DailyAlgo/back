@@ -19,14 +19,19 @@ export abstract class Base {
     return await this.promisePool.end()
   }
 
-  protected async _find(
+  protected async _findIfExist(
     sql: string,
-    values: { [param: string]: string | boolean | Date | number }
+    values: { [param: string]: string | boolean | Date | number },
+    optional: boolean
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
-    if (rows.length == 0) {
+    if (rows.length == 0 && !optional) {
       throw new Error('NOT_FOUND')
+    }
+
+    if (rows.length == 0 && optional) {
+      return 0
     }
 
     if (rows.length > 1) {
@@ -82,7 +87,7 @@ export abstract class Base {
     values: { [param: string]: string | boolean | Date | number }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
-    
+
     if (result.affectedRows !== 1) {
       throw new Error('UPDATE FAILED')
     }
@@ -93,7 +98,7 @@ export abstract class Base {
     values: { [param: string]: string | boolean | Date | number }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
-    
+
     if (result.affectedRows !== 1) {
       throw new Error('DELETE FAILED')
     }

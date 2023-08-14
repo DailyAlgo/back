@@ -25,7 +25,7 @@ export class Answer extends Base {
 
   async find(id: string): Promise<AnswerType> {
     const sql = 'SELECT * FROM answer WHERE id = :id'
-    const row = await this._find(sql, { id: id })
+    const row = await this._findIfExist(sql, { id: id }, false)
     return {
       id: row['id'],
       question_id: row['question_id'],
@@ -37,10 +37,9 @@ export class Answer extends Base {
     }
   }
 
-  async findList(
-    question_id: number,
-  ): Promise<AnswerType[]> {
-    const sql = 'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
+  async findList(question_id: number): Promise<AnswerType[]> {
+    const sql =
+      'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
     const rows = await this._findListAll(sql, { question_id })
 
     if (rows.length == 0) {
@@ -51,7 +50,7 @@ export class Answer extends Base {
   }
 
   async create(answer: AnswerCreationType): Promise<void> {
-    const created_time = Date.now();
+    const created_time = Date.now()
     const sql =
       'INSERT INTO answer (question_id, user_id, content, like_cnt, created_time) VALUES (:question_id, :user_id, :content, :created_time)'
     await this._create(sql, {
@@ -67,7 +66,7 @@ export class Answer extends Base {
       'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id'
     await this._update(sql, {
       content: answer.content,
-      id: answer.id
+      id: answer.id,
     })
   }
 
@@ -75,17 +74,13 @@ export class Answer extends Base {
     let sql
     if (type === true) {
       // 좋아요
-      sql =
-      'UPDATE answer SET like_cnt = like_cnt+1 WHERE id = :id'
-    }
-    else if (type === false) {
+      sql = 'UPDATE answer SET like_cnt = like_cnt+1 WHERE id = :id'
+    } else if (type === false) {
       // 좋아요 취소
-      sql =
-      'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id'
-    }
-    else return
+      sql = 'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id'
+    } else return
     await this._update(sql, {
-      id: answer.id
+      id: answer.id,
     })
   }
 }

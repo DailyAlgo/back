@@ -18,7 +18,7 @@ export class QuestionInfo extends Base {
 
   async find(question_id: string): Promise<QuestionInfoType> {
     const sql = 'SELECT * FROM question_info WHERE question_id = :question_id'
-    const row = await this._find(sql, { question_id })
+    const row = await this._findIfExist(sql, { question_id }, false)
     return {
       question_id: row['question_id'],
       view_cnt: row['view_cnt'],
@@ -30,8 +30,7 @@ export class QuestionInfo extends Base {
   }
 
   async create(question_id: number): Promise<void> {
-    const sql =
-      'INSERT INTO question_info (question_id) VALUES (:question_id)'
+    const sql = 'INSERT INTO question_info (question_id) VALUES (:question_id)'
     await this._create(sql, {
       question_id,
     })
@@ -62,14 +61,12 @@ export class QuestionInfo extends Base {
     if (type === true) {
       // 좋아요
       sql =
-      'UPDATE question_info SET like_cnt = like_cnt+1 WHERE question_id = :question_id'
-    }
-    else if (type === false) {
+        'UPDATE question_info SET like_cnt = like_cnt+1 WHERE question_id = :question_id'
+    } else if (type === false) {
       // 좋아요 취소
       sql =
-      'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id AND like_cnt > 0'
-    }
-    else return;
+        'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id AND like_cnt > 0'
+    } else return
     await this._update(sql, {
       question_id,
     })

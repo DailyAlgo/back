@@ -25,7 +25,7 @@ export class AnswerComment extends Base {
 
   async find(id: string): Promise<AnswerCommentType> {
     const sql = 'SELECT * FROM answer_comment WHERE id = :id'
-    const row = await this._find(sql, { id: id })
+    const row = await this._findIfExist(sql, { id: id }, false)
     return {
       id: row['id'],
       answer_id: row['answer_id'],
@@ -37,10 +37,9 @@ export class AnswerComment extends Base {
     }
   }
 
-  async findList(
-    answer_id: number,
-  ): Promise<AnswerCommentType[]> {
-    const sql = 'SELECT * FROM answer_comment WHERE answer_id = :answer_id ORDER BY id'
+  async findList(answer_id: number): Promise<AnswerCommentType[]> {
+    const sql =
+      'SELECT * FROM answer_comment WHERE answer_id = :answer_id ORDER BY id'
     const rows = await this._findListAll(sql, { answer_id })
 
     if (rows.length == 0) {
@@ -61,11 +60,10 @@ export class AnswerComment extends Base {
   }
 
   async update(comment: AnswerCommentType): Promise<void> {
-    const sql =
-      'UPDATE answer_comment SET content = :content WHERE id = :id'
+    const sql = 'UPDATE answer_comment SET content = :content WHERE id = :id'
     await this._update(sql, {
       content: comment.content,
-      id: comment.id
+      id: comment.id,
     })
   }
 
@@ -73,15 +71,11 @@ export class AnswerComment extends Base {
     let sql
     if (type === true) {
       // 좋아요
-      sql =
-      'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
-    }
-    else if (type === false) {
+      sql = 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
+    } else if (type === false) {
       // 좋아요 취소
-      sql =
-      'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    }
-    else return
+      sql = 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
+    } else return
     await this._update(sql, {
       id: answer_comment.id,
     })

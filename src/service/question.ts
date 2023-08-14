@@ -56,8 +56,9 @@ export class Question extends Base {
 
   async find(id: number): Promise<QuestionDetailType> {
     question_info.view(id)
-    const sql = 'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE id = :id'
-    const row = await this._find(sql, { id })
+    const sql =
+      'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE id = :id'
+    const row = await this._findIfExist(sql, { id: id }, false)
     return {
       id: row['id'],
       title: row['title'],
@@ -75,11 +76,10 @@ export class Question extends Base {
     }
   }
 
-  async findList(
-    offset: number,
-  ): Promise<QuestionListType[]> {
+  async findList(offset: number): Promise<QuestionListType[]> {
     const limit = 10
-    const sql = 'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, qi.last_answer_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
+    const sql =
+      'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, qi.last_answer_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
     const rows = await this._findListPage(sql, { offset, limit })
 
     if (rows.length == 0) {
@@ -92,14 +92,16 @@ export class Question extends Base {
   async create(question: QuestionCreationType): Promise<void> {
     const sql =
       'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
-    const question_id = Number(await this._create(sql, {
-      title: question.title,
-      user_id: question.user_id,
-      source: question.source,
-      type: question.type,
-      content: question.content,
-      code: question.code,
-    }))
+    const question_id = Number(
+      await this._create(sql, {
+        title: question.title,
+        user_id: question.user_id,
+        source: question.source,
+        type: question.type,
+        content: question.content,
+        code: question.code,
+      })
+    )
     question_info.create(question_id)
   }
 
@@ -117,8 +119,7 @@ export class Question extends Base {
   }
 
   async delete(id: number): Promise<void> {
-    const sql =
-      'DELETE FROM question WHERE id = :id'
+    const sql = 'DELETE FROM question WHERE id = :id'
     await this._delete(sql, {
       id,
     })
