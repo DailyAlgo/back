@@ -220,7 +220,7 @@ export const updateUser = async (
 ) => {
   try {
     const id = req.params['id']
-    userService.update({
+    await userService.update({
       id: id,
       nickname: req.body.nickname,
     })
@@ -237,7 +237,7 @@ export const deleteUser = async (
 ) => {
   try {
     const id = req.params['id']
-    userService.delete(id)
+    await userService.delete(id)
     res.status(200).json({ message: 'User deleted successfully' })
   } catch (error) {
     next(error)

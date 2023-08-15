@@ -74,7 +74,7 @@ export class QuestionComment extends Base {
   }
 
   async like(
-    question_comment: QuestionCommentType,
+    id: number,
     type: boolean
   ): Promise<void> {
     let sql
@@ -85,9 +85,7 @@ export class QuestionComment extends Base {
       // 좋아요 취소
       sql = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
     } else return
-    await this._update(sql, {
-      id: question_comment.id,
-    })
+    await this._update(sql, { id })
   }
 }
 
