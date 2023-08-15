@@ -43,22 +43,9 @@ export abstract class Base {
     return row
   }
 
-  protected async _findListPage(
+  protected async _finds(
     sql: string,
     values: { [param: string]: number }
-  ): Promise<any> {
-    const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
-
-    if (rows.length == 0) {
-      throw new Error('NOT_FOUND')
-    }
-
-    return rows
-  }
-
-  protected async _findListAll(
-    sql: string,
-    values: { [param: string]: string | number }
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
@@ -72,7 +59,7 @@ export abstract class Base {
   protected async _create(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
-  ): Promise<string | number> {
+  ): Promise<number> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
     if (result.affectedRows !== 1) {

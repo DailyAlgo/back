@@ -40,7 +40,7 @@ export class Answer extends Base {
   async findList(question_id: number): Promise<AnswerType[]> {
     const sql =
       'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._findListAll(sql, { question_id })
+    const rows = await this._finds(sql, { question_id })
 
     if (rows.length == 0) {
       throw new Error('NOT_FOUND')

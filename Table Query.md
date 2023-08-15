@@ -19,8 +19,6 @@ CREATE TABLE IF NOT EXISTS user (
 ) COMMENT '유저';
 ```
 
-
-
 ## password
 
 > 보안을 위해 비밀번호를 따로 관리도 가능
@@ -40,8 +38,6 @@ CREATE TABLE IF NOT EXISTS password (
     PRIMARY KEY (user_id)
 ) COMMENT '비밀번호';
 ```
-
-
 
 ## question
 
@@ -70,8 +66,6 @@ CREATE TABLE IF NOT EXISTS question (
 ) COMMENT '질문';
 ```
 
-
-
 ### question_info
 
 - Question ID
@@ -87,13 +81,10 @@ CREATE TABLE IF NOT EXISTS question_info (
     view_cnt INT NOT NULL DEFAULT 0 COMMENT '조회 수',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     answer_cnt INT NOT NULL DEFAULT 0 COMMENT '답변 수',
-    comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수',
-	last_answer_id INT NULL COMMENT 'Answer ID (PK)',
+    comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수'
     PRIMARY KEY (question_id)
 ) COMMENT '질문 정보';
 ```
-
-
 
 ## answer
 
@@ -118,8 +109,6 @@ CREATE TABLE IF NOT EXISTS answer (
 ) COMMENT '답변';
 ```
 
-
-
 ## question_comment
 
 - ID
@@ -142,8 +131,6 @@ CREATE TABLE IF NOT EXISTS question_comment (
     PRIMARY KEY (id)
 ) COMMENT '질문 댓글';
 ```
-
-
 
 ## answer_comment
 

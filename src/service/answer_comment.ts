@@ -37,10 +37,10 @@ export class AnswerComment extends Base {
     }
   }
 
-  async findList(answer_id: number): Promise<AnswerCommentType[]> {
+  async finds(answer_id: number): Promise<AnswerCommentType[]> {
     const sql =
       'SELECT * FROM answer_comment WHERE answer_id = :answer_id ORDER BY id'
-    const rows = await this._findListAll(sql, { answer_id })
+    const rows = await this._finds(sql, { answer_id })
 
     if (rows.length == 0) {
       throw new Error('NOT_FOUND')

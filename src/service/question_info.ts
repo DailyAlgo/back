@@ -8,7 +8,6 @@ export type QuestionInfoType = {
   like_cnt: number
   answer_cnt: number
   comment_cnt: number
-  last_answer_id?: string
 }
 
 export class QuestionInfo extends Base {
@@ -25,7 +24,6 @@ export class QuestionInfo extends Base {
       like_cnt: row['like_cnt'],
       answer_cnt: row['answer_cnt'],
       comment_cnt: row['comment_cnt'],
-      last_answer_id: row['last_answer_id'],
     }
   }
 

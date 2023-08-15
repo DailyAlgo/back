@@ -23,7 +23,7 @@ export const findQuestionList = async (
 ) => {
   try {
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(await questionService.findList(offset))
+    res.status(200).json(await questionService.finds(offset))
   } catch (error) {
     next(error)
   }
@@ -35,7 +35,6 @@ export const insertQuestion = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
     questionService.create({
       title: req.body.title,
       user_id: req.credentials?.user?.id,
@@ -56,7 +55,8 @@ export const updateQuestion = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
     questionService.update({
       id,
@@ -108,7 +108,7 @@ export const findQuestionCommentList = async (
 ) => {
   try {
     const id = Number(req.params['id'])
-    res.status(200).json(await questionCommentService.findList(id))
+    res.status(200).json(await questionCommentService.finds(id))
   } catch (error) {
     next(error)
   }
@@ -120,7 +120,8 @@ export const insertQuestionComment = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
     questionCommentService.create({
       question_id: id,
@@ -139,7 +140,8 @@ export const updateQuestionComment = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
     const question_id = Number(req.params['id'])
     await questionCommentService.update({
