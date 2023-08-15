@@ -63,11 +63,17 @@ export class Answer extends Base {
 
   async update(answer: AnswerType): Promise<void> {
     const sql =
-      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id'
+      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       content: answer.content,
       id: answer.id,
+      user_id: answer.user_id,
     })
+  }
+
+  async delete(id: number, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM answer WHERE id = :id AND user_id = :user_id'
+    await this._delete(sql, { id, user_id })
   }
 
   async like(answer: AnswerType, type: boolean): Promise<void> {

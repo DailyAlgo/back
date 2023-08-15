@@ -79,8 +79,10 @@ export const deleteQuestion = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    questionService.delete(id)
+    questionService.delete(id, req.credentials.user)
     res.status(200).json({ message: 'Question deleted successfully' })
   } catch (error) {
     next(error)
@@ -163,8 +165,10 @@ export const deleteQuestionComment = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
-    await questionCommentService.delete(id)
+    await questionCommentService.delete(id, req.credentials.user)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)

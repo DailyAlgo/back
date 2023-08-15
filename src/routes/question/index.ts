@@ -15,8 +15,6 @@ import check_token from '../../middleware/check_token'
 
 const router = express.Router()
 
-// Todo : Compare User 쪽 Middleware 잘못 만듦 (수정 필요!)
-
 router.post('/', check_token, insertQuestion)
 router.get('/', findQuestionList)
 router.get('/:id', findQuestion)

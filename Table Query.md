@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS user (
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
     PRIMARY KEY (id)
+    UNIQUE KEY (id, nickname)
 ) COMMENT '유저';
 ```
 
@@ -83,6 +84,7 @@ CREATE TABLE IF NOT EXISTS question_info (
     answer_cnt INT NOT NULL DEFAULT 0 COMMENT '답변 수',
     comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수'
     PRIMARY KEY (question_id)
+    FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 정보';
 ```
 

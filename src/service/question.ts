@@ -104,7 +104,7 @@ export class Question extends Base {
 
   async update(question: QuestionType): Promise<void> {
     const sql =
-      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id'
+      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: question.title,
       source: question.source,
@@ -112,13 +112,15 @@ export class Question extends Base {
       content: question.content,
       code: question.code,
       id: question.id,
+      user_id: question.user_id,
     })
   }
 
-  async delete(id: number): Promise<void> {
-    const sql = 'DELETE FROM question WHERE id = :id'
+  async delete(id: number, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM question WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, {
       id,
+      user_id,
     })
   }
 }
