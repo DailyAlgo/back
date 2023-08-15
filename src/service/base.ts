@@ -26,12 +26,12 @@ export abstract class Base {
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
-    if (rows.length == 0 && !optional) {
-      throw new Error('NOT_FOUND')
-    }
-
     if (rows.length == 0 && optional) {
       return 0
+    }
+
+    if (rows.length == 0 && !optional) {
+      throw new Error('NOT_FOUND')
     }
 
     if (rows.length > 1) {
@@ -80,7 +80,6 @@ export abstract class Base {
     }
     return result.insertId
   }
-  // protected async _save() {}
 
   protected async _update(
     sql: string,

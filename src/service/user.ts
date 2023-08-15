@@ -3,26 +3,21 @@ import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import passwordService from '../service/password'
 
-export type UserType = {
+interface UserNickname {
+  id: string
+  nickname: string
+}
+
+interface UserInfo extends UserNickname {
   id: string
   name: string
   nickname: string
   email: string
   created_time: Date
-  modified_time?: Date
 }
 
-type UserCreationType = {
-  id: string
-  name: string
-  nickname: string
-  email: string
+interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
   password: string
-}
-
-type UserUpdateType = {
-  id: string
-  nickname: string
 }
 
 export class User extends Base {
@@ -30,7 +25,7 @@ export class User extends Base {
     super(options)
   }
 
-  async find(id: string, optional: boolean): Promise<UserType> {
+  async find(id: string, optional: boolean): Promise<UserInfo> {
     const sql = 'SELECT * FROM user WHERE id = :id'
     const row = await this._findIfExist(sql, { id: id }, optional)
     return {
@@ -48,7 +43,7 @@ export class User extends Base {
     return row['id']
   }
 
-  async create(user: UserCreationType): Promise<void> {
+  async create(user: UserInfoCredential): Promise<void> {
     const sql =
       'INSERT INTO user (id, name, nickname, email) VALUES (:id, :name, :nickname, :email)'
     await this._create(sql, {
@@ -63,7 +58,7 @@ export class User extends Base {
     })
   }
 
-  async update(user: UserUpdateType): Promise<void> {
+  async update(user: UserNickname): Promise<void> {
     const sql = 'UPDATE user SET nickname = :nickname WHERE id = :id'
     await this._update(sql, {
       nickname: user.nickname,
