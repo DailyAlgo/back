@@ -350,9 +350,9 @@ export const checkId = async (
     }
     const id = String(req.query['id'])
     if (await userService.find(id, true)) {
-      res.status(200).send(true)
-    } else {
       res.status(200).send(false)
+    } else {
+      res.status(200).send(true)
     }
   } catch (error) {
     next(error)
@@ -370,9 +370,9 @@ export const checkNickname = async (
     }
     const nickname = String(req.query['nickname'])
     if (await userService.findIdByNickname(nickname)) {
-      res.status(200).send(true)
-    } else {
       res.status(200).send(false)
+    } else {
+      res.status(200).send(true)
     }
   } catch (error) {
     next(error)
