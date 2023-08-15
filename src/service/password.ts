@@ -1,6 +1,6 @@
 import { PoolOptions } from 'mysql2/promise'
-import getConfig from "../config/config"
-import { Base } from "./base"
+import getConfig from '../config/config'
+import { Base } from './base'
 import * as bcrypt from 'bcrypt'
 
 export type PasswordType = {
@@ -23,17 +23,15 @@ export class Password extends Base {
 
   async compare(id: string, password: string): Promise<boolean> {
     const sql = 'SELECT * FROM password WHERE user_id = :id'
-    const row = await this._find(sql, { id: id })
-    const userPassword = row['password']
-    const salt = row['salt']
-    const hashedPassword = await bcrypt.hash(password, salt)
-    return userPassword === hashedPassword;
+    const row = await this._findIfExist(sql, { id: id }, false)
+    return row['password'] === (await bcrypt.hash(password, row['salt']))
   }
 
-  async changePassword(user_id: string, password: string): Promise<void> {
+  async update(user_id: string, password: string): Promise<void> {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
-    const sql = 'UPDATE password SET salt = :salt, password = :password where user_id = :user_id'
+    const sql =
+      'UPDATE password SET salt = :salt, password = :password where user_id = :user_id'
     await this._update(sql, {
       user_id,
       salt,

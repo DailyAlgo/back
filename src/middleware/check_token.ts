@@ -11,8 +11,8 @@ const middleware = async (req: Request, _: Response, next: NextFunction) => {
         id: decoded['id'],
         name: decoded['name'],
         nickname: decoded['nickname'],
-        email: decoded['emaail'],
-        created_time: decoded['created_time']
+        email: decoded['email'],
+        created_time: decoded['created_time'],
       },
     }
     next()

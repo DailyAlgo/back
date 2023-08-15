@@ -19,13 +19,18 @@ export abstract class Base {
     return await this.promisePool.end()
   }
 
-  protected async _find(
+  protected async _findIfExist(
     sql: string,
-    values: { [param: string]: string | boolean | Date | number }
+    values: { [param: string]: string | boolean | Date | number },
+    optional: boolean
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
-    if (rows.length == 0) {
+    if (rows.length == 0 && optional) {
+      return 0
+    }
+
+    if (rows.length == 0 && !optional) {
       throw new Error('NOT_FOUND')
     }
 
@@ -38,22 +43,9 @@ export abstract class Base {
     return row
   }
 
-  protected async _findListPage(
+  protected async _finds(
     sql: string,
     values: { [param: string]: number }
-  ): Promise<any> {
-    const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
-
-    if (rows.length == 0) {
-      throw new Error('NOT_FOUND')
-    }
-
-    return rows
-  }
-
-  protected async _findListAll(
-    sql: string,
-    values: { [param: string]: string | number }
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
@@ -67,7 +59,7 @@ export abstract class Base {
   protected async _create(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
-  ): Promise<string | number> {
+  ): Promise<number> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
     if (result.affectedRows !== 1) {
@@ -75,14 +67,13 @@ export abstract class Base {
     }
     return result.insertId
   }
-  // protected async _save() {}
 
   protected async _update(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
-    
+
     if (result.affectedRows !== 1) {
       throw new Error('UPDATE FAILED')
     }
@@ -93,7 +84,7 @@ export abstract class Base {
     values: { [param: string]: string | boolean | Date | number }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
-    
+
     if (result.affectedRows !== 1) {
       throw new Error('DELETE FAILED')
     }

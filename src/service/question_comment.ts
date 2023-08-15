@@ -25,7 +25,7 @@ export class QuestionComment extends Base {
 
   async find(id: number): Promise<QuestionCommentType> {
     const sql = 'SELECT * FROM question_comment WHERE id = :id'
-    const row = await this._find(sql, { id: id })
+    const row = await this._findIfExist(sql, { id: id }, false)
     return {
       id: row['id'],
       question_id: row['question_id'],
@@ -37,11 +37,10 @@ export class QuestionComment extends Base {
     }
   }
 
-  async findList(
-    question_id: number,
-  ): Promise<QuestionCommentType[]> {
-    const sql = 'SELECT * FROM question_comment WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._findListAll(sql, { question_id })
+  async finds(question_id: number): Promise<QuestionCommentType[]> {
+    const sql =
+      'SELECT * FROM question_comment WHERE question_id = :question_id ORDER BY id'
+    const rows = await this._finds(sql, { question_id })
 
     if (rows.length == 0) {
       throw new Error('NOT_FOUND')
@@ -61,35 +60,32 @@ export class QuestionComment extends Base {
   }
 
   async update(comment: QuestionCommentType): Promise<void> {
-    const sql =
-      'UPDATE question_comment SET content = :content WHERE id = :id'
+    const sql = 'UPDATE question_comment SET content = :content WHERE id = :id'
     await this._update(sql, {
       content: comment.content,
-      id: comment.id
+      id: comment.id,
     })
   }
 
   async delete(id: number): Promise<void> {
-    const sql =
-      'DELETE FROM question_comment WHERE id = :id'
+    const sql = 'DELETE FROM question_comment WHERE id = :id'
     await this._delete(sql, { id })
   }
 
-  async like(question_comment: QuestionCommentType, type: boolean): Promise<void> {
+  async like(
+    question_comment: QuestionCommentType,
+    type: boolean
+  ): Promise<void> {
     let sql
     if (type === true) {
       // 좋아요
-      sql =
-      'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id'
-    }
-    else if (type === false) {
+      sql = 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id'
+    } else if (type === false) {
       // 좋아요 취소
-      sql =
-      'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    }
-    else return
+      sql = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
+    } else return
     await this._update(sql, {
-      id: question_comment.id
+      id: question_comment.id,
     })
   }
 }

@@ -4,8 +4,34 @@ import passwordService from '../service/password'
 import jwt from 'jsonwebtoken'
 import axios from 'axios'
 import getConfig from '../config/config'
+import {
+  GoogleAuth,
+  GoogleLogin,
+  GoogleUserMe,
+  KakaoAuth,
+  KakaoLogin,
+  KakaoUserMe,
+} from '../util/gen_url'
 
 const oauth = getConfig().oauth
+
+interface Auth {
+  clientID: string
+  redirectUri: string
+}
+
+export interface KAuth extends Auth {
+  responseType: string
+  scope: string
+}
+
+export interface GAuth extends Auth {
+  responseType: string
+  accessType: string
+  scope: string
+}
+
+export type Authorization = 'google' | 'kakao'
 
 export const findUser = async (
   req: Request,
@@ -14,7 +40,7 @@ export const findUser = async (
 ) => {
   try {
     const id = req.params['id']
-    const user = await userService.find(id)
+    const user = await userService.find(id, false)
     res.status(200).json(user)
   } catch (error) {
     next(error)
@@ -50,21 +76,18 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    const token = jwt.sign(await userService.find(req.body.id), secretKey, {
-      expiresIn: '1h',
-    })
+    const token = jwt.sign(
+      await userService.find(req.body.id, false),
+      secretKey,
+      {
+        expiresIn: '1h',
+      }
+    )
     res.status(200).json({ message: 'Success login', token })
   } catch (error) {
     next(error)
   }
 }
-
-const OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth'
-                + `?client_id=${oauth.GOOGLE_CLIENT_ID}`
-                + `&response_type=${oauth.GOOGLE_RESPONSE_TYPE}`
-                + `&redirect_uri=${oauth.GOOGLE_REDIRECT_URL}`
-                + `&scope=${oauth.GOOGLE_SCOPE}`
-                + `&access_type=${oauth.GOOGLE_ACCESS_TYPE}`;
 
 export const googleRedirect = async (
   req: Request,
@@ -72,47 +95,71 @@ export const googleRedirect = async (
   next: NextFunction
 ) => {
   try {
-    console.log(OAUTH_URL)
-    res.redirect(OAUTH_URL);
+    res.redirect(GoogleAuth(oauth.google))
   } catch (error) {
     next(error)
   }
 }
 
-const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
-
-const getGoogleToken = async (code) => {
+export const kakaoRedirect = async (
+  _: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const tokenApi = await axios.post(GOOGLE_TOKEN_URL, {
-      code,
-      client_id: oauth.GOOGLE_CLIENT_ID,
-      client_secret: oauth.GOOGLE_CLIENT_SECRET,
-      redirect_uri: oauth.GOOGLE_REDIRECT_URL,
-      grant_type: 'authorization_code'
-    });
-    const accessToken = tokenApi.data.access_token;
-    return accessToken;
-  } catch (err) {
-    return err;
+    res.redirect(KakaoAuth(oauth.kakao))
+  } catch (error) {
+    next(error)
   }
-};
+}
 
-const GOOGLE_USER_INFO_URL = 'https://www.googleapis.com/oauth2/v2/userinfo'
+// TODO: http request config 분리
+const getBody = (code: string, authorization: Authorization): object => {
+  const commonBody = {
+    code,
+    grant_type: 'authorization_code',
+  }
+
+  const authorizations = {
+    kakao: {
+      client_id: oauth.kakao.clientID,
+      redirect_uri: oauth.kakao.redirectUri,
+    },
+    google: {
+      client_id: oauth.google.clientID,
+      client_secret: oauth.google.clientSecret,
+      redirect_uri: oauth.google.redirectUri,
+    },
+  }
+
+  return {
+    ...commonBody,
+    ...authorizations[authorization],
+  }
+}
+
+const getGoogleToken = async (code: string) => {
+  try {
+    const token = await axios.post(GoogleLogin(), getBody(code, 'google'))
+    const accessToken = token.data.access_token
+    return accessToken
+  } catch (err) {
+    return err
+  }
+}
 
 const getGoogleUserInfo = async (accessToken) => {
   try {
-    const userInfoApi = await axios.get(GOOGLE_USER_INFO_URL, {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    console.log(userInfoApi.data)
-    return userInfoApi.data;
+    const { data } = await axios.get(GoogleUserMe(), {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    })
+    return data
   } catch (err) {
-    return err;
+    return err
   }
-};
+}
 
 export const googleOauth = async (
   req: Request,
@@ -122,12 +169,13 @@ export const googleOauth = async (
   try {
     const query = req.query
     if (query && query.code) {
-      const accessToken = await getGoogleToken(query.code)
+      // TODO: query code is string validator
+      const accessToken = await getGoogleToken(query.code as string)
       const userInfo = await getGoogleUserInfo(accessToken)
 
       try {
         // 로그인
-        const user = await userService.find('google'+userInfo.id)
+        const user = await userService.find('google' + userInfo.id, true)
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
@@ -136,14 +184,14 @@ export const googleOauth = async (
         if (error instanceof Error && error.message === 'NOT_FOUND') {
           // 회원가입
           userService.create({
-            id: 'google'+userInfo.id,
+            id: 'google' + userInfo.id,
             name: userInfo.name,
             nickname: userInfo.given_name,
             email: userInfo.email,
             password: userInfo.email,
           })
           const user = {
-            id: 'google'+userInfo.id,
+            id: 'google' + userInfo.id,
             name: userInfo.name,
             nickname: userInfo.given_name,
             email: userInfo.email,
@@ -180,7 +228,7 @@ export const updateUser = async (
   } catch (error) {
     next(error)
   }
-};
+}
 
 export const deleteUser = async (
   req: Request,
@@ -194,23 +242,22 @@ export const deleteUser = async (
   } catch (error) {
     next(error)
   }
-};
+}
 
 export const changePassword = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.credentials?.user) return res.status(400).json({ message: 'User Info is missing' })
   try {
-    await passwordService.changePassword(req.credentials.user.id, req.body.newPassword)
+    await passwordService.update(req.credentials?.user.id, req.body.newPassword)
     res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const findIdByEmail =async (
+export const findIdByEmail = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -219,6 +266,75 @@ export const findIdByEmail =async (
     const email = req.params['email']
     res.status(200).json(userService.findIdByEmail(email))
   } catch (error) {
+    next(error)
+  }
+}
+
+const getKakaoToken = async (code: any) => {
+  try {
+    const token = await axios.post(KakaoLogin(), getBody(code, 'kakao'), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+      timeout: 3000,
+    })
+    const accessToken = token.data.access_token
+    return accessToken
+  } catch (err) {
+    return err
+  }
+}
+
+const getKakaoUserInfo = async (accessToken) => {
+  try {
+    const { data } = await axios.get(KakaoUserMe(), {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    })
+    return data
+  } catch (err) {
+    return err
+  }
+}
+
+export const kakaoOauth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // email: 추가항목 동의 or 권한 신청
+    const query = req.query
+    if (query && query.code) {
+      // console.log('temp')
+      const accessToken = await getKakaoToken(query.code)
+      const userInfo = await getKakaoUserInfo(accessToken)
+      const user = await userService.find('kakao' + userInfo.id, true)
+      const kakaoAccount = {
+        id: 'kakao' + userInfo.id,
+        name: userInfo.kakao_account.profile['nickname'],
+        nickname: userInfo.kakao_account.profile['nickname'],
+        email: userInfo.kakao_account['email'],
+        password: '',
+      }
+
+      if (user.id === '0') {
+        userService.create(kakaoAccount)
+      }
+      const token = jwt.sign(kakaoAccount, secretKey, {
+        expiresIn: '1h',
+      })
+      res.status(200).json({ message: 'Kakao login succeeded', token })
+      next()
+    } else {
+      res.status(500).json({ message: 'Google oauth responses wrong value' })
+    }
+    res.send('success info')
+    next()
+  } catch (error) {
+    console.log('user error')
     next(error)
   }
 }

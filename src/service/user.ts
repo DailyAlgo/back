@@ -3,26 +3,21 @@ import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import passwordService from '../service/password'
 
-export type UserType = {
+interface UserNickname {
+  id: string
+  nickname: string
+}
+
+interface UserInfo extends UserNickname {
   id: string
   name: string
   nickname: string
   email: string
   created_time: Date
-  modified_time?: Date
 }
 
-type UserCreationType = {
-  id: string
-  name: string
-  nickname: string
-  email: string
-  password : string
-}
-
-type UserUpdateType = {
-  id: string
-  nickname: string
+interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
+  password: string
 }
 
 export class User extends Base {
@@ -30,11 +25,11 @@ export class User extends Base {
     super(options)
   }
 
-  async find(id: string): Promise<UserType> {
+  async find(id: string, optional: boolean): Promise<UserInfo> {
     const sql = 'SELECT * FROM user WHERE id = :id'
-    const row = await this._find(sql, { id })
+    const row = await this._findIfExist(sql, { id: id }, optional)
     return {
-      id: row['id'],
+      id: row['id'] || '0',
       name: row['name'],
       nickname: row['nickname'],
       email: row['email'],
@@ -44,11 +39,11 @@ export class User extends Base {
 
   async findIdByEmail(email: string): Promise<string> {
     const sql = 'SELECT id FROM user WHERE email = :email'
-    const row = await this._find(sql, { email })
+    const row = await this._findIfExist(sql, { email }, false)
     return row['id']
   }
 
-  async create(user: UserCreationType): Promise<void> {
+  async create(user: UserInfoCredential): Promise<void> {
     const sql =
       'INSERT INTO user (id, name, nickname, email) VALUES (:id, :name, :nickname, :email)'
     await this._create(sql, {
@@ -56,7 +51,6 @@ export class User extends Base {
       name: user.name,
       nickname: user.nickname,
       email: user.email,
-      
     })
     await passwordService.create({
       user_id: user.id,
@@ -64,9 +58,8 @@ export class User extends Base {
     })
   }
 
-  async update(user: UserUpdateType): Promise<void> {
-    const sql =
-      'UPDATE user SET nickname = :nickname WHERE id = :id'
+  async update(user: UserNickname): Promise<void> {
+    const sql = 'UPDATE user SET nickname = :nickname WHERE id = :id'
     await this._update(sql, {
       nickname: user.nickname,
       id: user.id,
@@ -74,8 +67,7 @@ export class User extends Base {
   }
 
   async delete(id: string): Promise<void> {
-    const sql =
-      'DELETE FROM user WHERE id = :id'
+    const sql = 'DELETE FROM user WHERE id = :id'
     await this._delete(sql, {
       id,
     })
