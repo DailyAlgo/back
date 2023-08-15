@@ -60,20 +60,21 @@ export class QuestionComment extends Base {
   }
 
   async update(comment: QuestionCommentType): Promise<void> {
-    const sql = 'UPDATE question_comment SET content = :content WHERE id = :id'
+    const sql = 'UPDATE question_comment SET content = :content WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       content: comment.content,
       id: comment.id,
+      user_id: comment.user_id,
     })
   }
 
-  async delete(id: number): Promise<void> {
-    const sql = 'DELETE FROM question_comment WHERE id = :id'
-    await this._delete(sql, { id })
+  async delete(id: number, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM question_comment WHERE id = :id AND user_id = :user_id'
+    await this._delete(sql, { id, user_id })
   }
 
   async like(
-    question_comment: QuestionCommentType,
+    id: number,
     type: boolean
   ): Promise<void> {
     let sql
@@ -84,9 +85,7 @@ export class QuestionComment extends Base {
       // 좋아요 취소
       sql = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
     } else return
-    await this._update(sql, {
-      id: question_comment.id,
-    })
+    await this._update(sql, { id })
   }
 }
 

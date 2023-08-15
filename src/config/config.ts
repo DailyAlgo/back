@@ -48,7 +48,7 @@ const getConfig = (): Config => ({
       host: 'https://accounts.google.com',
       clientID:
         '219272200879-bk59njugfdecjh5c63i7pc1i1me5pt1c.apps.googleusercontent.com',
-      clientSecret: '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',
+      clientSecret: '-',
       responseType: 'code',
       redirectUri: 'http://localhost:8080/user/oauth/google/callback',
       scope: 'email profile',

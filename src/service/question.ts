@@ -80,11 +80,6 @@ export class Question extends Base {
     const sql =
       'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
     const rows = await this._finds(sql, { offset, limit })
-
-    if (rows.length == 0) {
-      throw new Error('NOT_FOUND')
-    }
-
     return rows
   }
 
@@ -104,7 +99,7 @@ export class Question extends Base {
 
   async update(question: QuestionType): Promise<void> {
     const sql =
-      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id'
+      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: question.title,
       source: question.source,
@@ -112,13 +107,15 @@ export class Question extends Base {
       content: question.content,
       code: question.code,
       id: question.id,
+      user_id: question.user_id,
     })
   }
 
-  async delete(id: number): Promise<void> {
-    const sql = 'DELETE FROM question WHERE id = :id'
+  async delete(id: number, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM question WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, {
       id,
+      user_id,
     })
   }
 }

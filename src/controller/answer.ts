@@ -1,55 +1,51 @@
 import { Request, Response, NextFunction } from 'express'
-import questionService from '../service/question'
-import questionInfoService from '../service/question_info'
-import questionCommentService from '../service/question_comment'
+import answerService from '../service/answer'
+import answerCommentService from '../service/answer_comment'
 
-export const findQuestion = async (
+export const findAnswer = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const id = Number(req.params['id'])
-    res.status(200).json(await questionService.find(id))
+    res.status(200).json(await answerService.find(id))
   } catch (error) {
     next(error)
   }
 }
 
-export const findQuestionList = async (
+export const findAnswerList = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(await questionService.finds(offset))
+    const question_id = Number(req.params['question_id'])
+    res.status(200).json(await answerService.finds(question_id))
   } catch (error) {
     next(error)
   }
 }
 
-export const insertQuestion = async (
+export const insertAnswer = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    await questionService.create({
-      title: req.body.title,
+    await answerService.create({
+      question_id: req.body.question_id,
       user_id: req.credentials?.user?.id,
-      source: req.body.source,
-      type: req.body.type,
       content: req.body.content,
-      code: req.body.code,
     })
-    res.status(200).json({ message: 'Question created successfully' })
+    res.status(200).json({ message: 'Answer created successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const updateQuestion = async (
+export const updateAnswer = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -58,22 +54,20 @@ export const updateQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionService.update({
+    await answerService.update({
       id,
-      title: req.body.title,
+      question_id: req.body.question_id,
       user_id: req.credentials?.user?.id,
-      source: req.body.source,
-      type: req.body.type,
       content: req.body.content,
-      code: req.body.code,
+      like_cnt: -1,
     })
-    res.status(200).json({ message: 'Question updated successfully' })
+    res.status(200).json({ message: 'Answer updated successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const deleteQuestion = async (
+export const deleteAnswer = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -82,41 +76,40 @@ export const deleteQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionService.delete(id, req.credentials.user)
-    res.status(200).json({ message: 'Question deleted successfully' })
+    await answerService.delete(id, req.credentials.user)
+    res.status(200).json({ message: 'Answer deleted successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const likeQuestion = async (
+export const likeAnswer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await answerService.like(req.body.id, req.body.type)
+    res.status(200).json({ message: 'Answer liked successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findAnswerCommentList = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const id = Number(req.params['id'])
-    await questionInfoService.like(id, req.body.type)
-    res.status(200).json({ message: 'Question liked successfully' })
+    res.status(200).json(await answerCommentService.finds(id))
   } catch (error) {
     next(error)
   }
 }
 
-export const findQuestionCommentList = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const id = Number(req.params['id'])
-    res.status(200).json(await questionCommentService.finds(id))
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const insertQuestionComment = async (
+export const insertAnswerComment = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -125,8 +118,8 @@ export const insertQuestionComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionCommentService.create({
-      question_id: id,
+    await answerCommentService.create({
+      answer_id: id,
       user_id: req.credentials?.user?.id,
       content: req.body.content,
     })
@@ -136,7 +129,7 @@ export const insertQuestionComment = async (
   }
 }
 
-export const updateQuestionComment = async (
+export const updateAnswerComment = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -145,10 +138,10 @@ export const updateQuestionComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
-    const question_id = Number(req.params['id'])
-    await questionCommentService.update({
+    const answer_id = Number(req.params['id'])
+    await answerCommentService.update({
       id,
-      question_id,
+      answer_id,
       user_id: req.credentials?.user?.id,
       content: req.body.content,
       like_cnt: -1,
@@ -159,7 +152,7 @@ export const updateQuestionComment = async (
   }
 }
 
-export const deleteQuestionComment = async (
+export const deleteAnswerComment = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -168,20 +161,20 @@ export const deleteQuestionComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
-    await questionCommentService.delete(id, req.credentials.user)
+    await answerCommentService.delete(id, req.credentials.user)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)
   }
 }
 
-export const likeQuestionComment = async (
+export const likeAnswerComment = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    await questionCommentService.like(req.body.id, req.body.type)
+    await answerCommentService.like(req.body.id, req.body.type)
     res.status(200).json({ message: 'Comment liked successfully' })
   } catch (error) {
     next(error)

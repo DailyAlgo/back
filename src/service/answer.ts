@@ -8,7 +8,7 @@ export type AnswerType = {
   user_id: string
   content: string
   like_cnt: number
-  created_time: Date
+  created_time?: Date
   modified_time?: Date
 }
 
@@ -23,7 +23,7 @@ export class Answer extends Base {
     super(options)
   }
 
-  async find(id: string): Promise<AnswerType> {
+  async find(id: number): Promise<AnswerType> {
     const sql = 'SELECT * FROM answer WHERE id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
     return {
@@ -37,15 +37,10 @@ export class Answer extends Base {
     }
   }
 
-  async findList(question_id: number): Promise<AnswerType[]> {
+  async finds(question_id: number): Promise<AnswerType[]> {
     const sql =
       'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
     const rows = await this._finds(sql, { question_id })
-
-    if (rows.length == 0) {
-      throw new Error('NOT_FOUND')
-    }
-
     return rows
   }
 
@@ -63,14 +58,20 @@ export class Answer extends Base {
 
   async update(answer: AnswerType): Promise<void> {
     const sql =
-      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id'
+      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       content: answer.content,
       id: answer.id,
+      user_id: answer.user_id,
     })
   }
 
-  async like(answer: AnswerType, type: boolean): Promise<void> {
+  async delete(id: number, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM answer WHERE id = :id AND user_id = :user_id'
+    await this._delete(sql, { id, user_id })
+  }
+
+  async like(id: number, type: boolean): Promise<void> {
     let sql
     if (type === true) {
       // 좋아요
@@ -80,7 +81,7 @@ export class Answer extends Base {
       sql = 'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id'
     } else return
     await this._update(sql, {
-      id: answer.id,
+      id,
     })
   }
 }
