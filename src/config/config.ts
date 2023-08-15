@@ -40,7 +40,7 @@ const getConfig = (): Config => ({
     host: 'localhost',
     port: 3306,
     database: 'daily_algo',
-    user: 'test',
+    user: 'nodecrew',
     password: '1234',
   },
   oauth: {
