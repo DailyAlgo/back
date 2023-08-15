@@ -264,7 +264,7 @@ export const findIdByEmail = async (
 ) => {
   try {
     const email = req.params['email']
-    res.status(200).json(userService.findIdByEmail(email))
+    res.status(200).json(await userService.findIdByEmail(email))
   } catch (error) {
     next(error)
   }
@@ -335,6 +335,46 @@ export const kakaoOauth = async (
     next()
   } catch (error) {
     console.log('user error')
+    next(error)
+  }
+}
+
+export const checkId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.query || !req.query.id) {
+      return res.status(400).json({ message: 'Email is missing' })
+    }
+    const id = String(req.query['id'])
+    if (await userService.find(id, true)) {
+      res.status(200).send(true)
+    } else {
+      res.status(200).send(false)
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const checkNickname = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.query || !req.query.nickname) {
+      return res.status(400).json({ message: 'Nickname is missing' })
+    }
+    const nickname = String(req.query['nickname'])
+    if (await userService.findIdByNickname(nickname)) {
+      res.status(200).send(true)
+    } else {
+      res.status(200).send(false)
+    }
+  } catch (error) {
     next(error)
   }
 }

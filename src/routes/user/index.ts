@@ -11,6 +11,8 @@ import {
   findIdByEmail,
   kakaoRedirect,
   kakaoOauth,
+  checkId,
+  checkNickname,
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
@@ -18,6 +20,8 @@ import check_token from '../../middleware/check_token'
 const router = express.Router()
 
 router.post('/sign_up', signUp) // 회원가입
+router.get('/check/id', checkId)
+router.get('/check/nickname', checkNickname)
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/:id', check_token, updateUser) // 회원정보 수정
@@ -27,6 +31,8 @@ router.put('/:id/password', check_password, check_token, changePassword) // 비�
 router.get('/question') // 내 질문 조회
 router.get('/answer') // 내 답변 조회
 router.get('/notice') // 알림 조회
+router.get('/sign_up/validation') // 회원가입 인증 이메일 발송요청
+router.post('/sign_up/validation') // 회원가입 이메일 인증
 // Google 로그인
 router.get('/oauth/google', googleRedirect)
 router.get('/kauth/kakao', kakaoRedirect)

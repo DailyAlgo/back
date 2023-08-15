@@ -37,6 +37,12 @@ export class User extends Base {
     }
   }
 
+  async findIdByNickname(nickname: string): Promise<string> {
+    const sql = 'SELECT id FROM user WHERE nickname = :nickname'
+    const row = await this._findIfExist(sql, { nickname }, true)
+    return row['id']
+  }
+
   async findIdByEmail(email: string): Promise<string> {
     const sql = 'SELECT id FROM user WHERE email = :email'
     const row = await this._findIfExist(sql, { email }, false)
