@@ -8,7 +8,7 @@ const getBase = (type: string, authorization: Authorization, path: string) => {
   return `${config[type][authorization].host}${path}`
 }
 
-const getURL = (base: string, query?: Record<string, string>): string => {
+const getURL = (base: string, query?: Record<string, string|undefined>): string => {
   if (query) {
     return `${base}?${qs.stringify(query)}`
   } else {

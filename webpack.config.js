@@ -3,6 +3,9 @@ const NodemonPlugin = require('nodemon-webpack-plugin')
 const nodeExternals = require('webpack-node-externals')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 const isDev = process.env.NODE_ENV !== 'production'
 

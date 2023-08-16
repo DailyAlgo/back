@@ -1,17 +1,20 @@
 export type Config = {
+  server: {
+    host: string | undefined
+  }
   db: {
     connectionLimit: number
-    host: string
+    host: string | undefined
     port: number
-    database: string
-    user: string
-    password: string
+    database: string | undefined
+    user: string | undefined
+    password: string | undefined
   }
   oauth: {
     google: {
       host: string
-      clientID: string
-      clientSecret: string
+      clientID: string | undefined
+      clientSecret: string | undefined
       responseType: string
       redirectUri: string
       scope: string
@@ -19,7 +22,7 @@ export type Config = {
     }
     kakao: {
       host: string
-      clientID: string
+      clientID: string | undefined
       redirectUri: string
       scope: string
       responseType: string
@@ -34,31 +37,35 @@ export type Config = {
     }
   }
 }
+
+const SERVER_URL = process.env.NODE_ENV !== 'production'?'http://localhost:8080':process.env.SERVER_URL
 const getConfig = (): Config => ({
+  server: {
+    host: SERVER_URL,
+  },
   db: {
     connectionLimit: 5,
-    host: 'localhost',
+    host: process.env.NODE_ENV !== 'production'?'localhost':process.env.DB_HOST,
     port: 3306,
-    database: 'daily_algo',
-    user: 'nodecrew',
-    password: '1234',
+    database: process.env.NODE_ENV !== 'production'?'daily_algo':process.env.DB_DATABASE,
+    user: process.env.NODE_ENV !== 'production'?'nodecrew':process.env.DB_USER,
+    password: process.env.NODE_ENV !== 'production'?'1234':process.env.DB_PASSWORD,
   },
   oauth: {
     google: {
       host: 'https://accounts.google.com',
-      clientID:
-        '219272200879-bk59njugfdecjh5c63i7pc1i1me5pt1c.apps.googleusercontent.com',
-      clientSecret: '-',
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       responseType: 'code',
-      redirectUri: 'http://localhost:8080/user/oauth/google/callback',
+      redirectUri: `${SERVER_URL}/user/oauth/google/callback`,
       scope: 'email profile',
       accessType: 'online',
     },
     kakao: {
       host: 'https://kauth.kakao.com',
-      clientID: '086a0e452d2a5f01f3a73869f830f8fe',
+      clientID: process.env.OAUTH_KAKAO_CLIENT_ID,
       // get current url and redirect
-      redirectUri: 'http://localhost:8080/user/kauth/kakao/callback',
+      redirectUri: `${SERVER_URL}/user/kauth/kakao/callback`,
       scope: 'account_email,profile_nickname',
       responseType: 'code',
     },
