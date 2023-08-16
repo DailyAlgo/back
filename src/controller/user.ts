@@ -16,7 +16,7 @@ import {
 const oauth = getConfig().oauth
 
 interface Auth {
-  clientID: string
+  clientID: string | undefined
   redirectUri: string
 }
 

@@ -8,7 +8,23 @@
 
 # Docker
 - 이미지 생성
-`docker build -t daily_algo .`
+`docker build -t dvlprjw/daily_algo:0.0.9 .`
+
+- 도커허브 Push
+`docker push dvlprjw/daily_algo:0.0.9`
+
+- 도커허브 Pull
+`docker pull dvlprjw/daily_algo:0.0.9`
 
 - 컨테이너 실행
-`docker run -itd -p 8080:8080 --name da daily_algo_test`
+`docker run -itd -p 8080:8080 --name da dvlprjw/daily_algo:0.0.9`
+
+- 도커 컨테이너 종료
+`docker rm da`
+
+- 도커 이미지 삭제
+`docker rmi dvlprjw/daily_algo:0.0.9`
+
+- 기타
+  - 이미지 확인 : `docker images`
+  - 컨테이너 확인 : `docker ps -a`
