@@ -9,6 +9,6 @@ RUN apk update && apk add bash && apk add curl
 
 RUN yarn install && yarn build
 
-ENTRYPOINT ["node", "dist/index.js" ]
+ENTRYPOINT ["node", "dist/index.js"]
 
 EXPOSE 3306

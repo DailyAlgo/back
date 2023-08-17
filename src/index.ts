@@ -21,6 +21,8 @@ app.use('/question', question)
 
 console.log('init router')
 
+console.log('env', process.env.DB_HOST_WRITE)
+
 app.get('/', (_, res) => {
   res.send('Hello World!')
 })
