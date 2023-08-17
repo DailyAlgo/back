@@ -45,7 +45,7 @@ const getConfig = (): Config => ({
   },
   db: {
     connectionLimit: 5,
-    host: process.env.NODE_ENV !== 'production'?'localhost':process.env.DB_HOST,
+    host: process.env.NODE_ENV !== 'production'?'localhost':process.env.DB_HOST_WRITE,
     port: 3306,
     database: process.env.NODE_ENV !== 'production'?'daily_algo':process.env.DB_DATABASE,
     user: process.env.NODE_ENV !== 'production'?'nodecrew':process.env.DB_USER,
@@ -54,8 +54,8 @@ const getConfig = (): Config => ({
   oauth: {
     google: {
       host: 'https://accounts.google.com',
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: process.env.OAUTH_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET,
       responseType: 'code',
       redirectUri: `${SERVER_URL}/user/oauth/google/callback`,
       scope: 'email profile',

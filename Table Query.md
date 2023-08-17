@@ -82,9 +82,9 @@ CREATE TABLE IF NOT EXISTS question_info (
     view_cnt INT NOT NULL DEFAULT 0 COMMENT '조회 수',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     answer_cnt INT NOT NULL DEFAULT 0 COMMENT '답변 수',
-    comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수'
-    PRIMARY KEY (question_id)
-    FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+    comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수',
+    PRIMARY KEY (question_id),
+    CONSTRAINT question_info_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 정보';
 ```
 

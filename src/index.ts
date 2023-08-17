@@ -25,4 +25,5 @@ console.log('env', process.env.DB_HOST_WRITE)
 
 app.get('/', (_, res) => {
   res.send('Hello World!')
+  console.log(getConfig().db)
 })
