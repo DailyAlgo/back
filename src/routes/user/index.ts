@@ -13,11 +13,14 @@ import {
   kakaoOauth,
   checkId,
   checkNickname,
+  getEmail,
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
 
 const router = express.Router()
+
+router.get('/email', getEmail)
 
 // OAuth 로그인
 router.get('/oauth/google', googleRedirect)
@@ -28,6 +31,7 @@ router.get('/kauth/kakao/callback', kakaoOauth)
 router.post('/sign_up', signUp) // 회원가입
 router.get('/check/id', checkId)
 router.get('/check/nickname', checkNickname)
+router.get('/email', getEmail)
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/:id', check_token, updateUser) // 회원정보 수정
@@ -46,5 +50,7 @@ router.post('/password/find/id') // Todo : step1. id
 router.post('/password/find/email') // Todo : step2. email -> cert_no
 router.post('/password/reset') // Todo : step3. email + cert_no -> token
 router.put('/passowrd/reset') // Todo : step4. token + new_password
+
+// Email
 
 export default router

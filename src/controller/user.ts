@@ -12,6 +12,8 @@ import {
   KakaoLogin,
   KakaoUserMe,
 } from '../util/gen_url'
+import renderSignUp from '../view/render_sign_up'
+import mail from '../service/mail'
 
 const oauth = getConfig().oauth
 
@@ -374,6 +376,32 @@ export const checkNickname = async (
     } else {
       res.status(200).send(true)
     }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+  try {
+    const html = renderSignUp({
+      data: {
+        token: 'hello1234',
+      },
+    })
+    const message = {
+      from: '',
+      to: '',
+      subject: 'Message title',
+      text: 'Plaintext version of the message',
+      html: html,
+    }
+    await mail.sendMail(message)
+    res.send('success send email')
   } catch (error) {
     next(error)
   }

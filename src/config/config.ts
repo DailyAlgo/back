@@ -36,20 +36,40 @@ export type Config = {
       host: string
     }
   }
+  mail: {
+    service: string
+    host: string
+    port: number
+    secure: boolean
+    auth: {
+      user: string
+      pass: string
+    }
+  }
 }
 
-const SERVER_URL = process.env.NODE_ENV !== 'production'?'http://localhost:8080':process.env.SERVER_URL
+const SERVER_URL =
+  process.env.NODE_ENV !== 'production'
+    ? 'http://localhost:8080'
+    : process.env.SERVER_URL
 const getConfig = (): Config => ({
   server: {
     host: SERVER_URL,
   },
   db: {
     connectionLimit: 5,
-    host: process.env.NODE_ENV !== 'production'?'localhost':process.env.DB_HOST_WRITE,
+    host:
+      process.env.NODE_ENV !== 'production'
+        ? 'localhost'
+        : process.env.DB_HOST_WRITE,
     port: 3306,
-    database: process.env.NODE_ENV !== 'production'?'daily_algo':process.env.DB_DATABASE,
-    user: process.env.NODE_ENV !== 'production'?'nodecrew':process.env.DB_USER,
-    password: process.env.NODE_ENV !== 'production'?'1234':process.env.DB_PASSWORD,
+    database:
+      process.env.NODE_ENV !== 'production'
+        ? 'daily_algo'
+        : process.env.DB_DATABASE,
+    user: process.env.NODE_ENV !== 'production' ? 'test' : process.env.DB_USER,
+    password:
+      process.env.NODE_ENV !== 'production' ? '1234' : process.env.DB_PASSWORD,
   },
   oauth: {
     google: {
@@ -76,6 +96,16 @@ const getConfig = (): Config => ({
     },
     kakao: {
       host: 'https://kapi.kakao.com',
+    },
+  },
+  mail: {
+    service: 'naver',
+    host: 'localhost',
+    port: 587,
+    secure: false,
+    auth: {
+      user: '', // naver 아이디 입력,
+      pass: '', // naver 비밀번호 입력,
     },
   },
 })
