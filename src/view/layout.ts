@@ -8,6 +8,7 @@ const template = ejs.compile(
     <title><%= title %></title>
   </head>
 <body>
+  <p style="color: blue;">hello it's p</p>
   <%- body %>
 </body>
 </html>`

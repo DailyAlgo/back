@@ -13,6 +13,7 @@ import {
   KakaoUserMe,
 } from '../util/gen_url'
 import renderSignUp from '../view/render_sign_up'
+import mail from '../service/mail'
 
 const oauth = getConfig().oauth
 
@@ -387,13 +388,20 @@ export const getEmail = async (
 ) => {
   // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
   try {
-    res.send(
-      renderSignUp({
-        data: {
-          token: 'hello1234',
-        },
-      })
-    )
+    const html = renderSignUp({
+      data: {
+        token: 'hello1234',
+      },
+    })
+    const message = {
+      from: '',
+      to: '',
+      subject: 'Message title',
+      text: 'Plaintext version of the message',
+      html: html,
+    }
+    await mail.sendMail(message)
+    res.send('success send email')
   } catch (error) {
     next(error)
   }

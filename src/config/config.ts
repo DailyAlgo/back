@@ -36,6 +36,16 @@ export type Config = {
       host: string
     }
   }
+  mail: {
+    service: string
+    host: string
+    port: number
+    secure: boolean
+    auth: {
+      user: string
+      pass: string
+    }
+  }
 }
 
 const SERVER_URL =
@@ -86,6 +96,16 @@ const getConfig = (): Config => ({
     },
     kakao: {
       host: 'https://kapi.kakao.com',
+    },
+  },
+  mail: {
+    service: 'naver',
+    host: 'localhost',
+    port: 587,
+    secure: false,
+    auth: {
+      user: '', // naver 아이디 입력,
+      pass: '', // naver 비밀번호 입력,
     },
   },
 })
