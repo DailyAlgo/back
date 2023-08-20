@@ -40,7 +40,7 @@ export class Answer extends Base {
   async finds(question_id: number): Promise<AnswerType[]> {
     const sql =
       'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._finds(sql, { question_id })
+    const rows = await this._findsIfExist(sql, { question_id }, true)
     return rows
   }
 

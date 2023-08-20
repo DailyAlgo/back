@@ -38,18 +38,20 @@ export type Config = {
   }
 }
 
-const SERVER_URL = process.env.NODE_ENV !== 'production'?'http://localhost:8080':process.env.SERVER_URL
+const isDev = process.env.NODE_ENV !== 'production'
+
+const SERVER_URL = isDev?'http://localhost:8080':process.env.SERVER_URL
 const getConfig = (): Config => ({
   server: {
     host: SERVER_URL,
   },
   db: {
     connectionLimit: 5,
-    host: process.env.NODE_ENV !== 'production'?'localhost':process.env.DB_HOST_WRITE,
+    host: isDev?'localhost':process.env.DB_HOST_WRITE,
     port: 3306,
-    database: process.env.NODE_ENV !== 'production'?'daily_algo':process.env.DB_DATABASE,
-    user: process.env.NODE_ENV !== 'production'?'nodecrew':process.env.DB_USER,
-    password: process.env.NODE_ENV !== 'production'?'1234':process.env.DB_PASSWORD,
+    database: isDev?'daily_algo':process.env.DB_DATABASE,
+    user: isDev?'test':process.env.DB_USER,
+    password: isDev?'1234':process.env.DB_PASSWORD,
   },
   oauth: {
     google: {

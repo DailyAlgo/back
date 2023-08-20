@@ -223,6 +223,7 @@ export const updateUser = async (
     await userService.update({
       id: id,
       nickname: req.body.nickname,
+      intro: req.body.intro,
     })
     res.status(200).json({ message: 'User updated successfully' })
   } catch (error) {
