@@ -12,6 +12,7 @@ import {
   KakaoLogin,
   KakaoUserMe,
 } from '../util/gen_url'
+import renderSignUp from '../view/render_sign_up'
 
 const oauth = getConfig().oauth
 
@@ -374,6 +375,25 @@ export const checkNickname = async (
     } else {
       res.status(200).send(true)
     }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+  try {
+    res.send(
+      renderSignUp({
+        data: {
+          token: 'hello1234',
+        },
+      })
+    )
   } catch (error) {
     next(error)
   }
