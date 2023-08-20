@@ -41,6 +41,50 @@ CREATE TABLE IF NOT EXISTS password (
 ) COMMENT '비밀번호';
 ```
 
+## follow
+
+- Follower ID
+- Following ID
+
+```mysql
+CREATE TABLE IF NOT EXISTS follow (
+	follower_id VARCHAR(30) NOT NULL COMMENT '팔로워 ID',
+    following_id VARCHAR(30) NOT NULL COMMENT '팔로잉 ID',
+    PRIMARY KEY (follower_id, following_id)
+) COMMENT '팔로우';
+```
+
+## organization
+
+- ID
+- 이름
+- 코드
+
+```mysql
+CREATE TABLE IF NOT EXISTS organization (
+	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+    name VARCHAR(50) NOT NULL COMMENT '이름',
+    code VARCHAR(6) NOT NULL COMMENT '가입코드',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
+    PRIMARY KEY (id),
+    UNIQUE KEY (id, name)
+) COMMENT '단체';
+```
+
+## userOrganizationMap
+
+- Organization ID
+- User ID
+
+```mysql
+CREATE TABLE IF NOT EXISTS user_organization_map (
+	organization_id INT NOT NULL COMMENT '단체 ID',
+    user_id VARCHAR(30) NOT NULL COMMENT '유저 ID',
+    PRIMARY KEY (organization_id, user_id)
+) COMMENT '유저 단체 매핑 테이블';
+```
+
 ## question
 
 - ID
