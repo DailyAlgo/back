@@ -22,7 +22,7 @@ export abstract class Base {
   protected async _findIfExist(
     sql: string,
     values: { [param: string]: string | boolean | Date | number },
-    optional: boolean
+    optional?: boolean
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
@@ -43,13 +43,14 @@ export abstract class Base {
     return row
   }
 
-  protected async _finds(
+  protected async _findsIfExist(
     sql: string,
-    values: { [param: string]: number }
+    values: { [param: string]: number },
+    optional?: boolean
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
-    if (rows.length == 0) {
+    if (rows.length == 0 && !optional) {
       throw new Error('NOT_FOUND')
     }
 
@@ -70,7 +71,7 @@ export abstract class Base {
 
   protected async _update(
     sql: string,
-    values: { [param: string]: string | boolean | Date | number }
+    values: { [param: string]: string | boolean | Date | number | null | undefined }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 

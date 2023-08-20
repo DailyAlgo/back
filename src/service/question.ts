@@ -79,7 +79,7 @@ export class Question extends Base {
     const limit = 10
     const sql =
       'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
-    const rows = await this._finds(sql, { offset, limit })
+    const rows = await this._findsIfExist(sql, { offset, limit }, true)
     return rows
   }
 

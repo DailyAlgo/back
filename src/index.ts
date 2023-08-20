@@ -3,6 +3,7 @@ import express from 'express'
 import getConfig from './config/config'
 import user from './routes/user'
 import question from './routes/question'
+import answer from './routes/answer'
 
 const port: number = parseInt(process.env.PORT!, 10) || 8080
 const app = express()
@@ -18,12 +19,10 @@ console.log('init middleware')
 
 app.use('/user', user)
 app.use('/question', question)
+app.use('/answer', answer)
 
 console.log('init router')
 
-console.log('env', process.env.DB_HOST_WRITE)
-
 app.get('/', (_, res) => {
   res.send('Hello World!')
-  console.log(getConfig().db)
 })

@@ -40,7 +40,7 @@ export class QuestionComment extends Base {
   async finds(question_id: number): Promise<QuestionCommentType[]> {
     const sql =
       'SELECT * FROM question_comment WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._finds(sql, { question_id })
+    const rows = await this._findsIfExist(sql, { question_id }, true)
 
     if (rows.length == 0) {
       throw new Error('NOT_FOUND')

@@ -6,6 +6,7 @@ import passwordService from '../service/password'
 interface UserNickname {
   id: string
   nickname: string
+  intro?: string
 }
 
 interface UserInfo extends UserNickname {
@@ -65,10 +66,11 @@ export class User extends Base {
   }
 
   async update(user: UserNickname): Promise<void> {
-    const sql = 'UPDATE user SET nickname = :nickname WHERE id = :id'
+    const sql = 'UPDATE user SET nickname = :nickname, intro = :intro WHERE id = :id'
     await this._update(sql, {
       nickname: user.nickname,
       id: user.id,
+      intro: user.intro
     })
   }
 
