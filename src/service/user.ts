@@ -80,6 +80,17 @@ export class User extends Base {
       id,
     })
   }
+
+  async follow(
+    follower_id: string,
+    following_id: string, 
+    type: boolean
+  ): Promise<void> {
+    const sql = type 
+      ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
+      : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
+    type ? await this._create(sql, { follower_id, following_id }) : await this._delete(sql, { follower_id, following_id })
+  }
 }
 
 export default new User(getConfig().db)

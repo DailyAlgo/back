@@ -14,6 +14,8 @@ import {
   checkId,
   checkNickname,
   getEmail,
+  followUser,
+  unfollowUser,
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
@@ -26,6 +28,7 @@ router.get('/kauth/kakao', kakaoRedirect)
 router.get('/oauth/google/callback', googleOauth)
 router.get('/kauth/kakao/callback', kakaoOauth)
 
+router.get('/find/:email', findIdByEmail) // 아이디 찾기
 router.post('/sign_up', signUp) // 회원가입
 router.get('/check/id', checkId)
 router.get('/check/nickname', checkNickname)
@@ -35,7 +38,9 @@ router.get('/:id', findUser) // 회원정보 조회
 router.put('/:id', check_token, updateUser) // 회원정보 수정
 router.delete('/:id', check_token, deleteUser) // 회원탈퇴
 router.put('/:id/password', check_password, check_token, changePassword) // 비밀번호 변경
-router.get('/find/:email', findIdByEmail) // 아이디 찾기
+router.post('/:id/follow', check_token, followUser)
+router.delete('/:id/follow', check_token, unfollowUser)
+
 // Todo
 router.get('/question') // 내 질문 조회
 router.get('/answer') // 내 답변 조회
