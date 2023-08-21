@@ -30,5 +30,7 @@
 - 기타
   - 이미지 확인 : `docker images`
   - 컨테이너 확인 : `docker ps -a`
+  - 로그 확인 : `docker logs da`
   - 도커 컴포즈 동작 : `docker-compose up` / `docker-compose up --build`
+  - 도커 컴포즈 백그라운드 동작 : `docker-compose up -d` (`docker-compose logs`로 로그 확인)
   - 이미지 태그 변경 : `docker image tag dailyalgo_be-dailyalgo_back dvlprjw/dailyalgo_be-dailyalgo_back:0.1.0`

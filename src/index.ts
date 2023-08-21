@@ -24,5 +24,5 @@ app.use('/answer', answer)
 console.log('init router')
 
 app.get('/', (_, res) => {
-  res.send('Hello World!')
+  res.send('Hello World! : ' + process.env.NODE_ENV)
 })
