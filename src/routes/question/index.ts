@@ -5,16 +5,21 @@ import {
   findQuestion,
   findQuestionCommentList,
   findQuestionList,
+  getCache,
   insertQuestion,
   insertQuestionComment,
   likeQuestion,
   likeQuestionComment,
+  setCache,
   updateQuestion,
   updateQuestionComment,
 } from '../../controller/question'
 import check_token from '../../middleware/check_token'
 
 const router = express.Router()
+
+router.get('/cache', getCache)
+router.post('/cache', setCache)
 
 router.post('/', check_token, insertQuestion) // 질문 생성
 router.get('/', findQuestionList) // 질문 리스트 조회

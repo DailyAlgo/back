@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import questionService from '../service/question'
 import questionInfoService from '../service/question_info'
 import questionCommentService from '../service/question_comment'
+import redisService from '../service/redis'
 
 export const findQuestion = async (
   req: Request,
@@ -183,6 +184,36 @@ export const likeQuestionComment = async (
   try {
     await questionCommentService.like(req.body.id, req.body.type)
     res.status(200).json({ message: 'Comment liked successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const getCache =async (
+  req: Request,  
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.query || !req.query.key) {
+      return res.status(400).json({ message: 'Key is missing' })
+    }
+    res.status(200).send(await redisService.get(req.query.key as string, true))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const setCache =async (
+  req: Request,  
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body.key) {
+      return res.status(400).json({ message: 'Key is missing' })
+    }
+    res.status(200).send(await redisService.set(req.body.key, req.body.value))
   } catch (error) {
     next(error)
   }

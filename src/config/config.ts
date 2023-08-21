@@ -46,6 +46,13 @@ export type Config = {
       pass: string
     }
   }
+  cache: {
+    url: string
+    socket: {
+      port: number,
+      host: string
+    }
+  }
 }
 
 const isDev = process.env.NODE_ENV !== 'production'
@@ -98,6 +105,13 @@ const getConfig = (): Config => ({
       user: '', // naver 아이디 입력,
       pass: '', // naver 비밀번호 입력,
     },
+  },
+  cache: {
+    url: "redis://redis:6379",
+    socket: {
+      port: 6379,
+      host: "localhost"
+    }
   },
 })
 

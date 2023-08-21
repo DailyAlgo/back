@@ -20,8 +20,6 @@ import check_token from '../../middleware/check_token'
 
 const router = express.Router()
 
-router.get('/email', getEmail)
-
 // OAuth 로그인
 router.get('/oauth/google', googleRedirect)
 router.get('/kauth/kakao', kakaoRedirect)
