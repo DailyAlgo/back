@@ -50,7 +50,9 @@ CREATE TABLE IF NOT EXISTS password (
 CREATE TABLE IF NOT EXISTS follow (
 	follower_id VARCHAR(30) NOT NULL COMMENT '팔로워 ID',
     following_id VARCHAR(30) NOT NULL COMMENT '팔로잉 ID',
-    PRIMARY KEY (follower_id, following_id)
+    PRIMARY KEY (follower_id, following_id),
+    CONSTRAINT follower_id_fk FOREIGN KEY (follower_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT following_id_fk FOREIGN KEY (following_id) REFERENCES user (id) ON DELETE CASCADE
 ) COMMENT '팔로우';
 ```
 
@@ -81,7 +83,9 @@ CREATE TABLE IF NOT EXISTS organization (
 CREATE TABLE IF NOT EXISTS user_organization_map (
 	organization_id INT NOT NULL COMMENT '단체 ID',
     user_id VARCHAR(30) NOT NULL COMMENT '유저 ID',
-    PRIMARY KEY (organization_id, user_id)
+    PRIMARY KEY (organization_id, user_id),
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT organization_id_fk FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE CASCADE
 ) COMMENT '유저 단체 매핑 테이블';
 ```
 
@@ -201,3 +205,9 @@ CREATE TABLE IF NOT EXISTS answer_comment (
     PRIMARY KEY (id)
 ) COMMENT '답변 댓글';
 ```
+
+## notification
+
+- ID
+- User ID
+- 
