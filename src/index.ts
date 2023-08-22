@@ -16,7 +16,8 @@ app.listen(port, () => {
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-app.use(cors(getConfig().cors.options))
+// app.use(cors(getConfig().cors.options)) // WhiteList는 더 알아보고 수정이 필요(지금 안 됨)
+app.use(cors()) // 프론트엔드 테스트 용도
 
 console.log('init middleware')
 
