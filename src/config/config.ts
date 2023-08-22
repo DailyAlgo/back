@@ -2,6 +2,12 @@ export type Config = {
   server: {
     host: string | undefined
   }
+  cors: {
+    options: {
+      origin
+      credentials: boolean
+    }
+  }
   db: {
     connectionLimit: number
     host: string | undefined
@@ -57,9 +63,22 @@ export type Config = {
 
 const isDev = process.env.NODE_ENV !== 'production'
 const SERVER_URL = isDev ? 'http://localhost:8080' : process.env.SERVER_URL
+const whiteList = ["http://localhost:3000", "http://localhost:8080", "http://13.209.184.61:8080"]
 const getConfig = (): Config => ({
   server: {
     host: SERVER_URL,
+  },
+  cors: {
+    options: {
+      origin: function (origin, callback) {
+        if (whiteList.indexOf(origin) != -1) {
+          callback(null, true)
+        } else {
+          callback(new Error("Origin Not Allowed"))
+        }
+      },
+      credentials: true
+    }
   },
   db: {
     connectionLimit: 5,
