@@ -63,7 +63,7 @@ export type Config = {
 
 const isDev = process.env.NODE_ENV !== 'production'
 const SERVER_URL = isDev ? 'http://localhost:8080' : process.env.SERVER_URL
-const whiteList = ["http://localhost:3000", "http://localhost:8080", "http://13.209.184.61:8080"]
+const whiteList = ["http://localhost", "http://13.209.184.61"]
 const getConfig = (): Config => ({
   server: {
     host: SERVER_URL,
