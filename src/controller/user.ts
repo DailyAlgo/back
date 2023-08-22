@@ -85,7 +85,7 @@ export const login = async (
         expiresIn: '1h',
       }
     )
-    res.status(200).json({ message: 'Success login', token })
+    res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Success login' })
   } catch (error) {
     next(error)
   }
@@ -181,7 +181,7 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
-        res.status(200).json({ message: 'Google login succeeded', token })
+        res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Google login succeeded' })
       } catch (error) {
         if (error instanceof Error && error.message === 'NOT_FOUND') {
           // 회원가입
@@ -202,7 +202,7 @@ export const googleOauth = async (
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
           })
-          res.status(200).json({ message: 'Google Signup succeeded', token })
+          res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Google Signup succeeded' })
         } else {
           next(error)
         }
@@ -329,7 +329,7 @@ export const kakaoOauth = async (
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
       })
-      res.status(200).json({ message: 'Kakao login succeeded', token })
+      res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Kakao login succeeded' })
       next()
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
