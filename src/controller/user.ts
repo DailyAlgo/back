@@ -407,3 +407,37 @@ export const getEmail = async (
     next(error)
   }
 }
+
+export const followUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const follower = req.credentials.user
+    const following = req.params['id']
+    await userService.follow(follower, following, true)
+    res.send('success follow')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const unfollowUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const follower = req.credentials.user
+    const following = req.params['id']
+    await userService.follow(follower, following, false)
+    res.send('success unfollow')
+  } catch (error) {
+    next(error)
+  }
+}

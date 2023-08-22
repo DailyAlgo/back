@@ -77,14 +77,7 @@ export class QuestionComment extends Base {
     id: number,
     type: boolean
   ): Promise<void> {
-    let sql
-    if (type === true) {
-      // 좋아요
-      sql = 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id'
-    } else if (type === false) {
-      // 좋아요 취소
-      sql = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    } else return
+    const sql = type ? 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id' : 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
     await this._update(sql, { id })
   }
 }
