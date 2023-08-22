@@ -36,9 +36,11 @@ export const insertQuestion = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
     await questionService.create({
       title: req.body.title,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       source: req.body.source,
       type: req.body.type,
       content: req.body.content,
@@ -62,7 +64,7 @@ export const updateQuestion = async (
     await questionService.update({
       id,
       title: req.body.title,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       source: req.body.source,
       type: req.body.type,
       content: req.body.content,
@@ -128,7 +130,7 @@ export const insertQuestionComment = async (
     const id = Number(req.params['id'])
     await questionCommentService.create({
       question_id: id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
     })
     res.status(200).json({ message: 'Comment created successfully' })
@@ -150,7 +152,7 @@ export const updateQuestionComment = async (
     await questionCommentService.update({
       id,
       question_id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
       like_cnt: -1,
     })

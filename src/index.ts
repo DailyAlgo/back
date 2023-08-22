@@ -4,6 +4,7 @@ import getConfig from './config/config'
 import user from './routes/user'
 import question from './routes/question'
 import answer from './routes/answer'
+import organization from './routes/organization'
 
 const port: number = parseInt(process.env.PORT!, 10) || 8080
 const app = express()
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }))
 console.log('init middleware')
 
 app.use('/user', user)
+app.use('/organimzation', organization)
 app.use('/question', question)
 app.use('/answer', answer)
 
