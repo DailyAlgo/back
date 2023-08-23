@@ -11,8 +11,10 @@ import {
   insertQuestionTag,
   likeQuestion,
   likeQuestionComment,
+  scrapQuestion,
   searchQuestion,
   setCache,
+  unscrapQuestion,
   updateQuestion,
   updateQuestionComment,
 } from '../../controller/question'
@@ -31,6 +33,8 @@ router.get('/:id', findQuestion) // 질문 조회
 router.put('/:id', check_token, updateQuestion) // 질문 수정
 router.delete('/:id', check_token, deleteQuestion) // 질문 삭제
 router.put('/:id/like', check_token, likeQuestion) // 질문 좋아요
+router.post('/:id/scrap', check_token, scrapQuestion) // 질문 스크랩
+router.delete('/:id/scrap', check_token, unscrapQuestion) // 질문 스크랩 취소
 router.get('/:id/comment', findQuestionCommentList) // 댓글 조회
 router.post('/:id/comment', check_token, insertQuestionComment) // 댓글 작성
 router.put('/:id/comment', check_token, updateQuestionComment) // 댓글 수정
