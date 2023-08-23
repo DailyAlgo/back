@@ -205,6 +205,22 @@ export const insertQuestionTag = async (
   }
 }
 
+export const searchQuestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.query || !req.query.keyword) {
+      return res.status(400).json({ message: 'Key is missing' })
+    }
+    const keyword = req.query.keyword
+    res.status(200).json(await questionService.search(keyword as string))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const getCache =async (
   req: Request,  
   res: Response,
