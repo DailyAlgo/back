@@ -83,7 +83,7 @@ export class Question extends Base {
     return rows
   }
 
-  async create(question: QuestionCreationType): Promise<void> {
+  async create(question: QuestionCreationType, tags: number[]): Promise<void> {
     const sql =
       'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
     const question_id = await this._create(sql, {
@@ -95,6 +95,9 @@ export class Question extends Base {
       code: question.code,
     })
     question_info.create(question_id)
+    tags.forEach(tag => {
+      this.addTag(tag, question_id)
+    })
   }
 
   async update(question: QuestionType): Promise<void> {
@@ -116,6 +119,19 @@ export class Question extends Base {
     await this._delete(sql, {
       id,
       user_id,
+    })
+  }
+
+  async createTag(name: string): Promise<void> {
+    const sql = 'INSERT INTO question_tag (name) VALUES (:name)'
+    await this._create(sql, { name, })
+  }
+
+  async addTag(tag_id: number, question_id: number): Promise<void> {
+    const sql = 'INSERT INTO question_tag_map (tag_id, question_id) VALUES (:tag_id, :question_id)'
+    await this._create(sql, {
+      tag_id,
+      question_id,
     })
   }
 }

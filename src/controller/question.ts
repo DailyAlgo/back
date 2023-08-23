@@ -38,6 +38,7 @@ export const insertQuestion = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
+    const tags: number[] = req.body.tags
     await questionService.create({
       title: req.body.title,
       user_id: req.credentials.user.id,
@@ -45,7 +46,7 @@ export const insertQuestion = async (
       type: req.body.type,
       content: req.body.content,
       code: req.body.code,
-    })
+    }, tags)
     res.status(200).json({ message: 'Question created successfully' })
   } catch (error) {
     next(error)
@@ -186,6 +187,19 @@ export const likeQuestionComment = async (
   try {
     await questionCommentService.like(req.body.id, req.body.type)
     res.status(200).json({ message: 'Comment liked successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const insertQuestionTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await questionService.createTag(req.body.name)
+    res.status(200).json({ message: 'Tag created successfully' })
   } catch (error) {
     next(error)
   }
