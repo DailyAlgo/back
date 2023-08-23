@@ -134,6 +134,17 @@ export class Question extends Base {
       question_id,
     })
   }
+
+  async search(keyword: string): Promise<QuestionListType[]> {
+    keyword = '%'+keyword.trim()+'%'
+    const sql = 
+      `SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt 
+      FROM question q INNER JOIN question_info qi ON q.id = qi.question_id 
+      WHERE q.title LIKE :keyword
+      LIMIT :limit OFFSET :offset`
+    const rows = await this._findsIfExist(sql, { keyword, }, true)
+    return rows
+  }
 }
 
 export default new Question(getConfig().db)

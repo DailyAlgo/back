@@ -45,7 +45,7 @@ export abstract class Base {
 
   protected async _findsIfExist(
     sql: string,
-    values: { [param: string]: number },
+    values: { [param: string]: number | string },
     optional?: boolean
   ): Promise<any> {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
