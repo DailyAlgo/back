@@ -34,11 +34,14 @@ export const insertAnswer = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const tags: number[] = req.body.tags
     await answerService.create({
       question_id: req.body.question_id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
-    })
+    }, tags)
     res.status(200).json({ message: 'Answer created successfully' })
   } catch (error) {
     next(error)
@@ -57,7 +60,7 @@ export const updateAnswer = async (
     await answerService.update({
       id,
       question_id: req.body.question_id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
       like_cnt: -1,
     })
@@ -120,7 +123,7 @@ export const insertAnswerComment = async (
     const id = Number(req.params['id'])
     await answerCommentService.create({
       answer_id: id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
     })
     res.status(200).json({ message: 'Comment created successfully' })
@@ -142,7 +145,7 @@ export const updateAnswerComment = async (
     await answerCommentService.update({
       id,
       answer_id,
-      user_id: req.credentials?.user?.id,
+      user_id: req.credentials.user.id,
       content: req.body.content,
       like_cnt: -1,
     })
@@ -176,6 +179,19 @@ export const likeAnswerComment = async (
   try {
     await answerCommentService.like(req.body.id, req.body.type)
     res.status(200).json({ message: 'Comment liked successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const insertAnswerTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    await answerService.createTag(req.body.name)
+    res.status(200).json({ message: 'Tag created successfully' })
   } catch (error) {
     next(error)
   }

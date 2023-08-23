@@ -44,15 +44,18 @@ export class Answer extends Base {
     return rows
   }
 
-  async create(answer: AnswerCreationType): Promise<void> {
+  async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
     const created_time = Date.now()
     const sql =
       'INSERT INTO answer (question_id, user_id, content, like_cnt, created_time) VALUES (:question_id, :user_id, :content, :created_time)'
-    await this._create(sql, {
+      const answer_id = await this._create(sql, {
       question_id: answer.question_id,
       user_id: answer.user_id,
       content: answer.content,
       created_time: created_time,
+    })
+    tags.forEach(tag => {
+      this.addTag(tag, answer_id)
     })
   }
 
@@ -82,6 +85,19 @@ export class Answer extends Base {
     } else return
     await this._update(sql, {
       id,
+    })
+  }
+
+  async createTag(name: string): Promise<void> {
+    const sql = 'INSERT INTO answer_tag (name) VALUES (:name)'
+    await this._create(sql, { name, })
+  }
+
+  async addTag(tag_id: number, answer_id: number): Promise<void> {
+    const sql = 'INSERT INTO answer_tag_map (tag_id, answer_id) VALUES (:tag_id, :answer_id)'
+    await this._create(sql, {
+      tag_id,
+      answer_id,
     })
   }
 }

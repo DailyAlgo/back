@@ -8,6 +8,7 @@ import {
   getCache,
   insertQuestion,
   insertQuestionComment,
+  insertQuestionTag,
   likeQuestion,
   likeQuestionComment,
   setCache,
@@ -21,6 +22,7 @@ const router = express.Router()
 router.get('/cache', getCache)
 router.post('/cache', setCache)
 
+router.post('/tag', insertQuestionTag) // 신규 태그 생성
 router.post('/', check_token, insertQuestion) // 질문 생성
 router.get('/', findQuestionList) // 질문 리스트 조회
 router.get('/:id', findQuestion) // 질문 조회
