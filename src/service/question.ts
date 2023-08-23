@@ -145,6 +145,16 @@ export class Question extends Base {
     const rows = await this._findsIfExist(sql, { keyword, }, true)
     return rows
   }
+
+  async scrap(user_id: string, question_id: number): Promise<void> {
+    const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
+    await this._create(sql, { user_id, question_id, })
+  }
+
+  async unscrap(user_id: string, question_id: number): Promise<void> {
+    const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
+    await this._delete(sql, { user_id, question_id, })
+  }
 }
 
 export default new Question(getConfig().db)

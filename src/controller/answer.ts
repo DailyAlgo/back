@@ -79,7 +79,7 @@ export const deleteAnswer = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await answerService.delete(id, req.credentials.user)
+    await answerService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Answer deleted successfully' })
   } catch (error) {
     next(error)
@@ -164,7 +164,7 @@ export const deleteAnswerComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
-    await answerCommentService.delete(id, req.credentials.user)
+    await answerCommentService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)

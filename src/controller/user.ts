@@ -416,7 +416,7 @@ export const followUser = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const follower = req.credentials.user
+    const follower = req.credentials.user.id
     const following = req.params['id']
     await userService.follow(follower, following, true)
     res.send('success follow')
@@ -433,7 +433,7 @@ export const unfollowUser = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const follower = req.credentials.user
+    const follower = req.credentials.user.id
     const following = req.params['id']
     await userService.follow(follower, following, false)
     res.send('success unfollow')

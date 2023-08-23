@@ -86,7 +86,7 @@ export const deleteQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionService.delete(id, req.credentials.user)
+    await questionService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Question deleted successfully' })
   } catch (error) {
     next(error)
@@ -172,7 +172,7 @@ export const deleteQuestionComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.body.id)
-    await questionCommentService.delete(id, req.credentials.user)
+    await questionCommentService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
     next(error)
@@ -216,6 +216,38 @@ export const searchQuestion = async (
     }
     const keyword = req.query.keyword
     res.status(200).json(await questionService.search(keyword as string))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const scrapQuestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+      const question_id = Number(req.body.id)
+    await questionService.scrap(req.credentials.user.id, question_id)
+    res.status(200).json({ message: 'Question scrapped successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const unscrapQuestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+      const question_id = Number(req.body.id)
+    await questionService.unscrap(req.credentials.user.id, question_id)
+    res.status(200).json({ message: 'Question unscrapped successfully' })
   } catch (error) {
     next(error)
   }
