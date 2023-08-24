@@ -71,6 +71,7 @@ export const signUp = async (
 
 // TODO: DOTENV 분리
 const secretKey = 'DA_JWT'
+const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
 
 export const login = async (
   req: Request,
@@ -85,7 +86,7 @@ export const login = async (
         expiresIn: '1h',
       }
     )
-    res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Success login' })
+    res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Success login' }).redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
   }
@@ -181,7 +182,7 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
-        res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Google login succeeded' })
+        res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Google login succeeded' }).redirect(LOGIN_REDIRECT_URL)
       } catch (error) {
         if (error instanceof Error && error.message === 'NOT_FOUND') {
           // 회원가입
@@ -202,7 +203,7 @@ export const googleOauth = async (
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
           })
-          res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Google Signup succeeded' })
+          res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Google Signup succeeded' }).redirect(LOGIN_REDIRECT_URL)
         } else {
           next(error)
         }
@@ -329,7 +330,7 @@ export const kakaoOauth = async (
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
       })
-      res.status(200).header('Authorization', `Bearer ${token}`).json({ message: 'Kakao login succeeded' })
+      res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Kakao login succeeded' })
       next()
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
@@ -437,6 +438,74 @@ export const unfollowUser = async (
     const following = req.params['id']
     await userService.follow(follower, following, false)
     res.send('success unfollow')
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findFollower = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    res.send(await userService.findFollower(id))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findFollowing = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    res.send(await userService.findFollowing(id))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findQuestion = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
+    res.send(await userService.findQuestion(id, offset))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findAnswer = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
+    res.send(await userService.findAnswer(id, offset))
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const findScrap = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const id = req.params['id']
+    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
+    res.send(await userService.findScrap(id, offset))
   } catch (error) {
     next(error)
   }

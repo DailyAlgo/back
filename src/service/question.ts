@@ -8,28 +8,35 @@ export type QuestionType = {
   title: string
   user_id: string
   source: string
-  type: number
+  type: string
   content: string
   code: string
   created_time?: Date
   modified_time?: Date
+  tags: string[]
 }
 
 type QuestionCreationType = {
   title: string
   user_id: string
   source: string
-  type: number
+  type: string
   content: string
   code: string
 }
 
 type QuestionListType = {
+  id: string
   title: string
+  source: string
+  type: string
   view_cnt: number
   like_cnt: number
   answer_cnt: number
   comment_cnt: number
+  tags: string[]
+  user_id: string
+  created_time: Date
 }
 
 type QuestionDetailType = {
@@ -37,7 +44,7 @@ type QuestionDetailType = {
   title: string
   user_id: string
   source: string
-  type: number
+  type: string
   content: string
   code: string
   created_time: Date
@@ -46,6 +53,7 @@ type QuestionDetailType = {
   like_cnt: number
   answer_cnt: number
   comment_cnt: number
+  tags: string[]
 }
 
 export class Question extends Base {
@@ -58,6 +66,7 @@ export class Question extends Base {
     const sql =
       'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
+    const tags = await this.findTag(row['id'])
     return {
       id: row['id'],
       title: row['title'],
@@ -72,15 +81,22 @@ export class Question extends Base {
       like_cnt: row['like_cnt'],
       answer_cnt: row['answer_cnt'],
       comment_cnt: row['comment_cnt'],
+      tags,
     }
   }
 
   async finds(offset: number): Promise<QuestionListType[]> {
     const limit = 10
     const sql =
-      'SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt FROM question q INNER JOIN question_info qi ON q.id = qi.question_id LIMIT :limit OFFSET :offset'
+      `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
+      FROM question q 
+      INNER JOIN question_info qi ON q.id = qi.question_id 
+      LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { offset, limit }, true)
-    return rows
+    return Promise.all(rows.map(row=>{
+      const tags = this.findTag(row['id'])
+      return {...row, tags}
+    }))
   }
 
   async create(question: QuestionCreationType, tags: number[]): Promise<void> {
@@ -95,9 +111,7 @@ export class Question extends Base {
       code: question.code,
     })
     question_info.create(question_id)
-    tags.forEach(tag => {
-      this.addTag(tag, question_id)
-    })
+    tags.forEach(tag => this.addTag(tag, question_id))
   }
 
   async update(question: QuestionType): Promise<void> {
@@ -111,6 +125,7 @@ export class Question extends Base {
       code: question.code,
       id: question.id,
       user_id: question.user_id,
+      tags: question.tags,
     })
   }
 
@@ -135,15 +150,30 @@ export class Question extends Base {
     })
   }
 
-  async search(keyword: string): Promise<QuestionListType[]> {
+  async findTag(question_id: number): Promise<string[]> {
+    const sql = 
+    `SELECT qt.name 
+    FROM question_tag qt 
+    INNER JOIN question_tag_map qtm ON qt.id = qtm.tag_id
+    WHERE qtm.question_id = :question_id`
+    const rows = await this._findsIfExist(sql, { question_id }, true)
+    return rows
+  }
+
+  async search(keyword: string, offset: number): Promise<QuestionListType[]> {
+    const limit = 10
     keyword = '%'+keyword.trim()+'%'
     const sql = 
-      `SELECT q.id, q.title, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt 
-      FROM question q INNER JOIN question_info qi ON q.id = qi.question_id 
+      `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
+      FROM question q 
+      INNER JOIN question_info qi ON q.id = qi.question_id 
       WHERE q.title LIKE :keyword
       LIMIT :limit OFFSET :offset`
-    const rows = await this._findsIfExist(sql, { keyword, }, true)
-    return rows
+    const rows = await this._findsIfExist(sql, { keyword, limit, offset }, true)
+    return Promise.all(rows.map(row=>{
+      const tags = this.findTag(row['id'])
+      return {...row, tags}
+    }))
   }
 
   async scrap(user_id: string, question_id: number): Promise<void> {
