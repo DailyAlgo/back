@@ -21,10 +21,12 @@ export class Password extends Base {
     super(options)
   }
 
-  async compare(id: string, password: string): Promise<boolean> {
+  async compare(id: string, password: string): Promise<void> {
     const sql = 'SELECT * FROM password WHERE user_id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
-    return row['password'] === (await bcrypt.hash(password, row['salt']))
+    if (row['password'] !== (await bcrypt.hash(password, row['salt']))) {
+      throw new Error('Incorrect Password')
+    }
   }
 
   async update(user_id: string, password: string): Promise<void> {
