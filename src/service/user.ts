@@ -1,8 +1,9 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
-import passwordService from '../service/password'
-import question from './question'
+import passwordService from './password'
+import organizationService from './organization'
+import questionService from './question'
 
 interface UserNickname {
   id: string
@@ -20,6 +21,7 @@ interface UserInfo extends UserNickname {
 
 interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
   password: string
+  organization_code?: string
 }
 
 interface UserQuestionListType {
@@ -74,6 +76,10 @@ export class User extends Base {
       user_id: user.id,
       password: user.password,
     })
+    if (user.organization_code) {
+      const organization = await organizationService.find(user.organization_code, false)
+      organizationService.join(organization.id, user.id)
+    }
   }
 
   async update(user: UserNickname): Promise<void> {
@@ -133,7 +139,7 @@ export class User extends Base {
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
     return Promise.all(rows.map(row=>{
-      const tags = question.findTag(row['id'])
+      const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
   }
@@ -152,7 +158,7 @@ export class User extends Base {
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
     return Promise.all(rows.map(row=>{
-      const tags = question.findTag(row['id'])
+      const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
   }
@@ -172,7 +178,7 @@ export class User extends Base {
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
     return Promise.all(rows.map(row=>{
-      const tags = question.findTag(row['id'])
+      const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
   }

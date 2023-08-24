@@ -2,18 +2,15 @@ import { NextFunction, Request, Response } from "express"
 import organizationService from "../service/organization"
 import { getOrganizationCode } from "../util/gen_shortCode"
 
-export const findIdByCode = async (code: string): Promise<string> => {
-  return await organizationService.findIdByCode(code)
-}
-
-export const findOrganizatioon = async (
+export const findOrganization = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const id = Number(req.params['id'])
-    res.status(200).json(await organizationService.find(id, false))
+    const code = req.query.code
+    const organization = await organizationService.find(code as string, false)
+    res.status(200).send(organization.name)
   } catch (error) {
     next(error)
   }

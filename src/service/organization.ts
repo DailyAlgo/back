@@ -22,9 +22,9 @@ export class Organization extends Base {
     super(options)
   }
 
-  async find(id: number, optional: boolean): Promise<OrganizationDetail> {
-    const sql = 'SELECT * FROM organization WHERE id = :id'
-    const row = await this._findIfExist(sql, { id: id }, optional)
+  async find(code: string, optional: boolean): Promise<OrganizationDetail> {
+    const sql = 'SELECT * FROM organization WHERE code = :code'
+    const row = await this._findIfExist(sql, { code }, optional)
     return {
       id: row['id'],
       name: row['name'],
@@ -32,12 +32,6 @@ export class Organization extends Base {
       master: row['master'],
       created_time: row['created_time'],
     }
-  }
-
-  async findIdByCode(code: string): Promise<string> {
-    const sql = 'SELECT id FROM organization WHERE code = :code'
-    const row = await this._findIfExist(sql, { code }, false)
-    return row['id']
   }
 
   async create(organization: OrganizationInfo): Promise<void> {
