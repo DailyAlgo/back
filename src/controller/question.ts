@@ -212,9 +212,6 @@ export const searchQuestion = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.query || !req.query.keyword) {
-      return res.status(400).json({ message: 'Key is missing' })
-    }
     const keyword = req.query.keyword
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.status(200).json(await questionService.search(keyword as string, offset))
@@ -261,9 +258,6 @@ export const getCache =async (
   next: NextFunction
 ) => {
   try {
-    if (!req.query || !req.query.key) {
-      return res.status(400).json({ message: 'Key is missing' })
-    }
     res.status(200).send(await redisService.get(req.query.key as string, true))
   } catch (error) {
     next(error)

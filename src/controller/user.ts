@@ -16,6 +16,9 @@ import renderSignUp from '../view/render_sign_up'
 import mail from '../service/mail'
 
 const oauth = getConfig().oauth
+const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
+// TODO: DOTENV 분리
+const secretKey = 'DA_JWT'
 
 interface Auth {
   clientID: string | undefined
@@ -61,17 +64,20 @@ export const signUp = async (
       nickname: req.body.nickname,
       email: req.body.email,
       password: req.body.password,
+      organization_code: req.body.organization_code,
     })
-    // TODO: 회원 가입 후 자동 로그인
-    res.status(200).json({ message: 'User created successfully' })
+    const token = jwt.sign(
+      await userService.find(req.body.id, false),
+      secretKey,
+      {
+        expiresIn: '1h',
+      }
+    )
+    res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'User created successfully' }).redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
   }
 }
-
-// TODO: DOTENV 분리
-const secretKey = 'DA_JWT'
-const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
 
 export const login = async (
   req: Request,
@@ -86,7 +92,7 @@ export const login = async (
         expiresIn: '1h',
       }
     )
-    res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Success login' }).redirect(LOGIN_REDIRECT_URL)
+    res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Success login' }).redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
   }
@@ -182,7 +188,7 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
-        res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Google login succeeded' }).redirect(LOGIN_REDIRECT_URL)
+        res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Google login succeeded' }).redirect(LOGIN_REDIRECT_URL)
       } catch (error) {
         if (error instanceof Error && error.message === 'NOT_FOUND') {
           // 회원가입
@@ -203,7 +209,7 @@ export const googleOauth = async (
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
           })
-          res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Google Signup succeeded' }).redirect(LOGIN_REDIRECT_URL)
+          res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Google Signup succeeded' }).redirect(LOGIN_REDIRECT_URL)
         } else {
           next(error)
         }
@@ -330,7 +336,7 @@ export const kakaoOauth = async (
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
       })
-      res.status(200).cookie('jwt', token, { maxAge: 900000, httpOnly: true }).json({ message: 'Kakao login succeeded' })
+      res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Kakao login succeeded' })
       next()
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
@@ -349,9 +355,6 @@ export const checkId = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.query || !req.query.id) {
-      return res.status(400).json({ message: 'Email is missing' })
-    }
     const id = String(req.query['id'])
     if (await userService.find(id, true)) {
       res.status(200).send(false)
@@ -369,9 +372,6 @@ export const checkNickname = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.query || !req.query.nickname) {
-      return res.status(400).json({ message: 'Nickname is missing' })
-    }
     const nickname = String(req.query['nickname'])
     if (await userService.findIdByNickname(nickname)) {
       res.status(200).send(false)
