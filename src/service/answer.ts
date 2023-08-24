@@ -2,7 +2,17 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 
-export type AnswerType = {
+interface AnswerType {
+  id: number
+  question_id: number
+  user_id: string
+  content: string
+  created_time?: Date
+  modified_time?: Date
+  tags: string[]  
+}
+
+interface AnswerInfo extends AnswerType {
   id: number
   question_id: number
   user_id: string
@@ -10,6 +20,7 @@ export type AnswerType = {
   like_cnt: number
   created_time?: Date
   modified_time?: Date
+  tags: string[]
 }
 
 type AnswerCreationType = {
@@ -23,9 +34,10 @@ export class Answer extends Base {
     super(options)
   }
 
-  async find(id: number): Promise<AnswerType> {
+  async find(id: number): Promise<AnswerInfo> {
     const sql = 'SELECT * FROM answer WHERE id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
+    const tags = await this.findTag(row['id'])
     return {
       id: row['id'],
       question_id: row['question_id'],
@@ -34,14 +46,18 @@ export class Answer extends Base {
       like_cnt: row['like_cnt'],
       created_time: row['created_time'],
       modified_time: row['modified_time'],
+      tags,
     }
   }
 
-  async finds(question_id: number): Promise<AnswerType[]> {
+  async finds(question_id: number): Promise<AnswerInfo[]> {
     const sql =
       'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
     const rows = await this._findsIfExist(sql, { question_id }, true)
-    return rows
+    return Promise.all(rows.map(row=>{
+      const tags = this.findTag(row['id'])
+      return {...row, tags}
+    }))
   }
 
   async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
@@ -66,6 +82,7 @@ export class Answer extends Base {
       content: answer.content,
       id: answer.id,
       user_id: answer.user_id,
+      tags: answer.tags,
     })
   }
 
@@ -99,6 +116,16 @@ export class Answer extends Base {
       tag_id,
       answer_id,
     })
+  }
+
+  async findTag(answer_id: number): Promise<string[]> {
+    const sql = 
+    `SELECT at.name 
+    FROM answer_tag at 
+    INNER JOIN answer_tag_map atm ON at.id = atm.tag_id
+    WHERE atm.answer_id = :answer_id`
+    const rows = await this._findsIfExist(sql, { answer_id }, true)
+    return rows
   }
 }
 

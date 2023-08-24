@@ -62,7 +62,7 @@ export const updateAnswer = async (
       question_id: req.body.question_id,
       user_id: req.credentials.user.id,
       content: req.body.content,
-      like_cnt: -1,
+      tags: req.body.tags,
     })
     res.status(200).json({ message: 'Answer updated successfully' })
   } catch (error) {

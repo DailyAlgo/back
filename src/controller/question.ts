@@ -70,6 +70,7 @@ export const updateQuestion = async (
       type: req.body.type,
       content: req.body.content,
       code: req.body.code,
+      tags: req.body.tags,
     })
     res.status(200).json({ message: 'Question updated successfully' })
   } catch (error) {
@@ -215,7 +216,8 @@ export const searchQuestion = async (
       return res.status(400).json({ message: 'Key is missing' })
     }
     const keyword = req.query.keyword
-    res.status(200).json(await questionService.search(keyword as string))
+    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
+    res.status(200).json(await questionService.search(keyword as string, offset))
   } catch (error) {
     next(error)
   }

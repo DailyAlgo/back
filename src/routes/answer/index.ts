@@ -5,6 +5,7 @@ import { deleteAnswer, deleteAnswerComment, findAnswerCommentList, findAnswerLis
 const router = express.Router()
 
 router.post('/tag', insertAnswerTag) // 신규 태그 생성
+router.get('/tag') // Todo
 router.post('/', check_token, insertAnswer) // 답변 생성
 router.get('/:question_id', findAnswerList) // 답변 리스트 조회
 router.put('/:id', check_token, updateAnswer) // 답변 수정

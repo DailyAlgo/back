@@ -71,7 +71,7 @@ export abstract class Base {
 
   protected async _update(
     sql: string,
-    values: { [param: string]: string | boolean | Date | number | null | undefined }
+    values: { [param: string]: string | boolean | Date | number | null | undefined | string[] }
   ): Promise<void> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
