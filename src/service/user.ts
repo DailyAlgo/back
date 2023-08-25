@@ -19,6 +19,20 @@ interface UserInfo extends UserNickname {
   created_time: Date
 }
 
+interface UserProfile extends UserInfo {
+  id: string
+  name: string
+  nickname: string
+  email: string
+  created_time: Date
+  organizations: string[]
+  question_cnt: number
+  answer_cnt: number
+  view_cnt: number
+  follower_cnt: number
+  following_cnt: number
+}
+
 interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
   password: string
   organization_code?: string
@@ -39,15 +53,39 @@ export class User extends Base {
     super(options)
   }
 
-  async find(id: string, optional: boolean): Promise<UserInfo> {
-    const sql = 'SELECT * FROM user WHERE id = :id'
+  async find(id: string, optional: boolean): Promise<UserProfile> {
+    const sql = 
+    `SELECT u.id, u.name, u.nickname, u.email, u.created_time, 
+    COUNT(q.id) as question_cnt, COUNT(a.id) as answer_cnt, IFNULL(SUM(q.view_cnt), 0) as view_cnt, 
+    COUNT(follower.follower_id) as follower_cnt, COUNT(following.following_id) as following_cnt
+    FROM user u
+    LEFT OUTER JOIN (SELECT q.id, qi.view_cnt, q.user_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id) q ON u.id = q.user_id
+    LEFT OUTER JOIN answer a ON u.id = a.user_id
+    LEFT OUTER JOIN follow follower ON follower.following_id = u.id
+    LEFT OUTER JOIN follow following ON following.follower_id = u.id
+    WHERE u.id = :id
+    GROUP BY u.id, u.name, u.nickname, u.email, u.created_time`
     const row = await this._findIfExist(sql, { id: id }, optional)
+    const sql_organization = 
+    `SELECT o.name
+    FROM user u
+    LEFT OUTER JOIN user_organization_map uom ON u.id = uom.user_id
+    INNER JOIN organization o ON o.id = uom.organization_id 
+    WHERE u.id = :id
+    `
+    const organizations = await this._findIfExist(sql_organization, { id: id }, true)
     return {
       id: row['id'] || '0',
       name: row['name'],
       nickname: row['nickname'],
       email: row['email'],
       created_time: row['created_time'],
+      question_cnt: row['question_cnt'],
+      answer_cnt: row['answer_cnt'],
+      view_cnt: row['view_cnt'],
+      follower_cnt: row['follower_cnt'],
+      following_cnt: row['following_cnt'],
+      organizations
     }
   }
 
@@ -133,7 +171,7 @@ export class User extends Base {
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
       FROM question q 
-      INNER JOIN answer a ON q.id = a.question_id 
+      LEFT OUTER JOIN answer a ON q.id = a.question_id 
       WHERE q.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
@@ -172,7 +210,7 @@ export class User extends Base {
       `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
       FROM scrap s
       INNER JOIN question q ON q.id = s.question_id 
-      INNER JOIN answer a ON q.id = a.question_id 
+      LEFT OUTER JOIN answer a ON q.id = a.question_id 
       WHERE s.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
