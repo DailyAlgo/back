@@ -206,6 +206,24 @@ export const insertQuestionTag = async (
   }
 }
 
+export const searchQuestionTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tag = await questionService.findTag(req.body.name)
+    if (tag) {
+      res.status(200).json({ message: 'Searched Tag successfully' })  
+    } else {
+      await questionService.createTag(req.body.name)
+      res.status(200).json({ message: 'Tag created successfully' })
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const searchQuestion = async (
   req: Request,
   res: Response,
