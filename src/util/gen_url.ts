@@ -1,6 +1,7 @@
 import qs from 'qs'
 import getConfig from '../config/config'
 import { Authorization, GAuth, KAuth } from '../controller/user'
+import { Request } from 'express'
 
 const config = getConfig()
 
@@ -8,7 +9,10 @@ const getBase = (type: string, authorization: Authorization, path: string) => {
   return `${config[type][authorization].host}${path}`
 }
 
-const getURL = (base: string, query?: Record<string, string|undefined>): string => {
+const getURL = (
+  base: string,
+  query?: Record<string, string | undefined>
+): string => {
   if (query) {
     return `${base}?${qs.stringify(query)}`
   } else {
@@ -49,4 +53,17 @@ export const KakaoUserMe = (): string => {
 
 export const GoogleUserMe = (): string => {
   return getURL(getBase('api', 'google', '/oauth2/v2/userinfo'))
+}
+
+export const getAbsoluteURL = (req: Request, url: string): string => {
+  const hostname = req.hostname
+  const scheme = (function () {
+    if (hostname.startsWith('local')) {
+      return 'http'
+    } else {
+      return 'https'
+    }
+  })()
+  const base = `${scheme}://${hostname}`
+  return new URL(url, base).toString()
 }

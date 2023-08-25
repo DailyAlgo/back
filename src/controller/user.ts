@@ -11,6 +11,7 @@ import {
   KakaoAuth,
   KakaoLogin,
   KakaoUserMe,
+  getAbsoluteURL,
 } from '../util/gen_url'
 import renderSignUp from '../view/render_sign_up'
 import mail from '../service/mail'
@@ -66,6 +67,7 @@ export const signUp = async (
       password: req.body.password,
       organization_code: req.body.organization_code,
     })
+
     const token = jwt.sign(
       await userService.find(req.body.id, false),
       secretKey,
@@ -73,7 +75,15 @@ export const signUp = async (
         expiresIn: '1h',
       }
     )
-    res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'User created successfully' }).redirect(LOGIN_REDIRECT_URL)
+    const absoluteUrl = getAbsoluteURL(req, `/user/authorization?=${token}`)
+
+    // TODO: 소셜 로그인에도 이메일 전송 추가 필요
+    sendSignUpEmail(absoluteUrl)
+    res
+      .status(200)
+      .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+      .json({ message: 'User created successfully' })
+      .redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
   }
@@ -92,7 +102,23 @@ export const login = async (
         expiresIn: '1h',
       }
     )
-    res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Success login' }).redirect(LOGIN_REDIRECT_URL)
+    res
+      .status(200)
+      .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+      .json({ message: 'Success login' })
+      .redirect(LOGIN_REDIRECT_URL)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const verifyUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    res.status(200).json({ message: 'User signed up successfully' })
   } catch (error) {
     next(error)
   }
@@ -188,7 +214,11 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
-        res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Google login succeeded' }).redirect(LOGIN_REDIRECT_URL)
+        res
+          .status(200)
+          .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+          .json({ message: 'Google login succeeded' })
+          .redirect(LOGIN_REDIRECT_URL)
       } catch (error) {
         if (error instanceof Error && error.message === 'NOT_FOUND') {
           // 회원가입
@@ -209,7 +239,11 @@ export const googleOauth = async (
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
           })
-          res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Google Signup succeeded' }).redirect(LOGIN_REDIRECT_URL)
+          res
+            .status(200)
+            .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+            .json({ message: 'Google Signup succeeded' })
+            .redirect(LOGIN_REDIRECT_URL)
         } else {
           next(error)
         }
@@ -262,6 +296,21 @@ export const changePassword = async (
   try {
     await passwordService.update(req.credentials?.user.id, req.body.newPassword)
     res.status(200).json({ message: 'Password changed successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const sendChangePassword = async (
+  req: Request,
+  _: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.headers['authorization'] || ''
+    const absoluteUrl = getAbsoluteURL(req, `/user/authorization2?=${token}`)
+    // sign up email function
+    sendChangePasswordEmail(absoluteUrl)
   } catch (error) {
     next(error)
   }
@@ -336,7 +385,10 @@ export const kakaoOauth = async (
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
       })
-      res.status(200).cookie('jwt', token, { maxAge: 3600, httpOnly: true }).json({ message: 'Kakao login succeeded' })
+      res
+        .status(200)
+        .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+        .json({ message: 'Kakao login succeeded' })
       next()
     } else {
       res.status(500).json({ message: 'Google oauth responses wrong value' })
@@ -383,29 +435,45 @@ export const checkNickname = async (
   }
 }
 
-export const getEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const sendSignUpEmail = async (url: string) => {
   // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
   try {
     const html = renderSignUp({
       data: {
-        token: 'hello1234',
+        token: `${url}`,
       },
     })
     const message = {
       from: '',
       to: '',
       subject: 'Message title',
-      text: 'Plaintext version of the message',
+      text: `Click this url to finish sign up ${url}`,
       html: html,
     }
     await mail.sendMail(message)
-    res.send('success send email')
   } catch (error) {
-    next(error)
+    throw error
+  }
+}
+
+export const sendChangePasswordEmail = async (url: string) => {
+  // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+  try {
+    const html = renderSignUp({
+      data: {
+        token: `${url}`,
+      },
+    })
+    const message = {
+      from: '',
+      to: '',
+      subject: 'Message title',
+      text: `Click this url to change password ${url}`,
+      html: html,
+    }
+    await mail.sendMail(message)
+  } catch (error) {
+    throw error
   }
 }
 
