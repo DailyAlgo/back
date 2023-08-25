@@ -13,13 +13,15 @@ import {
   kakaoOauth,
   checkId,
   checkNickname,
-  getEmail,
+  sendSignUpEmail,
   followUser,
   unfollowUser,
   findFollower,
   findFollowing,
   findQuestion,
   findScrap,
+  verifyUser,
+  // sendChangePassword,
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
@@ -37,7 +39,7 @@ router.get('/find/:email', findIdByEmail) // 아이디 찾기
 router.post('/sign_up', signUp) // 회원가입
 router.get('/check/id', checkId) // ID 중복 확인
 router.get('/check/nickname', checkNickname) // 닉네임 중복확인
-router.get('/email', getEmail)
+router.get('/email', sendSignUpEmail) // 이메일 발송 테스트
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/:id', check_token, updateUser) // 회원정보 수정
@@ -50,6 +52,12 @@ router.get(':id/following', findFollowing) // 팔로잉 조회
 router.get(':id/question', findQuestion) // 질문 조회
 router.get(':id/answer', findAnswer) // 답변 조회
 router.get(':id/scrap', findScrap) // 팔로잉 조회
+
+// 이매일 클릭 시 사용자 인증
+router.get('/authorization', check_token, verifyUser)
+// 이메일 클릭 시 비밀번호 변경 주소
+// (생각해보니 이건 어차피 클라이언트에서 렌더링하고 해당 폼에서 비밀번호 변경 요청 보내면 되서 불필요)
+// router.get('/authorization2', check_token, sendChangePassword)
 
 // Todo
 router.get(':id/notice') // 알림 조회
