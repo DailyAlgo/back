@@ -42,8 +42,7 @@ export const findUser = async (
 ) => {
   try {
     const id = req.params['id']
-    const user = await userService.find(id, false)
-    res.status(200).json(user)
+    res.status(200).json(await userService.find(id, false))
   } catch (error) {
     next(error)
   }
