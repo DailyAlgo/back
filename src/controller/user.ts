@@ -101,6 +101,7 @@ export const login = async (
         expiresIn: '1h',
       }
     )
+    userService.lastLogin(req.body.id)
     res
       .status(200)
       .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
