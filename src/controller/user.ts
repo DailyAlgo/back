@@ -15,6 +15,7 @@ import {
 } from '../util/gen_url'
 import renderSignUp from '../view/render_sign_up'
 import mail from '../service/mail'
+import refreshTokenService from '../service/refresh_token'
 
 const oauth = getConfig().oauth
 const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
@@ -66,14 +67,21 @@ export const signUp = async (
       password: req.body.password,
       organization_code: req.body.organization_code,
     })
-
+    const user = await userService.find(req.body.id, false)
     const token = jwt.sign(
-      await userService.find(req.body.id, false),
+      user,
       secretKey,
       {
         expiresIn: '1h',
       }
     )
+    const currentTime = new Date();
+    const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+    refreshTokenService.create({
+      user_id: user.id,
+      token,
+      expiration_time,
+    })
     const absoluteUrl = getAbsoluteURL(req, `/user/authorization?=${token}`)
 
     // TODO: 소셜 로그인에도 이메일 전송 추가 필요
@@ -94,13 +102,21 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
+    const user = await userService.find(req.body.id, false)
     const token = jwt.sign(
-      await userService.find(req.body.id, false),
+      user,
       secretKey,
       {
         expiresIn: '1h',
       }
     )
+    const currentTime = new Date();
+    const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+    refreshTokenService.create({
+      user_id: user.id,
+      token,
+      expiration_time,
+    })
     userService.lastLogin(req.body.id)
     res
       .status(200)
@@ -214,6 +230,13 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
+        const currentTime = new Date();
+        const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+        refreshTokenService.create({
+          user_id: user.id,
+          token,
+          expiration_time,
+        })
         res
           .status(200)
           .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
@@ -238,6 +261,13 @@ export const googleOauth = async (
           }
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
+          })
+          const currentTime = new Date();
+          const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+          refreshTokenService.create({
+            user_id: user.id,
+            token,
+            expiration_time,
           })
           res
             .status(200)
@@ -384,6 +414,13 @@ export const kakaoOauth = async (
       }
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
+      })
+      const currentTime = new Date();
+      const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+      refreshTokenService.create({
+        user_id: user.id,
+        token,
+        expiration_time,
       })
       res
         .status(200)
