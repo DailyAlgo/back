@@ -42,6 +42,24 @@ CREATE TABLE IF NOT EXISTS password (
 ) COMMENT '비밀번호';
 ```
 
+### refresh_token
+
+- ID
+- User ID
+- Token Value
+- Expiration
+
+```mysql
+CREATE TABLE IF NOT EXISTS refresh_token (
+	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+	user_id VARCHAR(30) NOT NULL COMMENT 'USER ID',
+    token VARCHAR(255) NOT NULL COMMENT 'Access Token',
+    expiration_time TIMESTAMP NOT NULL COMMENT '만료시간',
+    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',
+    PRIMARY KEY (ID)
+) COMMENT '리프레시 토큰';
+```
+
 ## follow
 
 - Follower ID
@@ -156,29 +174,6 @@ CREATE TABLE IF NOT EXISTS question_info (
 ) COMMENT '질문 정보';
 ```
 
-## answer
-
-- ID
-- Question ID
-- User ID
-- 답변내용
-- 좋아요 수
-- 생성시간
-- 수정시간
-
-```mysql
-CREATE TABLE IF NOT EXISTS answer (
-	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
-	question_id INT NOT NULL COMMENT 'Question ID',
-	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
-    content VARCHAR(3000) NOT NULL COMMENT '내용',
-    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
-    PRIMARY KEY (id)
-) COMMENT '답변';
-```
-
 ## question_comment
 
 - ID
@@ -200,29 +195,6 @@ CREATE TABLE IF NOT EXISTS question_comment (
     modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '질문 댓글';
-```
-
-## answer_comment
-
-- ID
-- AnswerID
-- User ID
-- 내용
-- 좋아요 수
-- 생성시간
-- 수정시간
-
-```mysql
-CREATE TABLE IF NOT EXISTS answer_comment (
-	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
-	question_id INT NOT NULL COMMENT 'Answer ID',
-	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
-    content VARCHAR(200) NOT NULL COMMENT '내용',
-    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
-    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',
-    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
-    PRIMARY KEY (id)
-) COMMENT '답변 댓글';
 ```
 
 ## question_tag
@@ -251,6 +223,52 @@ CREATE TABLE IF NOT EXISTS question_tag_map (
     CONSTRAINT tag_id_fk FOREIGN KEY (tag_id) REFERENCES question_tag (id) ON DELETE CASCADE,
     CONSTRAINT question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 태그 매핑 테이블';
+```
+
+## answer
+
+- ID
+- Question ID
+- User ID
+- 답변내용
+- 좋아요 수
+- 생성시간
+- 수정시간
+
+```mysql
+CREATE TABLE IF NOT EXISTS answer (
+	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+	question_id INT NOT NULL COMMENT 'Question ID',
+	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+    content VARCHAR(3000) NOT NULL COMMENT '내용',
+    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
+    PRIMARY KEY (id)
+) COMMENT '답변';
+```
+
+## answer_comment
+
+- ID
+- AnswerID
+- User ID
+- 내용
+- 좋아요 수
+- 생성시간
+- 수정시간
+
+```mysql
+CREATE TABLE IF NOT EXISTS answer_comment (
+	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+	question_id INT NOT NULL COMMENT 'Answer ID',
+	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+    content VARCHAR(200) NOT NULL COMMENT '내용',
+    like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
+    created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',
+    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
+    PRIMARY KEY (id)
+) COMMENT '답변 댓글';
 ```
 
 ## answer_tag
