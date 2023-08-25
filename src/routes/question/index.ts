@@ -13,6 +13,7 @@ import {
   likeQuestionComment,
   scrapQuestion,
   searchQuestion,
+  searchQuestionTag,
   setCache,
   unscrapQuestion,
   updateQuestion,
@@ -27,7 +28,7 @@ router.post('/cache', setCache)
 
 router.get('/search', searchQuestion) // 질문 검색
 router.post('/tag', insertQuestionTag) // 신규 태그 생성
-router.get('/tag') // Todo
+router.get('/tag', searchQuestionTag) // 태그 조회 (없으면 생성)
 router.post('/', check_token, insertQuestion) // 질문 생성
 router.get('/', findQuestionList) // 질문 리스트 조회
 router.get('/:id', findQuestion) // 질문 조회

@@ -196,3 +196,21 @@ export const insertAnswerTag = async (
     next(error)
   }
 }
+
+export const searchAnswerTag = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tag = await answerService.findTag(req.body.name)
+    if (tag) {
+      res.status(200).json({ message: 'Searched Tag successfully' })  
+    } else {
+      await answerService.createTag(req.body.name)
+      res.status(200).json({ message: 'Tag created successfully' })
+    }
+  } catch (error) {
+    next(error)
+  }
+}
