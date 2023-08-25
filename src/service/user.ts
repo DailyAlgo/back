@@ -136,6 +136,13 @@ export class User extends Base {
     })
   }
 
+  async lastLogin(id: string): Promise<void> {
+    const sql = 'UPDATE user SET last_login = CURRENT_TIMESTAMP() WHERE id = :id'
+    await this._update(sql, {
+      id,
+    })
+  }
+
   async follow(
     follower_id: string,
     following_id: string, 

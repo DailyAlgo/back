@@ -6,6 +6,7 @@
 - 이름
 - 닉네임
 - 이메일
+- 마지막 로그인
 
 ```mysql
 CREATE TABLE IF NOT EXISTS user (
@@ -15,7 +16,7 @@ CREATE TABLE IF NOT EXISTS user (
     email VARCHAR(50) NOT NULL COMMENT '이메일',
     intro VARCHAR(100) NULL COMMENT '소개',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
+    last_login TIMESTAMP NULL COMMENT '마지막 로그인',
     PRIMARY KEY (id),
     UNIQUE KEY (id, nickname)
 ) COMMENT '유저';
