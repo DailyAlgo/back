@@ -4,6 +4,7 @@ import getConfig from '../config/config'
 import passwordService from './password'
 import organizationService from './organization'
 import questionService from './question'
+import { notify } from '../util/gen_notification'
 
 interface UserNickname {
   id: string
@@ -148,6 +149,7 @@ export class User extends Base {
     following_id: string, 
     type: boolean
   ): Promise<void> {
+    notify('user', follower_id, 'follow', 'user', following_id)
     const sql = type 
       ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
       : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'

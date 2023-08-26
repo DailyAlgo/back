@@ -1,6 +1,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import { notify } from '../util/gen_notification'
 
 export type QuestionCommentType = {
   id: number
@@ -51,12 +52,13 @@ export class QuestionComment extends Base {
 
   async create(comment: QuestionCommentCreationType): Promise<void> {
     const sql =
-      'INSERT INTO question_comment (question_id, user_id, content) VALUES (:question_id, :user_id, :content)'
-    await this._create(sql, {
+    'INSERT INTO question_comment (question_id, user_id, content) VALUES (:question_id, :user_id, :content)'
+    const id = await this._create(sql, {
       question_id: comment.question_id,
       user_id: comment.user_id,
       content: comment.content,
     })
+    notify('user', comment.user_id, 'comment', 'question_comment', String(id))
   }
 
   async update(comment: QuestionCommentType): Promise<void> {
@@ -75,10 +77,14 @@ export class QuestionComment extends Base {
 
   async like(
     id: number,
+    user_id: string,
     type: boolean
   ): Promise<void> {
-    const sql = type ? 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id' : 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    await this._update(sql, { id })
+    type ? notify('user', user_id, 'like', 'question_comment', String(id)) : ''
+    const sql = type
+    ? 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id AND user_id = :user_id' 
+    : 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id AND user_id = :user_id'
+    await this._update(sql, { id, user_id })
   }
 }
 

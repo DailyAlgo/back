@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express"
 import organizationService from "../service/organization"
 import { getOrganizationCode } from "../util/gen_shortCode"
 
+export const findIdByCode = async (code: string): Promise<number> => {
+  return (await organizationService.find(code, true)).id
+}
+
 export const findOrganization = async (
   req: Request,
   res: Response,
