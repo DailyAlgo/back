@@ -1,6 +1,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import { notify } from '../util/gen_notification'
 
 export type AnswerCommentType = {
   id: number
@@ -23,7 +24,7 @@ export class AnswerComment extends Base {
     super(options)
   }
 
-  async find(id: string): Promise<AnswerCommentType> {
+  async find(id: number): Promise<AnswerCommentType> {
     const sql = 'SELECT * FROM answer_comment WHERE id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
     return {
@@ -52,11 +53,12 @@ export class AnswerComment extends Base {
   async create(comment: AnswerCommentCreationType): Promise<void> {
     const sql =
       'INSERT INTO answer_comment (answer_id, user_id, content) VALUES (:answer_id, :user_id, :content)'
-    await this._create(sql, {
+    const id = await this._create(sql, {
       answer_id: comment.answer_id,
       user_id: comment.user_id,
       content: comment.content,
     })
+    notify('user', comment.user_id, 'comment', 'answer_comment', String(id))
   }
 
   async update(comment: AnswerCommentType): Promise<void> {
@@ -73,16 +75,12 @@ export class AnswerComment extends Base {
     await this._delete(sql, { id, user_id })
   }
 
-  async like(id: number, type: boolean): Promise<void> {
-    let sql
-    if (type === true) {
-      // 좋아요
-      sql = 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
-    } else if (type === false) {
-      // 좋아요 취소
-      sql = 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    } else return
-    await this._update(sql, { id })
+  async like(id: number, user_id: string, type: boolean): Promise<void> {
+    type ? notify('user', user_id, 'like', 'answer_comment', String(id)) : ''
+    const sql = type
+    ? 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id AND user_id = :user_id'
+    : 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id AND user_id = :user_id'
+    await this._update(sql, { id, user_id })
   }
 }
 

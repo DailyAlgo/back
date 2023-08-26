@@ -1,6 +1,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import { notify } from '../util/gen_notification'
 
 interface AnswerType {
   id: number
@@ -63,13 +64,14 @@ export class Answer extends Base {
   async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
     const created_time = Date.now()
     const sql =
-      'INSERT INTO answer (question_id, user_id, content, like_cnt, created_time) VALUES (:question_id, :user_id, :content, :created_time)'
-      const answer_id = await this._create(sql, {
+    'INSERT INTO answer (question_id, user_id, content, like_cnt, created_time) VALUES (:question_id, :user_id, :content, :created_time)'
+    const answer_id = await this._create(sql, {
       question_id: answer.question_id,
       user_id: answer.user_id,
       content: answer.content,
       created_time: created_time,
     })
+    notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
     tags.forEach(tag => {
       this.addTag(tag, answer_id)
     })
@@ -91,18 +93,12 @@ export class Answer extends Base {
     await this._delete(sql, { id, user_id })
   }
 
-  async like(id: number, type: boolean): Promise<void> {
-    let sql
-    if (type === true) {
-      // 좋아요
-      sql = 'UPDATE answer SET like_cnt = like_cnt+1 WHERE id = :id'
-    } else if (type === false) {
-      // 좋아요 취소
-      sql = 'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id'
-    } else return
-    await this._update(sql, {
-      id,
-    })
+  async like(id: number, user_id: string, type: boolean): Promise<void> {
+    type ? notify('user', user_id, 'like', 'answer', String(id)) : ''
+    const sql = type
+    ? 'UPDATE answer SET like_cnt = like_cnt+1 WHERE id = :id AND user_id = :user_id'
+    : 'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id AND user_id = :user_id'
+    await this._update(sql, { id, user_id })
   }
 
   async createTag(name: string): Promise<void> {

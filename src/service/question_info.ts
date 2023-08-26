@@ -1,6 +1,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import { notify } from '../util/gen_notification'
 
 export type QuestionInfoType = {
   question_id: number
@@ -54,19 +55,21 @@ export class QuestionInfo extends Base {
     })
   }
 
-  async like(question_id: number, type: boolean): Promise<void> {
-    let sql
-    if (type === true) {
-      // 좋아요
-      sql =
-        'UPDATE question_info SET like_cnt = like_cnt+1 WHERE question_id = :question_id'
-    } else if (type === false) {
-      // 좋아요 취소
-      sql =
-        'UPDATE question_info SET like_cnt = like_cnt-1 WHERE question_id = :question_id AND like_cnt > 0'
-    } else return
+  async like(question_id: number, user_id: string, type: boolean): Promise<void> {
+    type ? notify('user', user_id, 'like', 'question', String(question_id)) : ''
+    const sql = type 
+    ? `UPDATE question_info qi 
+      INNER JOIN question q ON qi.question_id = q.id 
+      SET qi.like_cnt = qi.like_cnt+1 
+      WHERE qi.question_id = :question_id
+      AND q.user_id = :user_id`
+    : `UPDATE question_info qi 
+      INNER JOIN question q ON qi.question_id = q.id 
+      SET qi.like_cnt = qi.like_cnt-1 
+      WHERE qi.question_id = :question_id AND qi.like_cnt > 0
+      AND q.user_id = :user_id`
     await this._update(sql, {
-      question_id,
+      question_id, user_id
     })
   }
 }

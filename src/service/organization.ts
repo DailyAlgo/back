@@ -2,6 +2,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
+import { notify } from '../util/gen_notification'
 
 interface OrganizationInfo {
   name: string
@@ -34,6 +35,18 @@ export class Organization extends Base {
     }
   }
 
+  async findById(id: number, optional: boolean): Promise<OrganizationDetail> {
+    const sql = 'SELECT * FROM organization WHERE id = :id'
+    const row = await this._findIfExist(sql, { id }, optional)
+    return {
+      id: row['id'],
+      name: row['name'],
+      code: row['code'],
+      master: row['master'],
+      created_time: row['created_time'],
+    }
+  }
+
   async create(organization: OrganizationInfo): Promise<void> {
     const sql =
       'INSERT INTO organization (name, code, master) VALUES (:name, :code. :master)'
@@ -53,6 +66,7 @@ export class Organization extends Base {
   }
 
   async join(id: number, user_id: string): Promise<void> {
+    notify('user', user_id, 'join', 'organization', String(id))
     const sql = 'INSERT INTO user_organization_map (organization_id, user_id) VALUES (:id, :user_id)'
     await this._create(sql, { id, user_id })
   }

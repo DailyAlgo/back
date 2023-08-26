@@ -304,8 +304,13 @@ CREATE TABLE IF NOT EXISTS answer_tag_map (
 - ID
 - User ID
 - 읽음 여부
-- Type
-- Target ID
+- Subject (user)
+- Subject ID
+- Subject 이름
+- Type (like, comment, reply, follow, join)
+- Object (question, answer, question_comment, user)
+- Object ID
+- Object 이름
 - Target Url
 - 내용
 - 생성시간
@@ -313,12 +318,17 @@ CREATE TABLE IF NOT EXISTS answer_tag_map (
 ```
 CREATE TABLE IF NOT EXISTS notification (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+    read TINYINT NOT NULL DEFAULT FALSE COMMENT '읽음',
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
-    read TINYINT NOT NULL COMMENT '읽음',
+    subject VARCHAR(30) NULL COMMENT '알림 발생자',
+    subject_id VARCHAR(255) NULL COMMENT '발생자 ID',
+    subject_name VARCHAR(255) NULL COMMENT '발생자 이름',
     type VARCHAR(20) NOT NULL COMMENT '알림 타입',
-    target_id VARCHAR(255) NOT NULL COMMENT 'Target ID(PK)',
+    object VARCHAR(20) NOT NULL COMMENT '알림 대상', 
+    object_id VARCHAR(255) NOT NULL COMMENT '대상 ID',
+    object_name VARCHAR(255) NOT NULL COMMENT '대상 이름',
     target_url VARCHAR(255) NOT NULL COMMENT 'Target URL',
-    content VARCHAR(100) NOT NULL COMMENT '내용',
+    content VARCHAR(100) NULL COMMENT '내용',
     created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',    
     PRIMARY KEY (id),
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE

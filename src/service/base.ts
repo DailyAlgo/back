@@ -27,7 +27,7 @@ export abstract class Base {
     const [rows] = await this.promisePool.query<RowDataPacket[]>(sql, values)
 
     if (rows.length == 0 && optional) {
-      return 0
+      return -1
     }
 
     if (rows.length == 0 && !optional) {
@@ -59,7 +59,7 @@ export abstract class Base {
 
   protected async _create(
     sql: string,
-    values: { [param: string]: string | boolean | Date | number }
+    values: { [param: string]: string | boolean | Date | number | undefined }
   ): Promise<number> {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
