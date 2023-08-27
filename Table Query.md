@@ -206,7 +206,8 @@ CREATE TABLE IF NOT EXISTS question_comment (
 CREATE TABLE IF NOT EXISTS question_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE KEY (id, name)
 ) COMMENT '질문 태그';
 ```
 
@@ -280,7 +281,8 @@ CREATE TABLE IF NOT EXISTS answer_comment (
 CREATE TABLE IF NOT EXISTS answer_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE KEY (id, name)
 ) COMMENT '답변 태그';
 ```
 

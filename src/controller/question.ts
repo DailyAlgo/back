@@ -216,7 +216,7 @@ export const searchQuestionTag = async (
   next: NextFunction
 ) => {
   try {
-    const tag = await questionService.findTag(req.body.name)
+    const tag = await questionService.searchTag(req.body.name)
     if (tag) {
       res.status(200).json({ message: 'Searched Tag successfully' })  
     } else {

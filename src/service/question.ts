@@ -111,7 +111,9 @@ export class Question extends Base {
       code: question.code,
     })
     question_info.create(question_id)
-    tags.forEach(tag => this.addTag(tag, question_id))
+    tags.forEach(tag => {
+      this.addTag(tag, question_id)
+    })
   }
 
   async update(question: QuestionType): Promise<void> {
@@ -142,10 +144,16 @@ export class Question extends Base {
     await this._create(sql, { name, })
   }
 
-  async addTag(tag_id: number, question_id: number): Promise<void> {
-    const sql = 'INSERT INTO question_tag_map (tag_id, question_id) VALUES (:tag_id, :question_id)'
+  async addTag(tag_name: number, question_id: number): Promise<void> {
+    const sql = `INSERT INTO question_tag_map 
+    (tag_id, question_id) 
+    (
+      SELECT max(id), :question_id
+      FROM question_tag
+      WHERE name = :tag_name
+    )`
     await this._create(sql, {
-      tag_id,
+      tag_name,
       question_id,
     })
   }
@@ -157,6 +165,15 @@ export class Question extends Base {
     INNER JOIN question_tag_map qtm ON qt.id = qtm.tag_id
     WHERE qtm.question_id = :question_id`
     const rows = await this._findsIfExist(sql, { question_id }, true)
+    return rows
+  }
+
+  async searchTag(name: string): Promise<string[]> {
+    const sql = 
+    `SELECT name 
+    FROM question_tag 
+    WHERE name = :name`
+    const rows = await this._findsIfExist(sql, { name }, true)
     return rows
   }
 
