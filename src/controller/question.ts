@@ -14,6 +14,7 @@ export const findQuestion = async (
     const question = await questionService.find(id)
     if (req.credentials?.user)
       question['isScrap'] = await questionService.isScrap(req.credentials.user.id, id)
+    console.log(question)
     res.status(200).json(question)
   } catch (error) {
     next(error)

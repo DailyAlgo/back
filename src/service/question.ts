@@ -103,10 +103,12 @@ export class Question extends Base {
       INNER JOIN question_info qi ON q.id = qi.question_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { offset, limit }, true)
-    return Promise.all(rows.map(row=>{
+    Promise.all(rows.map(row=>{
       const tags = this.findTag(row['id'])
       row = {...row, tags}
     }))
+    console.log(rows)
+    return rows
   }
 
   async create(question: QuestionCreationType, tags: number[]): Promise<void> {
