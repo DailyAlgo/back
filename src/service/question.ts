@@ -64,7 +64,7 @@ export class Question extends Base {
   async find(id: number): Promise<QuestionDetailType> {
     question_info.view(id)
     const sql =
-      'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE id = :id'
+      'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE q.id = :id'
     const row = await this._findIfExist(sql, { id: id }, false)
     const tags = await this.findTag(row['id'])
     return {
