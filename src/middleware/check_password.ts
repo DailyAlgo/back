@@ -6,6 +6,7 @@ const middleware = async (req: Request, _: Response, next: NextFunction) => {
     await passwordService.compare(req.body.id, req.body.password)
     next()
   } catch (error) {
+    console.log(`!! 비밀번호 틀림`)
     next(error)
   }
 }
