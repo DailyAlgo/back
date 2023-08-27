@@ -446,7 +446,7 @@ export const checkId = async (
 ) => {
   try {
     const id = String(req.query['id'])
-    if (await userService.find(id, true)) {
+    if ((await userService.find(id, true)).id !== '0') {
       res.status(200).send(false)
     } else {
       res.status(200).send(true)

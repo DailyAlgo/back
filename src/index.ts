@@ -23,7 +23,7 @@ app.use(cors()) // 프론트엔드 테스트 용도
 console.log('init middleware')
 
 app.use('/user', user)
-app.use('/organimzation', organization)
+app.use('/organization', organization)
 app.use('/question', question)
 app.use('/answer', answer)
 app.use('/notification', notification)

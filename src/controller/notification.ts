@@ -65,7 +65,7 @@ export const findNotificationCount = async (
     const notifications = await notificationService.finds(req.credentials.user.id, true, offset)
     console.log(notifications)
     console.log(notifications.length)
-    res.status(200).send(notifications.length)
+    res.status(200).send(notifications.length.toString())
   } catch (error) {
     next(error)
   }
