@@ -36,7 +36,7 @@ export class RefreshToken extends Base {
 
   async create(refresh_token: RefreshTokenData): Promise<number> {
     const sql =
-      'INSERT INTO refresh_token (id, user_id, token, expiration_time) VALUES (:id, :user_id. :token, :expiration_time)'
+      'INSERT INTO refresh_token (id, user_id, token, expiration_time) VALUES (:id, :user_id, :token, :expiration_time)'
     return await this._create(sql, {
       user_id: refresh_token.user_id,
       token: refresh_token.token,
