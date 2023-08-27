@@ -95,7 +95,7 @@ export class Question extends Base {
     const rows = await this._findsIfExist(sql, { offset, limit }, true)
     return Promise.all(rows.map(row=>{
       const tags = this.findTag(row['id'])
-      return {...row, tags}
+      row = {...row, tags}
     }))
   }
 
