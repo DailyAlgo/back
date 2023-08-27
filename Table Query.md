@@ -330,7 +330,7 @@ CREATE TABLE IF NOT EXISTS notification (
     object VARCHAR(20) NOT NULL COMMENT '알림 대상', 
     object_id VARCHAR(255) NOT NULL COMMENT '대상 ID',
     object_name VARCHAR(255) NOT NULL COMMENT '대상 이름',
-    target_url VARCHAR(255) NOT NULL COMMENT 'Target URL',
+    target_url VARCHAR(255) NULL COMMENT 'Target URL',
     content VARCHAR(100) NULL COMMENT '내용',
     created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',    
     PRIMARY KEY (id),

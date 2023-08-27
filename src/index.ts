@@ -6,6 +6,7 @@ import user from './routes/user'
 import question from './routes/question'
 import answer from './routes/answer'
 import organization from './routes/organization'
+import notification from './routes/notification'
 
 const port: number = parseInt(process.env.PORT!, 10) || 8080
 const app = express()
@@ -25,6 +26,7 @@ app.use('/user', user)
 app.use('/organimzation', organization)
 app.use('/question', question)
 app.use('/answer', answer)
+app.use('/notification', notification)
 
 console.log('init router')
 
