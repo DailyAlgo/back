@@ -18,7 +18,7 @@ interface NotificationBase {
 
 interface NotificationInfo extends NotificationBase {
   id: number
-  read: boolean
+  is_read: boolean
   user_id: string
   type: string
   subject?: string
@@ -42,7 +42,7 @@ export class Notification extends Base {
     const row = await this._findIfExist(sql, { id, user_id }, optional)
     return {
       id: row['id'],
-      read: row['read'],
+      is_read: row['is_read'],
       user_id: row['user_id'],
       type: row['type'],
       subject: row['subject'],
@@ -63,7 +63,7 @@ export class Notification extends Base {
       `SELECT * 
       FROM notification 
       WHERE user_id = :user_id 
-      ${unreadOnly?'AND read = FALSE ':' '}
+      ${unreadOnly?'AND is_read = FALSE ':' '}
       ORDER BY id
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id, limit, offset }, true)
@@ -91,7 +91,7 @@ export class Notification extends Base {
   }
 
   async read(id: number, user_id: string): Promise<void> {
-    const sql = 'UPDATE notification SET read = TRUE WHERE id = :id AMD user_id = :user_id'
+    const sql = 'UPDATE notification SET is_read = TRUE WHERE id = :id AMD user_id = :user_id'
     await this._update(sql, { id, user_id })
   }
 }

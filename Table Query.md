@@ -70,26 +70,9 @@ CREATE TABLE IF NOT EXISTS follow (
 	follower_id VARCHAR(30) NOT NULL COMMENT '팔로워 ID',
     following_id VARCHAR(30) NOT NULL COMMENT '팔로잉 ID',
     PRIMARY KEY (follower_id, following_id),
-    CONSTRAINT follower_id_fk FOREIGN KEY (follower_id) REFERENCES user (id) ON DELETE CASCADE,
-    CONSTRAINT following_id_fk FOREIGN KEY (following_id) REFERENCES user (id) ON DELETE CASCADE
+    CONSTRAINT follow_follower_id_fk FOREIGN KEY (follower_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT follow_following_id_fk FOREIGN KEY (following_id) REFERENCES user (id) ON DELETE CASCADE
 ) COMMENT '팔로우';
-```
-
-## scrap
-
-- User ID
-- Question ID
-- 생성시간
-
-```mysql
-CREATE TABLE IF NOT EXISTS scrap (
-	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
-	question_id INT NOT NULL COMMENT 'Question ID',
-    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
-    PRIMARY KEY (user_id, question_id),
-    CONSTRAINT user_id_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-    CONSTRAINT question_info_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
-) COMMENT '스크랩';
 ```
 
 ## organization
@@ -121,8 +104,8 @@ CREATE TABLE IF NOT EXISTS user_organization_map (
 	organization_id INT NOT NULL COMMENT '단체 ID',
     user_id VARCHAR(30) NOT NULL COMMENT '유저 ID',
     PRIMARY KEY (organization_id, user_id),
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
-    CONSTRAINT organization_id_fk FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE CASCADE
+    CONSTRAINT user_organization_map_user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT user_organization_map_organization_id_fk FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE CASCADE
 ) COMMENT '유저 단체 매핑 테이블';
 ```
 
@@ -170,8 +153,25 @@ CREATE TABLE IF NOT EXISTS question_info (
     answer_cnt INT NOT NULL DEFAULT 0 COMMENT '답변 수',
     comment_cnt INT NOT NULL DEFAULT 0 COMMENT '댓글 수',
     PRIMARY KEY (question_id),
-    CONSTRAINT question_info_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+    CONSTRAINT question_info_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 정보';
+```
+
+## scrap
+
+- User ID
+- Question ID
+- 생성시간
+
+```mysql
+CREATE TABLE IF NOT EXISTS scrap (
+	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+	question_id INT NOT NULL COMMENT 'Question ID',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    PRIMARY KEY (user_id, question_id),
+    CONSTRAINT scrap_user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT scrap_question_info_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+) COMMENT '스크랩';
 ```
 
 ## question_comment
@@ -220,8 +220,8 @@ CREATE TABLE IF NOT EXISTS question_tag_map (
     tag_id INT NOT NULL COMMENT 'Tag ID (PK)',
     question_id INT NOT NULL COMMENT 'Question ID (PK)',
     PRIMARY KEY (tag_id, question_id),
-    CONSTRAINT tag_id_fk FOREIGN KEY (tag_id) REFERENCES question_tag (id) ON DELETE CASCADE,
-    CONSTRAINT question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
+    CONSTRAINT question_tag_map_tag_id_fk FOREIGN KEY (tag_id) REFERENCES question_tag (id) ON DELETE CASCADE,
+    CONSTRAINT question_tag_map_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 태그 매핑 테이블';
 ```
 
@@ -294,8 +294,8 @@ CREATE TABLE IF NOT EXISTS answer_tag_map (
     tag_id INT NOT NULL COMMENT 'Tag ID (PK)',
     answer_id INT NOT NULL COMMENT 'Answer ID (PK)',
     PRIMARY KEY (tag_id, answer_id),
-    CONSTRAINT tag_id_fk FOREIGN KEY (tag_id) REFERENCES answer_tag (id) ON DELETE CASCADE,
-    CONSTRAINT answer_id_fk FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE CASCADE
+    CONSTRAINT answer_tag_map_tag_id_fk FOREIGN KEY (tag_id) REFERENCES answer_tag (id) ON DELETE CASCADE,
+    CONSTRAINT answer_tag_map_answer_id_fk FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE CASCADE
 ) COMMENT '답변 태그 매핑 테이블';
 ```
 
@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS answer_tag_map (
 ```
 CREATE TABLE IF NOT EXISTS notification (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
-    read TINYINT NOT NULL DEFAULT FALSE COMMENT '읽음',
+    is_read TINYINT NOT NULL DEFAULT FALSE COMMENT '읽음',
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
     subject VARCHAR(30) NULL COMMENT '알림 발생자',
     subject_id VARCHAR(255) NULL COMMENT '발생자 ID',
@@ -331,6 +331,6 @@ CREATE TABLE IF NOT EXISTS notification (
     content VARCHAR(100) NULL COMMENT '내용',
     created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',    
     PRIMARY KEY (id),
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
+    CONSTRAINT notification_user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
 ) COMMENT '알림';
 ```
