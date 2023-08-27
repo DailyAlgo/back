@@ -61,15 +61,13 @@ export class QuestionInfo extends Base {
     ? `UPDATE question_info qi 
       INNER JOIN question q ON qi.question_id = q.id 
       SET qi.like_cnt = qi.like_cnt+1 
-      WHERE qi.question_id = :question_id
-      AND q.user_id = :user_id`
+      WHERE qi.question_id = :question_id`
     : `UPDATE question_info qi 
       INNER JOIN question q ON qi.question_id = q.id 
       SET qi.like_cnt = qi.like_cnt-1 
-      WHERE qi.question_id = :question_id AND qi.like_cnt > 0
-      AND q.user_id = :user_id`
+      WHERE qi.question_id = :question_id AND qi.like_cnt > 0`
     await this._update(sql, {
-      question_id, user_id
+      question_id
     })
   }
 }

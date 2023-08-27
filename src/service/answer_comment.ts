@@ -78,9 +78,9 @@ export class AnswerComment extends Base {
   async like(id: number, user_id: string, type: boolean): Promise<void> {
     type ? notify('user', user_id, 'like', 'answer_comment', String(id)) : ''
     const sql = type
-    ? 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id AND user_id = :user_id'
-    : 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id AND user_id = :user_id'
-    await this._update(sql, { id, user_id })
+    ? 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
+    : 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
+    await this._update(sql, { id })
   }
 }
 
