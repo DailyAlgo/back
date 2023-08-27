@@ -11,7 +11,10 @@ export const findQuestion = async (
 ) => {
   try {
     const id = Number(req.params['id'])
-    res.status(200).json(await questionService.find(id))
+    const question = await questionService.find(id)
+    if (req.credentials?.user)
+      question['isScrap'] = await questionService.isScrap(req.credentials.user.id, id)
+    res.status(200).json(question)
   } catch (error) {
     next(error)
   }
@@ -43,6 +46,7 @@ export const insertQuestion = async (
       title: req.body.title,
       user_id: req.credentials.user.id,
       source: req.body.source,
+      link: req.body.link,
       type: req.body.type,
       content: req.body.content,
       code: req.body.code,
@@ -67,6 +71,7 @@ export const updateQuestion = async (
       title: req.body.title,
       user_id: req.credentials.user.id,
       source: req.body.source,
+      link: req.body.link,
       type: req.body.type,
       content: req.body.content,
       code: req.body.code,

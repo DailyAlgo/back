@@ -8,6 +8,7 @@ export type QuestionType = {
   title: string
   user_id: string
   source: string
+  link: string
   type: string
   content: string
   code: string
@@ -20,6 +21,7 @@ type QuestionCreationType = {
   title: string
   user_id: string
   source: string
+  link: string
   type: string
   content: string
   code: string
@@ -43,7 +45,9 @@ type QuestionDetailType = {
   id: number
   title: string
   user_id: string
+  user_nickname: string
   source: string
+  link: string
   type: string
   content: string
   code: string
@@ -64,14 +68,20 @@ export class Question extends Base {
   async find(id: number): Promise<QuestionDetailType> {
     question_info.view(id)
     const sql =
-      'SELECT q.*, qi.* FROM question q INNER JOIN question_info qi ON q.id = qi.question_id WHERE q.id = :id'
+      `SELECT q.*, qi.*, u.nickname 
+      FROM question q 
+      INNER JOIN question_info qi ON q.id = qi.question_id 
+      INNER JOIN user u ON q.user_id = u.id 
+      WHERE q.id = :id`
     const row = await this._findIfExist(sql, { id: id }, false)
     const tags = await this.findTag(row['id'])
     return {
       id: row['id'],
       title: row['title'],
       user_id: row['user_id'],
+      user_nickname: row['nickname'],
       source: row['source'],
+      link: row['link'],
       type: row['type'],
       content: row['content'],
       code: row['code'],
@@ -101,11 +111,12 @@ export class Question extends Base {
 
   async create(question: QuestionCreationType, tags: number[]): Promise<void> {
     const sql =
-      'INSERT INTO question (title, user_id, source, type, content, code) VALUES (:title, :user_id, :source, :type, :content, :code)'
+      'INSERT INTO question (title, user_id, source, link, type, content, code) VALUES (:title, :user_id, :source, :link, :type, :content, :code)'
     const question_id = await this._create(sql, {
       title: question.title,
       user_id: question.user_id,
       source: question.source,
+      link: question.link,
       type: question.type,
       content: question.content,
       code: question.code,
@@ -118,10 +129,11 @@ export class Question extends Base {
 
   async update(question: QuestionType): Promise<void> {
     const sql =
-      'UPDATE question SET title = :title, source = :source, type = :type, content = :content, code = :code WHERE id = :id AND user_id = :user_id'
+      'UPDATE question SET title = :title, source = :source, link = :link, type = :type, content = :content, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: question.title,
       source: question.source,
+      link: question.link,
       type: question.type,
       content: question.content,
       code: question.code,
@@ -201,6 +213,15 @@ export class Question extends Base {
   async unscrap(user_id: string, question_id: number): Promise<void> {
     const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
     await this._delete(sql, { user_id, question_id, })
+  }
+
+  async isScrap(user_id: string, question_id: number): Promise<boolean> {
+    const sql = 'SELECT * FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
+    const scrap = await this._findIfExist(sql, { user_id, question_id, }, true)
+    if (scrap < 0) {
+      return false
+    }
+    return true
   }
 }
 
