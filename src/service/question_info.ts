@@ -56,19 +56,19 @@ export class QuestionInfo extends Base {
   }
 
   async like(question_id: number, user_id: string, type: boolean): Promise<void> {
-    type ? notify('user', user_id, 'like', 'question', String(question_id)) : ''
     const sql = type 
     ? `UPDATE question_info qi 
-      INNER JOIN question q ON qi.question_id = q.id 
-      SET qi.like_cnt = qi.like_cnt+1 
-      WHERE qi.question_id = :question_id`
+    INNER JOIN question q ON qi.question_id = q.id 
+    SET qi.like_cnt = qi.like_cnt+1 
+    WHERE qi.question_id = :question_id`
     : `UPDATE question_info qi 
-      INNER JOIN question q ON qi.question_id = q.id 
-      SET qi.like_cnt = qi.like_cnt-1 
-      WHERE qi.question_id = :question_id AND qi.like_cnt > 0`
+    INNER JOIN question q ON qi.question_id = q.id 
+    SET qi.like_cnt = qi.like_cnt-1 
+    WHERE qi.question_id = :question_id AND qi.like_cnt > 0`
     await this._update(sql, {
       question_id
     })
+    type ? notify('user', user_id, 'like', 'question', String(question_id)) : ''
   }
 }
 

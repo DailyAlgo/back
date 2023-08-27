@@ -149,11 +149,11 @@ export class User extends Base {
     following_id: string, 
     type: boolean
   ): Promise<void> {
-    notify('user', follower_id, 'follow', 'user', following_id)
     const sql = type 
-      ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
-      : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
+    ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
+    : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
     type ? await this._create(sql, { follower_id, following_id }) : await this._delete(sql, { follower_id, following_id })
+    notify('user', follower_id, 'follow', 'user', following_id)
   }
   
   async findFollower(

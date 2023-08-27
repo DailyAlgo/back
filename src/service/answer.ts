@@ -72,10 +72,10 @@ export class Answer extends Base {
       content: answer.content,
       created_time: created_time,
     })
-    notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
     tags.forEach(tag => {
       this.addTag(tag, answer_id)
     })
+    notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
   }
 
   async update(answer: AnswerType): Promise<void> {
@@ -95,11 +95,11 @@ export class Answer extends Base {
   }
 
   async like(id: number, user_id: string, type: boolean): Promise<void> {
-    type ? notify('user', user_id, 'like', 'answer', String(id)) : ''
     const sql = type
     ? 'UPDATE answer SET like_cnt = like_cnt+1 WHERE id = :id'
     : 'UPDATE answer SET like_cnt = like_cnt-1 WHERE id = :id'
     await this._update(sql, { id })
+    type ? notify('user', user_id, 'like', 'answer', String(id)) : ''
   }
 
   async createTag(name: string): Promise<void> {

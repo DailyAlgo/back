@@ -80,11 +80,11 @@ export class QuestionComment extends Base {
     user_id: string,
     type: boolean
   ): Promise<void> {
-    type ? notify('user', user_id, 'like', 'question_comment', String(id)) : ''
     const sql = type
     ? 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id' 
     : 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
     await this._update(sql, { id })
+    type ? notify('user', user_id, 'like', 'question_comment', String(id)) : ''
   }
 }
 

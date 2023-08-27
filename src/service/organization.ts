@@ -66,9 +66,9 @@ export class Organization extends Base {
   }
 
   async join(id: number, user_id: string): Promise<void> {
-    notify('user', user_id, 'join', 'organization', String(id))
     const sql = 'INSERT INTO user_organization_map (organization_id, user_id) VALUES (:id, :user_id)'
     await this._create(sql, { id, user_id })
+    notify('user', user_id, 'join', 'organization', String(id))
   }
 
   async withdraw(id: number, user_id: string): Promise<void> {
