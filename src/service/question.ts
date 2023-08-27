@@ -107,7 +107,6 @@ export class Question extends Base {
       const tags = this.findTag(row['id'])
       row = {...row, tags}
     }))
-    console.log(rows)
     return rows
   }
 
