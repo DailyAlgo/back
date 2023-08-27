@@ -55,7 +55,6 @@ export const notify = async (
       const question = await questionService.find(answer.question_id)
       object_name = question.title
       user_id = question.user_id
-      console.log(question)
       if (type === 'answer') {
         content = answer.content
       }
@@ -93,7 +92,6 @@ export const notify = async (
       break
     }
   }
-  console.log('user_id : '+user_id)
   await notificationService.create({
     user_id,
     type,

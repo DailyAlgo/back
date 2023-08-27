@@ -71,6 +71,7 @@ export class Notification extends Base {
   }
 
   async create(notification: NotificationBase): Promise<void> {
+    console.log('notification : ' + notification)
     const sql =
       'INSERT INTO notification (user_id, type, subject, subject_id, subject_name, object, object_id, object_name, target_url, content) VALUES (:name, :type, :subject, :subject_id, :subject_name, :object, :object_id, :object_name, :target_url, :content)'
     await this._create(sql, {
