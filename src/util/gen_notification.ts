@@ -35,6 +35,7 @@ export const notify = async (
       const id = Number(object_id)
       const question = await questionService.find(id)
       object_name = question.title
+      user_id = question.user_id
       break
     }
     case 'question_comment': {
@@ -42,6 +43,7 @@ export const notify = async (
       const question_comment = await questionCommentService.find(id)
       const question = await questionService.find(question_comment.question_id)
       object_name = question.title
+      user_id = question.user_id
       if (type === 'comment') {
         content = question_comment.content
       }
@@ -52,6 +54,7 @@ export const notify = async (
       const answer = await answerService.find(id)
       const question = await questionService.find(answer.question_id)
       object_name = question.title
+      user_id = question.user_id
       if (type === 'answer') {
         content = answer.content
       }
@@ -63,6 +66,7 @@ export const notify = async (
       const answer = await answerService.find(answer_comment.answer_id)
       const question = await questionService.find(answer.question_id)
       object_name = question.title
+      user_id = answer.user_id
       if (type === 'comment') {
         content = answer_comment.content
       }
@@ -71,6 +75,7 @@ export const notify = async (
     case 'user': {
       const user = await userService.find(object_id, false)
       object_name = user.nickname
+      user_id = user.id
       if (type === 'follow') {
         user_id = object_id
       }
@@ -80,9 +85,7 @@ export const notify = async (
       const id = Number(object_id)
       const organization = await organizationService.findById(id, false)
       object_name = organization.name
-      if (type === 'join') {
-        user_id = organization.master
-      }
+      user_id = organization.master
       break
     }
     default: {
