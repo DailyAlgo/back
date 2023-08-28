@@ -15,6 +15,18 @@ export class Redis extends Cache {
     return await this._findIfExist(key, optional)
   }
 
+  async getOrSet(key: string, callback: Function): Promise<any> {
+    try {
+      // Cache Hit
+      return await this._findIfExist(key, false)
+    } catch(error) {
+      // Cache Miss
+      const value = callback()
+      this._create(key, value)
+      return value
+    }
+  }
+
   async rename(key: string, newKey: string): Promise<void> {
     await this._rename(key, newKey)
   }
