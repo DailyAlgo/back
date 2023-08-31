@@ -121,7 +121,7 @@ export const login = async (
     console.log(`!${user.id} LOGGED IN`)
     res
       .status(200)
-      .cookie('jwt', token, { maxAge: 3600, httpOnly: true, secure: false})
+      .cookie('jwt', token, { maxAge: 3600, httpOnly: true, secure: false })
       .json({ message: 'Success login' })
       .redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
