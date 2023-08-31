@@ -24,6 +24,7 @@ interface UserProfile extends UserInfo {
   id: string
   name: string
   nickname: string
+  intro: string
   email: string
   created_time: Date
   organizations: string[]
@@ -56,7 +57,7 @@ export class User extends Base {
 
   async find(id: string, optional: boolean): Promise<UserProfile> {
     const sql = 
-    `SELECT u.id, u.name, u.nickname, u.email, u.created_time, 
+    `SELECT u.id, u.name, u.nickname, u.intro, u.email, u.created_time, 
     COUNT(q.id) as question_cnt, COUNT(a.id) as answer_cnt, IFNULL(SUM(q.view_cnt), 0) as view_cnt, 
     COUNT(follower.follower_id) as follower_cnt, COUNT(following.following_id) as following_cnt
     FROM user u
@@ -74,11 +75,12 @@ export class User extends Base {
     INNER JOIN organization o ON o.id = uom.organization_id 
     WHERE u.id = :id
     `
-    const organizations = await this._findIfExist(sql_organization, { id: id }, true)
+    const organizations = await this._findsIfExist(sql_organization, { id: id }, true)
     return {
       id: row['id'] || '0',
       name: row['name'],
       nickname: row['nickname'],
+      intro: row['intro'],
       email: row['email'],
       created_time: row['created_time'],
       question_cnt: row['question_cnt'],
