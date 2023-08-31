@@ -158,16 +158,24 @@ export class User extends Base {
   
   async findFollower(
     id: string
-  ): Promise<string[]> {
-    const sql = 'SELECT follower_id FROM follow WHERE following_id = :following_id'
+  ): Promise<UserNickname[]> {
+    const sql = 
+    `SELECT u.id, u.nickname, u.intro 
+    FROM follow f
+    INNER JOIN user u ON f.follower_id = u.id
+    WHERE f.following_id = :following_id`
     const rows = await this._findsIfExist(sql, { following_id: id }, true)
     return rows
   }
   
   async findFollowing(
     id: string
-  ): Promise<string[]> {
-    const sql = 'SELECT following_id FROM follow WHERE follower_id = :follower_id'
+  ): Promise<UserNickname[]> {
+    const sql = 
+    `SELECT u.id, u.nickname, u.intro 
+    FROM follow f
+    INNER JOIN user u ON f.following_id = u.id
+    WHERE f.follower_id = :follower_id`
     const rows = await this._findsIfExist(sql, { follower_id: id }, true)
     return rows
   }
