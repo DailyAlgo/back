@@ -240,8 +240,10 @@ CREATE TABLE IF NOT EXISTS question_tag_map (
 ```mysql
 CREATE TABLE IF NOT EXISTS answer (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
+    title VARCHAR(100) NOT NULL COMMENT '제목',
 	question_id INT NOT NULL COMMENT 'Question ID',
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+    code VARCHAR(3000) NULL COMMENT '코드',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',

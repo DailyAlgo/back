@@ -49,7 +49,7 @@ export class Organization extends Base {
 
   async create(organization: OrganizationInfo): Promise<void> {
     const sql =
-      'INSERT INTO organization (name, code, master) VALUES (:name, :code. :master)'
+      'INSERT INTO organization (name, code, master) VALUES (:name, :code, :master)'
     await this._create(sql, {
       name: organization.name,
       code: organization.code,

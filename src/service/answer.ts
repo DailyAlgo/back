@@ -2,11 +2,14 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import { notify } from '../util/gen_notification'
+import { title } from 'process'
 
 interface AnswerType {
   id: number
   question_id: number
+  title: string
   user_id: string
+  code: string
   content: string
   created_time?: Date
   modified_time?: Date
@@ -16,7 +19,9 @@ interface AnswerType {
 interface AnswerInfo extends AnswerType {
   id: number
   question_id: number
+  title: string
   user_id: string
+  code: string
   content: string
   like_cnt: number
   created_time?: Date
@@ -26,7 +31,9 @@ interface AnswerInfo extends AnswerType {
 
 type AnswerCreationType = {
   question_id: number
+  title: string
   user_id: string
+  code: string
   content: string
 }
 
@@ -42,7 +49,9 @@ export class Answer extends Base {
     return {
       id: row['id'],
       question_id: row['question_id'],
+      title: row['title'],
       user_id: row['user_id'],
+      code: row['code'],
       content: row['content'],
       like_cnt: row['like_cnt'],
       created_time: row['created_time'],
@@ -65,10 +74,12 @@ export class Answer extends Base {
   async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
     const created_time = Date.now()
     const sql =
-    'INSERT INTO answer (question_id, user_id, content, like_cnt, created_time) VALUES (:question_id, :user_id, :content, :created_time)'
+    'INSERT INTO answer (question_id, title, user_id, code, content, like_cnt, created_time) VALUES (:question_id, :title, :user_id, :code, :content, :created_time)'
     const answer_id = await this._create(sql, {
       question_id: answer.question_id,
+      title: answer.title,
       user_id: answer.user_id,
+      code: answer.code,
       content: answer.content,
       created_time: created_time,
     })
@@ -80,12 +91,13 @@ export class Answer extends Base {
 
   async update(answer: AnswerType): Promise<void> {
     const sql =
-      'UPDATE answer SET content = :content, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
+      'UPDATE answer SET title = :title, content = :content, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
+      title: answer.title,
+      code: answer.code,
       content: answer.content,
       id: answer.id,
       user_id: answer.user_id,
-      tags: answer.tags,
     })
   }
 
