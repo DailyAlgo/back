@@ -46,7 +46,7 @@ export const findUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     res.status(200).json(await userService.find(id, false))
   } catch (error) {
     next(error)
@@ -60,7 +60,7 @@ export const signUp = async (
 ) => {
   try {
     await userService.create({
-      id: req.body.id,
+      id: req.body.id.toLowerCase(),
       name: req.body.name,
       nickname: req.body.nickname,
       email: req.body.email,
@@ -293,7 +293,7 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     await userService.update({
       id: id,
       nickname: req.body.nickname,
@@ -311,7 +311,7 @@ export const deleteUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     await userService.delete(id)
     res.status(200).json({ message: 'User deleted successfully' })
   } catch (error) {
@@ -524,7 +524,7 @@ export const followUser = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const follower = req.credentials.user.id
-    const following = req.params['id']
+    const following = req.params['id'].toLowerCase()
     await userService.follow(follower, following, true)
     res.send('success follow')
   } catch (error) {
@@ -541,7 +541,7 @@ export const unfollowUser = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const follower = req.credentials.user.id
-    const following = req.params['id']
+    const following = req.params['id'].toLowerCase()
     await userService.follow(follower, following, false)
     res.send('success unfollow')
   } catch (error) {
@@ -555,7 +555,7 @@ export const findFollower = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     res.send(await userService.findFollower(id))
   } catch (error) {
     next(error)
@@ -568,7 +568,7 @@ export const findFollowing = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     res.send(await userService.findFollowing(id))
   } catch (error) {
     next(error)
@@ -581,7 +581,7 @@ export const findQuestion = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findQuestion(id, offset))
   } catch (error) {
@@ -595,7 +595,7 @@ export const findAnswer = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findAnswer(id, offset))
   } catch (error) {
@@ -609,7 +609,7 @@ export const findScrap = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id']
+    const id = req.params['id'].toLowerCase()
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findScrap(id, offset))
   } catch (error) {
