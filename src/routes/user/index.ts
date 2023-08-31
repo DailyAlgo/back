@@ -47,11 +47,11 @@ router.delete('/:id', check_token, deleteUser) // 회원탈퇴
 router.put('/:id/password', check_password, check_token, changePassword) // 비밀번호 변경
 router.post('/:id/follow', check_token, followUser)
 router.delete('/:id/follow', check_token, unfollowUser)
-router.get(':id/follower', findFollower) // 팔로워 조회
-router.get(':id/following', findFollowing) // 팔로잉 조회
-router.get(':id/question', findQuestion) // 질문 조회
-router.get(':id/answer', findAnswer) // 답변 조회
-router.get(':id/scrap', findScrap) // 팔로잉 조회
+router.get('/:id/follower', findFollower) // 팔로워 조회
+router.get('/:id/following', findFollowing) // 팔로잉 조회
+router.get('/:id/question', findQuestion) // 질문 조회
+router.get('/:id/answer', findAnswer) // 답변 조회
+router.get('/:id/scrap', findScrap) // 팔로잉 조회
 
 // 이매일 클릭 시 사용자 인증
 router.get('/authorization', check_token, verifyUser)
