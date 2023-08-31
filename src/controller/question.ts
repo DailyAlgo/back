@@ -3,7 +3,7 @@ import questionService from '../service/question'
 import questionInfoService from '../service/question_info'
 import questionCommentService from '../service/question_comment'
 import redisService from '../service/redis'
-import redis from '../service/redis'
+// import redis from '../service/redis'
 
 export const findQuestion = async (
   req: Request,
@@ -12,8 +12,8 @@ export const findQuestion = async (
 ) => {
   try {
     const id = Number(req.params['id'])
-    const question = redis.getOrSet(String(id), ()=>questionService.find(id))
-    // const question = await questionService.find(id)
+    // const question = redis.getOrSet(String(id), ()=>questionService.find(id)) // Redis Memory 올려야 쓸 수 있음
+    const question = await questionService.find(id)
     if (req.credentials?.user)
       question['isScrap'] = await questionService.isScrap(req.credentials.user.id, id)
     res.status(200).json(question)
