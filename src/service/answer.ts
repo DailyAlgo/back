@@ -2,7 +2,6 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import { notify } from '../util/gen_notification'
-import { title } from 'process'
 
 interface AnswerType {
   id: number
