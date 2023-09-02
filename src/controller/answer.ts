@@ -41,6 +41,7 @@ export const insertAnswer = async (
       question_id: req.body.question_id,
       user_id: req.credentials.user.id,
       title: req.body.title,
+      language: req.body.language,
       code: req.body.code,
       content: req.body.content,
     }, tags)
@@ -64,6 +65,7 @@ export const updateAnswer = async (
       question_id: req.body.question_id,
       user_id: req.credentials.user.id,
       title: req.body.title,
+      language: req.body.language,
       code: req.body.code,
       content: req.body.content,
       tags: req.body.tags,
