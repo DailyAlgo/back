@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-const middleware = async (err: Error,  req: Request, res: Response, next: NextFunction) => {
+const middleware = (err: Error,  req: Request, res: Response, next: NextFunction) => {
   if (req.xhr) {
     res.status(500).send({ error: 'This Request occurs an Error' })
   } else {
