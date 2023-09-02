@@ -6,7 +6,7 @@ const middleware = (
   res: Response,
   next: NextFunction
 ) => {
-  res.status(500).json({ message: err })
+  res.status(500).json({ message: err.message })
 }
 
 export default middleware

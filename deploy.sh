@@ -7,7 +7,7 @@ docker rmi dailyalgo_dailyalgo_back
 echo 깃 체크아웃 : 권한 해제
 git checkout .
 echo 깃 풀
-git pull origin main
+sudo git pull origin main
 echo redis dump 파일 권한 부여 : 권한 설정
 sudo chmod 777 ./redis/data/dump.rdb
 echo 도커 컴포즈 실행
