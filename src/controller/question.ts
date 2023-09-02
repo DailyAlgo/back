@@ -51,6 +51,7 @@ export const insertQuestion = async (
       link: req.body.link,
       type: req.body.type,
       content: req.body.content,
+      language: req.body.language,
       code: req.body.code,
     }, tags)
     res.status(200).json({ message: 'Question created successfully' })
@@ -76,6 +77,7 @@ export const updateQuestion = async (
       link: req.body.link,
       type: req.body.type,
       content: req.body.content,
+      language: req.body.language,
       code: req.body.code,
       tags: req.body.tags,
     })
