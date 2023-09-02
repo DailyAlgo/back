@@ -34,10 +34,10 @@ app.use('/notification', notification)
 
 console.log('init router')
 
-app.get('/', (_, res) => {
-  res.send('Hello World! : ' + process.env.NODE_ENV)
-})
-
 app.use(logErrors)
 app.use(clientErrorHandler)
 app.use(errorHandler)
+
+app.get('/', (_, res) => {
+  res.send('Hello World! : ' + process.env.NODE_ENV)
+})
