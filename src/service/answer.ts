@@ -77,7 +77,7 @@ export class Answer extends Base {
   async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
     const created_time = Date.now()
     const sql =
-    'INSERT INTO answer (question_id, title, user_id, language, code, content, like_cnt, created_time) VALUES (:question_id, :title, :user_id, :language, :code, :content, :created_time)'
+    'INSERT INTO answer (question_id, title, user_id, language, code, content, like_cnt) VALUES (:question_id, :title, :user_id, :language, :code, :content)'
     const answer_id = await this._create(sql, {
       question_id: answer.question_id,
       title: answer.title,
