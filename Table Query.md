@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS user_organization_map (
 - 작성자
 - 출처 - 어떤 식으로 관리할지 (구분값을 따로 만들지, 도메인주소를 적을지에 따라 다름)
 - 질문유형
+- 언어
 - 코드
 - 질문내용
 - 생성시간
@@ -129,6 +130,7 @@ CREATE TABLE IF NOT EXISTS question (
     source VARCHAR(50) NOT NULL COMMENT '출처',
     link VARCHAR(255) NOT NULL COMMENT '문제링크',
     type VARCHAR(10) NOT NULL COMMENT '질문 유형',
+    language VARCHAR(10) NOT NULL COMMNET '언어',
     code VARCHAR(3000) NULL COMMENT '코드',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
@@ -232,6 +234,8 @@ CREATE TABLE IF NOT EXISTS question_tag_map (
 - ID
 - Question ID
 - User ID
+- 언어
+- 코드
 - 답변내용
 - 좋아요 수
 - 생성시간
@@ -243,6 +247,7 @@ CREATE TABLE IF NOT EXISTS answer (
     title VARCHAR(100) NOT NULL COMMENT '제목',
 	question_id INT NOT NULL COMMENT 'Question ID',
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+    language VARCHAR(10) NOT NULL COMMNET '언어',
     code VARCHAR(3000) NULL COMMENT '코드',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',

@@ -8,6 +8,7 @@ interface AnswerType {
   question_id: number
   title: string
   user_id: string
+  language: string
   code: string
   content: string
   created_time?: Date
@@ -20,6 +21,7 @@ interface AnswerInfo extends AnswerType {
   question_id: number
   title: string
   user_id: string
+  language: string
   code: string
   content: string
   like_cnt: number
@@ -32,6 +34,7 @@ type AnswerCreationType = {
   question_id: number
   title: string
   user_id: string
+  language: string
   code: string
   content: string
 }
@@ -50,6 +53,7 @@ export class Answer extends Base {
       question_id: row['question_id'],
       title: row['title'],
       user_id: row['user_id'],
+      language: row['language'],
       code: row['code'],
       content: row['content'],
       like_cnt: row['like_cnt'],
@@ -73,11 +77,12 @@ export class Answer extends Base {
   async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
     const created_time = Date.now()
     const sql =
-    'INSERT INTO answer (question_id, title, user_id, code, content, like_cnt, created_time) VALUES (:question_id, :title, :user_id, :code, :content, :created_time)'
+    'INSERT INTO answer (question_id, title, user_id, language, code, content, like_cnt, created_time) VALUES (:question_id, :title, :user_id, :language, :code, :content, :created_time)'
     const answer_id = await this._create(sql, {
       question_id: answer.question_id,
       title: answer.title,
       user_id: answer.user_id,
+      language: answer.language,
       code: answer.code,
       content: answer.content,
       created_time: created_time,
@@ -90,9 +95,10 @@ export class Answer extends Base {
 
   async update(answer: AnswerType): Promise<void> {
     const sql =
-      'UPDATE answer SET title = :title, content = :content, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
+      'UPDATE answer SET title = :title, content = :content, language = :language, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: answer.title,
+      language: answer.language,
       code: answer.code,
       content: answer.content,
       id: answer.id,

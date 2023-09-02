@@ -11,6 +11,7 @@ export type QuestionType = {
   link: string
   type: string
   content: string
+  language: string
   code: string
   created_time?: Date
   modified_time?: Date
@@ -24,6 +25,7 @@ type QuestionCreationType = {
   link: string
   type: string
   content: string
+  language: string
   code: string
 }
 
@@ -50,6 +52,7 @@ type QuestionDetailType = {
   link: string
   type: string
   content: string
+  language: string
   code: string
   created_time: Date
   modified_time?: Date
@@ -84,6 +87,7 @@ export class Question extends Base {
       link: row['link'],
       type: row['type'],
       content: row['content'],
+      language: row['language'],
       code: row['code'],
       created_time: row['created_time'],
       modified_time: row['modified_time'],
@@ -112,7 +116,7 @@ export class Question extends Base {
 
   async create(question: QuestionCreationType, tags: number[]): Promise<void> {
     const sql =
-      'INSERT INTO question (title, user_id, source, link, type, content, code) VALUES (:title, :user_id, :source, :link, :type, :content, :code)'
+      'INSERT INTO question (title, user_id, source, link, type, content, language, code) VALUES (:title, :user_id, :source, :link, :type, :content, :language, :code)'
     const question_id = await this._create(sql, {
       title: question.title,
       user_id: question.user_id,
@@ -120,6 +124,7 @@ export class Question extends Base {
       link: question.link,
       type: question.type,
       content: question.content,
+      language: question.language,
       code: question.code,
     })
     question_info.create(question_id)
@@ -130,13 +135,14 @@ export class Question extends Base {
 
   async update(question: QuestionType): Promise<void> {
     const sql =
-      'UPDATE question SET title = :title, source = :source, link = :link, type = :type, content = :content, code = :code WHERE id = :id AND user_id = :user_id'
+      'UPDATE question SET title = :title, source = :source, link = :link, type = :type, content = :content, language = :language, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: question.title,
       source: question.source,
       link: question.link,
       type: question.type,
       content: question.content,
+      language: question.language,
       code: question.code,
       id: question.id,
       user_id: question.user_id,
