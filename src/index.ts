@@ -8,6 +8,10 @@ import answer from './routes/answer'
 import organization from './routes/organization'
 import notification from './routes/notification'
 
+import logErrors from './middleware/logErrors'
+import clientErrorHandler from './middleware/clientErrorHandler'
+import errorHandler from './middleware/errorHandler'
+
 const port: number = parseInt(process.env.PORT!, 10) || 8080
 const app = express()
 
@@ -33,3 +37,7 @@ console.log('init router')
 app.get('/', (_, res) => {
   res.send('Hello World! : ' + process.env.NODE_ENV)
 })
+
+app.use(logErrors)
+app.use(clientErrorHandler)
+app.use(errorHandler)
