@@ -16,6 +16,7 @@ import {
 import renderSignUp from '../view/render_sign_up'
 import mail from '../service/mail'
 import refreshTokenService from '../service/refresh_token'
+import redis from '../service/redis'
 
 const oauth = getConfig().oauth
 const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
@@ -68,24 +69,18 @@ export const signUp = async (
       organization_code: req.body.organization_code,
     })
     const user = await userService.find(req.body.id, false)
-    const token = jwt.sign(
-      user,
-      secretKey,
-      {
-        expiresIn: '1h',
-      }
-    )
-    const currentTime = new Date();
-    const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+    const token = jwt.sign(user, secretKey, {
+      expiresIn: '1h',
+    })
+    const currentTime = new Date()
+    const expiration_time = new Date(
+      currentTime.getTime() + 7 * 24 * 60 * 60 * 1000
+    ) // 7일 뒤
     refreshTokenService.create({
       user_id: user.id,
       token,
       expiration_time,
     })
-    const absoluteUrl = getAbsoluteURL(req, `/user/authorization?=${token}`)
-
-    // TODO: 소셜 로그인에도 이메일 전송 추가 필요
-    sendSignUpEmail(absoluteUrl)
     res
       .status(200)
       .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
@@ -103,15 +98,13 @@ export const login = async (
 ) => {
   try {
     const user = await userService.find(req.body.id, false)
-    const token = jwt.sign(
-      user,
-      secretKey,
-      {
-        expiresIn: '1h',
-      }
-    )
-    const currentTime = new Date();
-    const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+    const token = jwt.sign(user, secretKey, {
+      expiresIn: '1h',
+    })
+    const currentTime = new Date()
+    const expiration_time = new Date(
+      currentTime.getTime() + 7 * 24 * 60 * 60 * 1000
+    ) // 7일 뒤
     refreshTokenService.create({
       user_id: user.id,
       token,
@@ -213,6 +206,15 @@ const getGoogleUserInfo = async (accessToken) => {
   }
 }
 
+const generateRandomNumbers = (count: number): string => {
+  const numbers: number[] = []
+  for (let i = 0; i < count; i++) {
+    const num = Math.floor(Math.random() * 10)
+    numbers.push(num)
+  }
+  return numbers.join('')
+}
+
 export const googleOauth = async (
   req: Request,
   res: Response,
@@ -231,8 +233,10 @@ export const googleOauth = async (
         const token = jwt.sign(user, secretKey, {
           expiresIn: '1h',
         })
-        const currentTime = new Date();
-        const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+        const currentTime = new Date()
+        const expiration_time = new Date(
+          currentTime.getTime() + 7 * 24 * 60 * 60 * 1000
+        ) // 7일 뒤
         refreshTokenService.create({
           user_id: user.id,
           token,
@@ -263,8 +267,10 @@ export const googleOauth = async (
           const token = jwt.sign(user, secretKey, {
             expiresIn: '1h',
           })
-          const currentTime = new Date();
-          const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+          const currentTime = new Date()
+          const expiration_time = new Date(
+            currentTime.getTime() + 7 * 24 * 60 * 60 * 1000
+          ) // 7일 뒤
           refreshTokenService.create({
             user_id: user.id,
             token,
@@ -416,8 +422,10 @@ export const kakaoOauth = async (
       const token = jwt.sign(kakaoAccount, secretKey, {
         expiresIn: '1h',
       })
-      const currentTime = new Date();
-      const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+      const currentTime = new Date()
+      const expiration_time = new Date(
+        currentTime.getTime() + 7 * 24 * 60 * 60 * 1000
+      ) // 7일 뒤
       refreshTokenService.create({
         user_id: user.id,
         token,
@@ -473,7 +481,17 @@ export const checkNickname = async (
   }
 }
 
-export const sendSignUpEmail = async (url: string) => {
+export const sendSignUpEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = jwt.sign(req.body.id.toLowerCase(), secretKey, {
+    expiresIn: '1h',
+  })
+  const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
+  const email = req.body.email
+  const certificationNum = generateRandomNumbers(6)
   // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
   try {
     const html = renderSignUp({
@@ -482,13 +500,16 @@ export const sendSignUpEmail = async (url: string) => {
       },
     })
     const message = {
-      from: '',
-      to: '',
+      from: 'node crew',
+      to: `${email}`,
       subject: 'Message title',
-      text: `Click this url to finish sign up ${url}`,
+      text: `The number is ${certificationNum}`,
       html: html,
     }
     await mail.sendMail(message)
+    redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
+
+    res.send(200).json({ message: 'send mail' })
   } catch (error) {
     throw error
   }

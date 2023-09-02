@@ -25,6 +25,7 @@ import {
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
+import check_certification_num from '../../middleware/check_certification_num'
 import { findAnswer } from '../../controller/answer'
 
 const router = express.Router()
@@ -34,9 +35,10 @@ router.get('/oauth/google', googleRedirect)
 router.get('/kauth/kakao', kakaoRedirect)
 router.get('/oauth/google/callback', googleOauth)
 router.get('/kauth/kakao/callback', kakaoOauth)
+router.post('/send_mail', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
 
 router.get('/find/:email', findIdByEmail) // 아이디 찾기
-router.post('/sign_up', signUp) // 회원가입
+router.post('/sign_up', check_certification_num, signUp) // 회원가입
 router.get('/check/id', checkId) // ID 중복 확인
 router.get('/check/nickname', checkNickname) // 닉네임 중복확인
 router.get('/email', sendSignUpEmail) // 이메일 발송 테스트
