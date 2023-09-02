@@ -1,12 +1,11 @@
-import { HttpStatusCode } from "axios";
 import { NextFunction, Request, Response } from "express";
 
 const middleware = (err: Error,  req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof Error && err.message === 'NOT_FOUND') {
-    res.status(HttpStatusCode.NotFound)
+  if (err.message === 'NOT_FOUND') {
+    res.status(404).json({ error: err })
   }
   else if (req.xhr) {
-    res.status(500).send({ error: 'This Request occurs an Error' })
+    res.status(500).json({ error: 'This Request occurs an Error' })
   } else {
     next(err)
   }
