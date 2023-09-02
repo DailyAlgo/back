@@ -66,7 +66,6 @@ export class Question extends Base {
   }
 
   async find(id: number): Promise<QuestionDetailType> {
-    question_info.view(id)
     const sql =
       `SELECT q.*, qi.*, u.nickname 
       FROM question q 
@@ -75,6 +74,7 @@ export class Question extends Base {
       WHERE q.id = :id`
     const row = await this._findIfExist(sql, { id: id }, false)
     const tags = await this.findTag(row['id'])
+    question_info.view(id)
     return {
       id: row['id'],
       title: row['title'],
