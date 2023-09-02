@@ -2,6 +2,7 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import { notify } from '../util/gen_notification'
+import questionInfoService from './question_info'
 
 export type QuestionCommentType = {
   id: number
@@ -58,6 +59,7 @@ export class QuestionComment extends Base {
       user_id: comment.user_id,
       content: comment.content,
     })
+    questionInfoService.renew(comment.question_id)
     notify('user', comment.user_id, 'comment', 'question_comment', String(id))
   }
 
@@ -71,8 +73,10 @@ export class QuestionComment extends Base {
   }
 
   async delete(id: number, user_id: string): Promise<void> {
+    const question_id = (await this.find(id)).question_id
     const sql = 'DELETE FROM question_comment WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, { id, user_id })
+    questionInfoService.renew(question_id)
   }
 
   async like(

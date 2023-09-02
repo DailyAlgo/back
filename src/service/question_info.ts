@@ -70,6 +70,20 @@ export class QuestionInfo extends Base {
     })
     type ? notify('user', user_id, 'like', 'question', String(question_id)) : ''
   }
+
+  async renew(question_id: number): Promise<void> {
+    const sql =
+      `UPDATE question_info 
+      SET answer_cnt = (SELECT COUNT(*) FROM answer WHERE question_id = :question_id) 
+      , comment_cnt = ( 
+        (SELECT COUNT(*) FROM answer_comment ac INNER JOIN answer a ON ac.answer_id = a.id WHERE a.question_id = :question_id) 
+        + (SELECT COUNT(*) FROM question_comment WHERE question_id = :question_id) 
+      ) 
+      WHERE question_id = :question_id`
+    await this._update(sql, {
+      question_id,
+    })
+  }
 }
 
 export default new QuestionInfo(getConfig().db)
