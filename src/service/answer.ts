@@ -14,7 +14,15 @@ interface AnswerType {
   content: string
   created_time?: Date
   modified_time?: Date
-  tags: string[]  
+}
+
+type AnswerCreationType = {
+  question_id: number
+  title: string
+  user_id: string
+  language: string
+  code: string
+  content: string
 }
 
 interface AnswerInfo extends AnswerType {
@@ -29,15 +37,6 @@ interface AnswerInfo extends AnswerType {
   created_time?: Date
   modified_time?: Date
   tags: string[]
-}
-
-type AnswerCreationType = {
-  question_id: number
-  title: string
-  user_id: string
-  language: string
-  code: string
-  content: string
 }
 
 export class Answer extends Base {
@@ -86,14 +85,12 @@ export class Answer extends Base {
       code: answer.code,
       content: answer.content,
     })
-    tags.forEach(tag => {
-      this.addTag(tag, answer_id)
-    })
+    this.addAllTag(tags, answer_id)
     questionInfoService.renew(answer.question_id)
     notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
   }
 
-  async update(answer: AnswerType): Promise<void> {
+  async update(answer: AnswerType, tags: number[]): Promise<void> {
     const sql =
       'UPDATE answer SET title = :title, content = :content, language = :language, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
@@ -104,6 +101,8 @@ export class Answer extends Base {
       id: answer.id,
       user_id: answer.user_id,
     })
+    this.removeAllTag(answer.id)
+    this.addAllTag(tags, answer.id)
   }
 
   async delete(id: number, user_id: string): Promise<void> {
@@ -138,6 +137,17 @@ export class Answer extends Base {
       tag_name,
       answer_id,
     })
+  }
+
+  async addAllTag(tags: number[], answer_id: number): Promise<void> {
+    tags.forEach(tag => {
+      this.addTag(tag, answer_id)
+    })
+  }
+
+  async removeAllTag(answer_id: number): Promise<void> {
+    const sql = 'DELETE FROM answer_tag_map WHERE answer_id = :answer_id'
+    await this._delete(sql, { answer_id })
   }
 
   async findTag(answer_id: number): Promise<string[]> {

@@ -60,6 +60,7 @@ export const updateAnswer = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
+    const tags: number[] = req.body.tags
     await answerService.update({
       id,
       question_id: req.body.question_id,
@@ -68,8 +69,7 @@ export const updateAnswer = async (
       language: req.body.language,
       code: req.body.code,
       content: req.body.content,
-      tags: req.body.tags,
-    })
+    }, tags)
     res.status(200).json({ message: 'Answer updated successfully' })
   } catch (error) {
     next(error)

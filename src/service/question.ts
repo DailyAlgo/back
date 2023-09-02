@@ -15,7 +15,6 @@ export type QuestionType = {
   code: string
   created_time?: Date
   modified_time?: Date
-  tags: string[]
 }
 
 type QuestionCreationType = {
@@ -128,12 +127,10 @@ export class Question extends Base {
       code: question.code,
     })
     question_info.create(question_id)
-    tags.forEach(tag => {
-      this.addTag(tag, question_id)
-    })
+    this.addAllTag(tags, question_id)
   }
 
-  async update(question: QuestionType): Promise<void> {
+  async update(question: QuestionType, tags: number[]): Promise<void> {
     const sql =
       'UPDATE question SET title = :title, source = :source, link = :link, type = :type, content = :content, language = :language, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
@@ -146,8 +143,9 @@ export class Question extends Base {
       code: question.code,
       id: question.id,
       user_id: question.user_id,
-      tags: question.tags,
     })
+    this.removeAllTag(question.id)
+    this.addAllTag(tags, question.id)
   }
 
   async delete(id: number, user_id: string): Promise<void> {
@@ -175,6 +173,17 @@ export class Question extends Base {
       tag_name,
       question_id,
     })
+  }
+
+  async addAllTag(tags: number[], question_id: number): Promise<void> {
+    tags.forEach(tag => {
+      this.addTag(tag, question_id)
+    })
+  }
+
+  async removeAllTag(question_id: number): Promise<void> {
+    const sql = 'DELETE FROM answer_tag_map WHERE question_id = :question_id'
+    await this._delete(sql, { question_id })
   }
 
   async findTag(question_id: number): Promise<string[]> {

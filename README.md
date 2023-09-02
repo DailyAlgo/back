@@ -4,8 +4,6 @@
 
 - 본인이 본인 follow 막기
 - like 중복 막기
-- Tag 수정
-- Code에서 언어는??
 
 # Docker
 
