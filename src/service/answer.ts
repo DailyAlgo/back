@@ -2,6 +2,7 @@ import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
 import { notify } from '../util/gen_notification'
+import questionInfoService from './question_info'
 
 interface AnswerType {
   id: number
@@ -88,6 +89,7 @@ export class Answer extends Base {
     tags.forEach(tag => {
       this.addTag(tag, answer_id)
     })
+    questionInfoService.renew(answer.question_id)
     notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
   }
 
@@ -105,8 +107,10 @@ export class Answer extends Base {
   }
 
   async delete(id: number, user_id: string): Promise<void> {
+    const question_id = (await this.find(id)).question_id
     const sql = 'DELETE FROM answer WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, { id, user_id })
+    questionInfoService.renew(question_id)
   }
 
   async like(id: number, user_id: string, type: boolean): Promise<void> {
