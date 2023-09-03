@@ -151,6 +151,9 @@ export class User extends Base {
     following_id: string, 
     type: boolean
   ): Promise<void> {
+    if (follower_id === following_id) {
+      throw new Error('BAD_REQUEST')
+    }
     const sql = type 
     ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
     : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'

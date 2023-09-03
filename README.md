@@ -2,7 +2,6 @@
 
 ## Todo
 
-- 본인이 본인 follow 막기
 - like 중복 막기
 
 # Docker
