@@ -3,6 +3,7 @@
 ## Todo
 
 - like 중복 막기
+- 토큰 확인만 하는 것 추가
 
 # Docker
 
@@ -10,7 +11,7 @@
   `docker build -t dvlprjw/daily_algo:0.1.0 .`
 
 - 도커허브 Push
-  `docker push dvlprjw/daily_algo:0.1.0`
+  `docker push dvlprjw/dailyalgo_be`
 
 - 도커허브 Pull
   `docker pull dvlprjw/daily_algo:0.1.0`

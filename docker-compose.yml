@@ -1,11 +1,17 @@
 version: '3.8'
+volumes:
+  mysql:
+    external: true
+    name: db
 services:
   dailyalgo_back:
     build:
       context: .
       dockerfile: ./Dockerfile
+    image: dvlprjw/dailyalgo_be
     container_name: dailyalgo_back
     depends_on:
+      - db
       - redis
     ports:
       - "8080:8080"
@@ -21,6 +27,27 @@ services:
       - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
       - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
       - OAUTH_KAKAO_CLIENT_ID=${OAUTH_KAKAO_CLIENT_ID}
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=daily_algo
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - TZ=Asia/Seoul
+    restart: always
+    command:
+      - --authentication_policy=caching_sha2_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
   redis:
     image: redis:latest
     container_name: redis

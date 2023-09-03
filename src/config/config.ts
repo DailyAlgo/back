@@ -82,11 +82,15 @@ const getConfig = (): Config => ({
   },
   db: {
     connectionLimit: 5,
-    host: isDev ? 'localhost' : process.env.DB_HOST_WRITE,
     port: 3306,
-    database: isDev ? 'daily_algo' : process.env.DB_DATABASE,
-    user: isDev ? 'test' : process.env.DB_USER,
-    password: isDev ? '1234' : process.env.DB_PASSWORD,
+    host: 'db',
+    user: 'nodecrew',
+    password: 'nodecrew',
+    database: 'daily_algo',
+    // host: isDev ? 'localhost' : process.env.DB_HOST_WRITE,
+    // database: isDev ? 'daily_algo' : process.env.DB_DATABASE,
+    // user: isDev ? 'test' : process.env.DB_USER,
+    // password: isDev ? '1234' : process.env.DB_PASSWORD,
   },
   oauth: {
     google: {
