@@ -3,10 +3,10 @@ import redis from '../service/redis'
 
 const middleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const num = req.body.number
-    const certificationNum = redis.get(req.body.id, num)
+    const num: string = req.body.num
+    const certificationNum: string = await redis.get(req.body.id, true)
     if (num !== certificationNum) throw new Error('num is not qualified')
-    res.status(200).json({ message: 'validated num' })
+    next()
   } catch (error) {
     next(error)
   }

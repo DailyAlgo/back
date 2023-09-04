@@ -16,7 +16,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_URL=redis://redis:6379redis
       - NODE_ENV=production
       - SERVER_URL=${SERVER_URL}
       - DB_HOST_WRITE=${DB_HOST_WRITE}

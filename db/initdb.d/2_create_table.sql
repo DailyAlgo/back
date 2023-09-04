@@ -23,17 +23,15 @@ CREATE TABLE IF NOT EXISTS password (
     PRIMARY KEY (user_id)
 ) COMMENT '비밀번호';
 
-### refresh_token
 CREATE TABLE IF NOT EXISTS refresh_token (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
 	user_id VARCHAR(30) NOT NULL COMMENT 'USER ID',
-    token VARCHAR(255) NOT NULL COMMENT 'Access Token',
+    token VARCHAR(500) NOT NULL COMMENT 'Access Token',
     expiration_time TIMESTAMP NOT NULL COMMENT '만료시간',
     created_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성시간',
     PRIMARY KEY (ID)
 ) COMMENT '리프레시 토큰';
 
-## follow
 CREATE TABLE IF NOT EXISTS follow (
 	follower_id VARCHAR(30) NOT NULL COMMENT '팔로워 ID',
     following_id VARCHAR(30) NOT NULL COMMENT '팔로잉 ID',
@@ -42,7 +40,6 @@ CREATE TABLE IF NOT EXISTS follow (
     CONSTRAINT follow_following_id_fk FOREIGN KEY (following_id) REFERENCES user (id) ON DELETE CASCADE
 ) COMMENT '팔로우';
 
-## organization
 CREATE TABLE IF NOT EXISTS organization (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(50) NOT NULL COMMENT '이름',
@@ -54,7 +51,6 @@ CREATE TABLE IF NOT EXISTS organization (
     UNIQUE KEY (id, name)
 ) COMMENT '단체';
 
-### user_organization_map
 CREATE TABLE IF NOT EXISTS user_organization_map (
 	organization_id INT NOT NULL COMMENT '단체 ID',
     user_id VARCHAR(30) NOT NULL COMMENT '유저 ID',
@@ -63,7 +59,6 @@ CREATE TABLE IF NOT EXISTS user_organization_map (
     CONSTRAINT user_organization_map_organization_id_fk FOREIGN KEY (organization_id) REFERENCES organization (id) ON DELETE CASCADE
 ) COMMENT '유저 단체 매핑 테이블';
 
-## question
 CREATE TABLE IF NOT EXISTS question (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     title VARCHAR(100) NOT NULL COMMENT '제목',
@@ -79,7 +74,6 @@ CREATE TABLE IF NOT EXISTS question (
     PRIMARY KEY (id)
 ) COMMENT '질문';
 
-### question_info
 CREATE TABLE IF NOT EXISTS question_info (
 	question_id INT NOT NULL COMMENT 'Question ID (PK)',
     view_cnt INT NOT NULL DEFAULT 0 COMMENT '조회 수',
@@ -90,7 +84,6 @@ CREATE TABLE IF NOT EXISTS question_info (
     CONSTRAINT question_info_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 정보';
 
-## scrap
 CREATE TABLE IF NOT EXISTS scrap (
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
 	question_id INT NOT NULL COMMENT 'Question ID',
@@ -100,7 +93,6 @@ CREATE TABLE IF NOT EXISTS scrap (
     CONSTRAINT scrap_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '스크랩';
 
-## question_like
 CREATE TABLE IF NOT EXISTS question_like (
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
 	question_id INT NOT NULL COMMENT 'Question ID',
@@ -110,7 +102,6 @@ CREATE TABLE IF NOT EXISTS question_like (
     CONSTRAINT question_like_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 좋아요';
 
-## question_comment
 CREATE TABLE IF NOT EXISTS question_comment (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
 	question_id INT NOT NULL COMMENT 'Question ID',
@@ -122,7 +113,6 @@ CREATE TABLE IF NOT EXISTS question_comment (
     PRIMARY KEY (id)
 ) COMMENT '질문 댓글';
 
-## question_comment_like
 CREATE TABLE IF NOT EXISTS question_comment_like (
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
 	question_comment_id INT NOT NULL COMMENT 'Question Comment ID',
@@ -133,7 +123,6 @@ CREATE TABLE IF NOT EXISTS question_comment_like (
 ) COMMENT '질문 댓글 좋아요';
 ```
 
-## question_tag
 CREATE TABLE IF NOT EXISTS question_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
@@ -141,7 +130,6 @@ CREATE TABLE IF NOT EXISTS question_tag (
     UNIQUE KEY (id, name)
 ) COMMENT '질문 태그';
 
-### question_tag_map
 CREATE TABLE IF NOT EXISTS question_tag_map (
     tag_id INT NOT NULL COMMENT 'Tag ID (PK)',
     question_id INT NOT NULL COMMENT 'Question ID (PK)',
@@ -150,7 +138,6 @@ CREATE TABLE IF NOT EXISTS question_tag_map (
     CONSTRAINT question_tag_map_question_id_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE
 ) COMMENT '질문 태그 매핑 테이블';
 
-## answer
 CREATE TABLE IF NOT EXISTS answer (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     title VARCHAR(100) NOT NULL COMMENT '제목',
@@ -165,7 +152,6 @@ CREATE TABLE IF NOT EXISTS answer (
     PRIMARY KEY (id)
 ) COMMENT '답변';
 
-## answer_like
 CREATE TABLE IF NOT EXISTS answer_like (
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
 	answer_id INT NOT NULL COMMENT 'Answer ID',
@@ -175,7 +161,6 @@ CREATE TABLE IF NOT EXISTS answer_like (
     CONSTRAINT answer_like_answer_id_fk FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE CASCADE
 ) COMMENT '답변 좋아요';
 
-## answer_comment
 CREATE TABLE IF NOT EXISTS answer_comment (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
 	question_id INT NOT NULL COMMENT 'Answer ID',
@@ -187,7 +172,6 @@ CREATE TABLE IF NOT EXISTS answer_comment (
     PRIMARY KEY (id)
 ) COMMENT '답변 댓글';
 
-## answer_tag
 CREATE TABLE IF NOT EXISTS answer_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
@@ -195,7 +179,6 @@ CREATE TABLE IF NOT EXISTS answer_tag (
     UNIQUE KEY (id, name)
 ) COMMENT '답변 태그';
 
-### answer_tag_map
 CREATE TABLE IF NOT EXISTS answer_tag_map (
     tag_id INT NOT NULL COMMENT 'Tag ID (PK)',
     answer_id INT NOT NULL COMMENT 'Answer ID (PK)',
@@ -204,7 +187,6 @@ CREATE TABLE IF NOT EXISTS answer_tag_map (
     CONSTRAINT answer_tag_map_answer_id_fk FOREIGN KEY (answer_id) REFERENCES answer (id) ON DELETE CASCADE
 ) COMMENT '답변 태그 매핑 테이블';
 
-## notification
 CREATE TABLE IF NOT EXISTS notification (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     is_read TINYINT NOT NULL DEFAULT FALSE COMMENT '읽음',
