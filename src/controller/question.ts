@@ -12,7 +12,7 @@ export const findQuestion = async (
 ) => {
   try {
     const id = Number(req.params['id'])
-    // const question = redis.getOrSet(String(id), ()=>questionService.find(id)) // Redis Memory 올려야 쓸 수 있음
+    // const question = await redis.getOrSet(String(id), ()=>questionService.find(id)) // Redis Memory 올려야 쓸 수 있음
     const question = await questionService.find(id)
     if (req.credentials?.user)
       question['isScrap'] = await questionService.isScrap(req.credentials.user.id, id)

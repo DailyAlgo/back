@@ -176,9 +176,9 @@ export class Question extends Base {
   }
 
   async addAllTag(tags: number[], question_id: number): Promise<void> {
-    tags.forEach(tag => {
+    Promise.all(tags.map(tag => {
       this.addTag(tag, question_id)
-    })
+    }))
   }
 
   async removeAllTag(question_id: number): Promise<void> {

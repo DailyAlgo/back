@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS answer_like (
 
 CREATE TABLE IF NOT EXISTS answer_comment (
 	id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
-	question_id INT NOT NULL COMMENT 'Answer ID',
+	answer_id INT NOT NULL COMMENT 'Answer ID',
 	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
     content VARCHAR(200) NOT NULL COMMENT '내용',
     like_cnt INT NOT NULL DEFAULT 0 COMMENT '좋아요 수',
