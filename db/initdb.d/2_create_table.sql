@@ -121,7 +121,6 @@ CREATE TABLE IF NOT EXISTS question_comment_like (
     CONSTRAINT question_comment_like_user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
     CONSTRAINT question_comment_like_question_id_fk FOREIGN KEY (question_comment_id) REFERENCES question_comment (id) ON DELETE CASCADE
 ) COMMENT '질문 댓글 좋아요';
-```
 
 CREATE TABLE IF NOT EXISTS question_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
@@ -171,6 +170,15 @@ CREATE TABLE IF NOT EXISTS answer_comment (
     modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
     PRIMARY KEY (id)
 ) COMMENT '답변 댓글';
+
+CREATE TABLE IF NOT EXISTS answer_comment_like (
+	user_id VARCHAR(30) NOT NULL COMMENT 'User ID',
+	answer_comment_id INT NOT NULL COMMENT 'Answer Comment ID',
+    created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
+    PRIMARY KEY (user_id, answer_comment_id),
+    CONSTRAINT answer_comment_like_user_id_fk FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE,
+    CONSTRAINT answer_comment_like_answer_id_fk FOREIGN KEY (answer_comment_id) REFERENCES answer_comment (id) ON DELETE CASCADE
+) COMMENT '답변 댓글 좋아요';
 
 CREATE TABLE IF NOT EXISTS answer_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',

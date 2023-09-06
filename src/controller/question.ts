@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 import questionService from '../service/question'
-import questionInfoService from '../service/question_info'
 import questionCommentService from '../service/question_comment'
 import redisService from '../service/redis'
 // import redis from '../service/redis'
@@ -112,7 +111,7 @@ export const likeQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionInfoService.like(id, req.credentials.user.id, req.body.type)
+    await questionService.like(id, req.credentials.user.id)
     res.status(200).json({ message: 'Question liked successfully' })
   } catch (error) {
     next(error)
@@ -199,7 +198,7 @@ export const likeQuestionComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await questionCommentService.like(req.body.id, req.credentials.user.id, req.body.type)
+    await questionCommentService.like(req.body.id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment liked successfully' })
   } catch (error) {
     next(error)
@@ -262,22 +261,6 @@ export const scrapQuestion = async (
       const question_id = Number(req.body.id)
     await questionService.scrap(req.credentials.user.id, question_id)
     res.status(200).json({ message: 'Question scrapped successfully' })
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const unscrapQuestion = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (!req.credentials?.user)
-      return res.status(400).json({ message: 'User Info is missing' })
-      const question_id = Number(req.body.id)
-    await questionService.unscrap(req.credentials.user.id, question_id)
-    res.status(200).json({ message: 'Question unscrapped successfully' })
   } catch (error) {
     next(error)
   }

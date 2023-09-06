@@ -20,6 +20,11 @@ type QuestionCommentCreationType = {
   content: string
 }
 
+type QuestionCommentLikeType = {
+  user_id: string
+  comment_id: number
+}
+
 export class QuestionComment extends Base {
   constructor(options: PoolOptions) {
     super(options)
@@ -79,16 +84,32 @@ export class QuestionComment extends Base {
     questionInfoService.renew(question_id)
   }
 
+  async findLike(id: number, user_id: string): Promise<QuestionCommentLikeType> {
+    const sql = 'SELECT * FROM question_comment_like WHERE comment_id = :id AND user_id = :user_id'
+    const row = await this._findIfExist(sql, { id, user_id }, true)
+    return {
+      user_id: row['user_id'],
+      comment_id: row['comment_id'],
+    }
+  }
+
   async like(
     id: number,
     user_id: string,
-    type: boolean
   ): Promise<void> {
-    const sql = type
-    ? 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id' 
-    : 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
-    await this._update(sql, { id })
-    type ? notify('user', user_id, 'like', 'question_comment', String(id)) : ''
+    const like = await this.findLike(id, user_id)
+    if (like.comment_id && like.user_id) {
+      const sql1 = 'DELETE FROM question_comment_like WHERE comment_id = :comment_id AND user_id = :user_id'
+      const sql2 = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
+      await this._delete(sql1, { comment_id: id, user_id })
+      await this._update(sql2, { id })
+    } else {
+      const sql1 = 'INSERT INTO question_comment_like (comment_id, user_id) VALUES (:comment_id, :user_id)'
+      const sql2 = 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id'
+      await this._create(sql1, { comment_id: id, user_id })
+      await this._update(sql2, { id })
+      notify('user', user_id, 'like', 'question_comment', String(id))
+    }
   }
 }
 

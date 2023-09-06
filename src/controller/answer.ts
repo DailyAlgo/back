@@ -100,7 +100,7 @@ export const likeAnswer = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await answerService.like(req.body.id, req.credentials.user.id, req.body.type)
+    await answerService.like(req.body.id, req.credentials.user.id)
     res.status(200).json({ message: 'Answer liked successfully' })
   } catch (error) {
     next(error)
@@ -187,7 +187,7 @@ export const likeAnswerComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await answerCommentService.like(req.body.id, req.credentials.user.id, req.body.type)
+    await answerCommentService.like(req.body.id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment liked successfully' })
   } catch (error) {
     next(error)

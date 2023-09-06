@@ -1,7 +1,7 @@
 import { Base } from './base'
 import { PoolOptions } from 'mysql2'
 import getConfig from '../config/config'
-import question_info from './question_info'
+import questionInfoService from './question_info'
 
 export type QuestionType = {
   id: number
@@ -62,6 +62,16 @@ type QuestionDetailType = {
   tags: string[]
 }
 
+type QuestionLikeType = {
+  user_id: string
+  question_id: number
+}
+
+type QuestionScrapType = {
+  user_id: string
+  question_id: number
+}
+
 export class Question extends Base {
   constructor(options: PoolOptions) {
     super(options)
@@ -76,7 +86,7 @@ export class Question extends Base {
       WHERE q.id = :id`
     const row = await this._findIfExist(sql, { id: id }, false)
     const tags = await this.findTag(row['id'])
-    question_info.view(id)
+    questionInfoService.view(id)
     return {
       id: row['id'],
       title: row['title'],
@@ -126,7 +136,7 @@ export class Question extends Base {
       language: question.language,
       code: question.code,
     })
-    question_info.create(question_id)
+    questionInfoService.create(question_id)
     this.addAllTag(tags, question_id)
   }
 
@@ -221,14 +231,24 @@ export class Question extends Base {
     }))
   }
 
-  async scrap(user_id: string, question_id: number): Promise<void> {
-    const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
-    await this._create(sql, { user_id, question_id, })
+  async findScrap(user_id: string, question_id: number): Promise<QuestionScrapType> {
+    const sql = 'SELECT * FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
+    const row = await this._findIfExist(sql, { user_id, question_id, }, true)
+    return {
+      user_id: row['user_id'],
+      question_id: row['question_id'],
+    }
   }
 
-  async unscrap(user_id: string, question_id: number): Promise<void> {
-    const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
-    await this._delete(sql, { user_id, question_id, })
+  async scrap(user_id: string, question_id: number): Promise<void> {
+    const scrap = await this.findScrap(user_id, question_id)
+    if (scrap.question_id && scrap.user_id) {
+      const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
+      await this._create(sql, { user_id, question_id, })
+    } else {
+      const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
+      await this._delete(sql, { user_id, question_id, })
+    }
   }
 
   async isScrap(user_id: string, question_id: number): Promise<boolean> {
@@ -238,6 +258,28 @@ export class Question extends Base {
       return false
     }
     return true
+  }
+
+  async findLike(question_id: number, user_id: string): Promise<QuestionLikeType> {
+    const sql = 'SELECT * FROM question_like WHERE user_id = :user_id AND question_id = :question_id'
+    const row = await this._findIfExist(sql, { user_id, question_id, }, true)
+    return {
+      user_id: row['user_id'],
+      question_id: row['question_id'],
+    }
+  }
+
+  async like(question_id: number, user_id: string): Promise<void> {
+    const like = await this.findLike(question_id, user_id)
+    if (like.question_id && like.user_id) {
+      const sql = 'DELETE FROM question_like WHERE user_id = :user_id AND question_id = :question_id'
+      await this._delete(sql, { user_id, question_id, })
+      await questionInfoService.like(question_id, user_id, false)
+    } else {
+      const sql = 'INSERT INTO question_like (user_id, question_id) VALUES (:user_id, :question_id)'
+      await this._create(sql, { user_id, question_id, })
+      await questionInfoService.like(question_id, user_id, true)
+    }
   }
 }
 
