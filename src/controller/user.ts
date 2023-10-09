@@ -84,7 +84,7 @@ export const signUp = async (
     res
       .status(200)
       .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
-      .json({ message: 'User created successfully' })
+      .json({ message: 'User created successfully', token }) // TODO: token 삭제
       .redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
@@ -115,7 +115,7 @@ export const login = async (
     res
       .status(200)
       .cookie('jwt', token, { maxAge: 3600, httpOnly: true, secure: false })
-      .json({ message: 'Success login' })
+      .json({ message: 'Success login', token }) // Todo: token 삭제
       .redirect(LOGIN_REDIRECT_URL)
   } catch (error) {
     next(error)
@@ -245,7 +245,7 @@ export const googleOauth = async (
         res
           .status(200)
           .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
-          .json({ message: 'Google login succeeded' })
+          .json({ message: 'Google login succeeded', token }) // TODO: token 삭제
           .redirect(LOGIN_REDIRECT_URL)
       } catch (error) {
         if (error instanceof Error && error.message === 'NOT_FOUND') {
@@ -279,7 +279,7 @@ export const googleOauth = async (
           res
             .status(200)
             .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
-            .json({ message: 'Google Signup succeeded' })
+            .json({ message: 'Google Signup succeeded', token }) // TODO: token 삭제
             .redirect(LOGIN_REDIRECT_URL)
         } else {
           next(error)
@@ -433,7 +433,7 @@ export const kakaoOauth = async (
       })
       res
         .status(200)
-        .cookie('jwt', token, { maxAge: 3600, httpOnly: true })
+        .cookie('jwt', token, { maxAge: 3600, httpOnly: true }) // TODO: token 삭제
         .json({ message: 'Kakao login succeeded' })
       next()
     } else {
