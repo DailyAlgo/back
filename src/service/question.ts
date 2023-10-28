@@ -29,6 +29,11 @@ type QuestionCreationType = {
 }
 
 type QuestionListType = {
+  total_cnt: number
+  question_list: QuestionListItemType[]
+}
+
+type QuestionListItemType = {
   id: string
   title: string
   source: string
@@ -108,7 +113,8 @@ export class Question extends Base {
     }
   }
 
-  async finds(offset: number): Promise<QuestionListType[]> {
+  async finds(offset: number): Promise<QuestionListType> {
+    const count = await this.count()
     const limit = 10
     const sql =
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
@@ -120,7 +126,17 @@ export class Question extends Base {
       const tags = this.findTag(row['id'])
       row = {...row, tags}
     }))
-    return rows
+    const res = {
+      total_cnt: count,
+      question_list: rows,
+    }
+    return res
+  }
+
+  async count(): Promise<number> {
+    const sql = 'SELECT COUNT(*) FROM question'
+    const row = await this._findIfExist(sql, {}, false)
+    return row['COUNT(*)']
   }
 
   async create(question: QuestionCreationType, tags: number[]): Promise<void> {
@@ -215,7 +231,8 @@ export class Question extends Base {
     return rows
   }
 
-  async search(keyword: string, offset: number): Promise<QuestionListType[]> {
+  async search(keyword: string, offset: number): Promise<QuestionListType> {
+    const count = await this.seacrhCount(keyword)
     const limit = 10
     keyword = '%'+keyword.trim()+'%'
     const sql = 
@@ -225,10 +242,26 @@ export class Question extends Base {
       WHERE q.title LIKE :keyword
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { keyword, limit, offset }, true)
-    return Promise.all(rows.map(row=>{
+    Promise.all(rows.map(row=>{
       const tags = this.findTag(row['id'])
       return {...row, tags}
     }))
+    const res = {
+      total_cnt: count,
+      question_list: rows,
+    }
+    return res
+  }
+
+  async seacrhCount(keyword: string): Promise<number> {
+    keyword = '%'+keyword.trim()+'%'
+    const sql = 
+      `SELECT COUNT(*) 
+      FROM question q 
+      INNER JOIN question_info qi ON q.id = qi.question_id 
+      WHERE q.title LIKE :keyword`
+    const row = await this._findIfExist(sql, { keyword }, false)
+    return row['COUNT(*)']
   }
 
   async findScrap(user_id: string, question_id: number): Promise<QuestionScrapType> {

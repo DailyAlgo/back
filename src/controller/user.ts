@@ -140,6 +140,7 @@ export const googleRedirect = async (
   next: NextFunction
 ) => {
   try {
+    console.log("!!!!!   " + GoogleAuth(oauth.google))
     res.redirect(GoogleAuth(oauth.google))
   } catch (error) {
     next(error)
@@ -486,32 +487,36 @@ export const sendSignUpEmail = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = jwt.sign(req.body.id.toLowerCase(), secretKey, {
-    expiresIn: '1h',
-  })
-  const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
-  const email = req.body.email
-  const certificationNum = generateRandomNumbers(6)
-  // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
   try {
-    const html = renderSignUp({
-      data: {
-        token: `${url}`,
-      },
+    const token = jwt.sign(req.body.id.toLowerCase(), secretKey, {
+      expiresIn: '1h',
     })
-    const message = {
-      from: 'node crew',
-      to: `${email}`,
-      subject: 'Message title',
-      text: `The number is ${certificationNum}`,
-      html: html,
+    const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
+    const email = req.body.email
+    const certificationNum = generateRandomNumbers(6)
+    // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+    try {
+      const html = renderSignUp({
+        data: {
+          token: `${url}`,
+        },
+      })
+      const message = {
+        from: 'node crew',
+        to: `${email}`,
+        subject: 'Message title',
+        text: `The number is ${certificationNum}`,
+        html: html,
+      }
+      await mail.sendMail(message)
+      redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
+  
+      res.send(200).json({ message: 'send mail' })
+    } catch (error) {
+      throw error
     }
-    await mail.sendMail(message)
-    redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
-
-    res.send(200).json({ message: 'send mail' })
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 

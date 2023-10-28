@@ -7,23 +7,23 @@
 # Docker
 
 - 이미지 생성
-  `docker build -t dvlprjw/daily_algo:0.1.0 .`
+  `docker build -t dvlprjw/dailyalgo_be .`
 
 - 도커허브 Push
   `docker push dvlprjw/dailyalgo_be`
 
 - 도커허브 Pull
-  `docker pull dvlprjw/daily_algo:0.1.0`
+  `docker pull dvlprjw/dailyalgo_be`
 
 - 컨테이너 실행
-  `docker run -itd -p 8080:8080 --name da dvlprjw/daily_algo:0.1.0`
+  `docker run -itd -p 8080:8080 --name da dvlprjw/dailyalgo_be`
 
 - 도커 컨테이너 종료
   `docker stop da`
   `docker rm da`
 
 - 도커 이미지 삭제
-  `docker rmi dvlprjw/daily_algo:0.1.0`
+  `docker rmi dvlprjw/dailyalgo_be`
 
 - 기타
   - 이미지 확인 : `docker images`
