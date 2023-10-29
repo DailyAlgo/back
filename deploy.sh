@@ -3,7 +3,7 @@ docker stop dailyalgo_back
 echo 컨테이너 삭제
 docker rm dailyalgo_back
 echo 이미지 삭제
-docker rmi dailyalgo_dailyalgo_back
+docker rmi dvlprjw/dailyalgo_be
 echo 깃 체크아웃 : 권한 해제
 git checkout .
 echo 깃 풀
