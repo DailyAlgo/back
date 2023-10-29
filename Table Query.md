@@ -146,7 +146,11 @@ CREATE TABLE IF NOT EXISTS question (
 - 좋아요 수
 - 답변 수
 - 댓글 수
-- 마지막 답변 id
+- * 생성시간
+- * 이름
+- * 문제 출처
+- * 질문 유형
+- * 답변 여부
 
 ```mysql
 CREATE TABLE IF NOT EXISTS question_info (
