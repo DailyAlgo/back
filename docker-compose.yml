@@ -1,7 +1,6 @@
 version: '3.8'
 volumes:
   mysql:
-    external: true
     name: db
 services:
   dailyalgo_back:

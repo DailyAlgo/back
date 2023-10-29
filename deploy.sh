@@ -13,6 +13,6 @@ sudo chmod 777 ./redis/data/dump.rdb
 echo 도커 이미지 빌드
 sudo docker build -t dvlprjw/dailyalgo_be .
 echo 도커 컴포즈 실행
-sudo docker-compose up -d --force-recreate
+docker-compose up -d --force-recreate
 echo 도커 컴포즈 로그 출력
 docker-compose logs
