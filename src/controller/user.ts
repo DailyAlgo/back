@@ -489,8 +489,7 @@ export const sendSignUpEmail = async (
 ) => {
   try {
     console.log("Request Body : %o", req.body);
-    console.log("Requested ID :" + req.body.id);
-    const token = jwt.sign(req.body.id.toLowerCase(), secretKey, {
+    const token = jwt.sign({id: req.body.id.toLowerCase()}, secretKey, {
       expiresIn: '1h',
     })
     const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
