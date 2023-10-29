@@ -509,7 +509,7 @@ export const sendSignUpEmail = async (
       html: html,
     }
     await mail.sendMail(message)
-    redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
+    await redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
 
     res.send(200).json({ message: 'send mail' })
   } catch (error) {
