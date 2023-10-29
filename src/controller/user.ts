@@ -488,7 +488,7 @@ export const sendSignUpEmail = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Request Body :" + req.body);
+    console.log("Request Body : %o", req.body);
     console.log("Requested ID :" + req.body.id);
     const token = jwt.sign(req.body.id.toLowerCase(), secretKey, {
       expiresIn: '1h',
