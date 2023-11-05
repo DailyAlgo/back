@@ -125,8 +125,8 @@ const getConfig = (): Config => ({
     port: 587,
     secure: false,
     auth: {
-      user: '', // naver 아이디 입력,
-      pass: '', // naver 비밀번호 입력,
+      user: `${process.env.NAVER_ID}`, // naver 아이디 입력,
+      pass: `${process.env.NAVER_PASSWORD}`, // naver 비밀번호 입력,
     },
   },
   cache: {
