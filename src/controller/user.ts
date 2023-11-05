@@ -491,10 +491,10 @@ export const sendSignUpEmail = async (
     console.log("Request Body : %o", req.body);
     if (!req.body.id)
       return res.status(400).json({ message: 'ID가 Null 값입니다.' })
-    const token = jwt.sign({id: req.body.id.toLowerCase()}, secretKey, {
-      expiresIn: '1h',
-    })
-    const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
+    // const token = jwt.sign({id: req.body.id.toLowerCase()}, secretKey, {
+    //   expiresIn: '1h',
+    // })
+    // const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
     const email = req.body.email
     const certificationNum = generateRandomNumbers(6)
     // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
