@@ -498,9 +498,14 @@ export const sendSignUpEmail = async (
     const email = req.body.email
     const certificationNum = generateRandomNumbers(6)
     // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+    // const html = renderSignUp({
+    //   data: {
+    //     token: `${url}`,
+    //   },
+    // })
     const html = renderSignUp({
       data: {
-        token: `${url}`,
+        token: `The number is ${certificationNum}`,
       },
     })
     const message = {
@@ -513,7 +518,7 @@ export const sendSignUpEmail = async (
     await mail.sendMail(message)
     await redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
 
-    // res.send(200).json({ message: 'send mail' })
+    res.send(200).json({ message: 'send mail' })
   } catch (error) {
     next(error)
   }
