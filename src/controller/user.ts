@@ -489,6 +489,8 @@ export const sendSignUpEmail = async (
 ) => {
   try {
     console.log("Request Body : %o", req.body);
+    if (!req.body.id)
+      return res.status(400).json({ message: 'ID가 Null 값입니다.' })
     const token = jwt.sign({id: req.body.id.toLowerCase()}, secretKey, {
       expiresIn: '1h',
     })
