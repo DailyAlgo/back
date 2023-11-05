@@ -121,7 +121,7 @@ const getConfig = (): Config => ({
   },
   mail: {
     service: 'naver',
-    host: 'localhost',
+    host: 'smtp.naver.com',
     port: 587,
     secure: false,
     auth: {
