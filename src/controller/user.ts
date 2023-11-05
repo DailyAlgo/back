@@ -504,9 +504,9 @@ export const sendSignUpEmail = async (
       },
     })
     const message = {
-      from: 'node crew',
+      from: 'nodecrew nodecrew@naver.com',
       to: `${email}`,
-      subject: 'Message title',
+      subject: 'Nodecrew Signup Email',
       text: `The number is ${certificationNum}`,
       html: html,
     }
@@ -528,7 +528,7 @@ export const sendChangePasswordEmail = async (url: string) => {
       },
     })
     const message = {
-      from: '',
+      from: 'nodecrew@naver.com',
       to: '',
       subject: 'Message title',
       text: `Click this url to change password ${url}`,

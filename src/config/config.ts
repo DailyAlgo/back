@@ -51,7 +51,6 @@ export type Config = {
       user: string
       pass: string
     }
-    from: string
   }
   cache: {
     url: string
@@ -129,7 +128,6 @@ const getConfig = (): Config => ({
       user: `${process.env.NAVER_ID}`, // naver 아이디 입력,
       pass: `${process.env.NAVER_PASSWORD}`, // naver 비밀번호 입력,
     },
-    from: 'daily-algo nodecrew@naver.com'
   },
   cache: {
     url: "redis://redis:6379",
