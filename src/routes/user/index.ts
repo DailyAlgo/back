@@ -37,7 +37,7 @@ router.get('/kauth/kakao', kakaoRedirect)
 router.get('/oauth/google/callback', googleOauth)
 router.get('/kauth/kakao/callback', kakaoOauth)
 router.post('/send_mail', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
-router.get('/check/certification_num', checkCertificationNum) // 인증번호 확인
+router.post('/check/certification_num', checkCertificationNum) // 인증번호 확인
 
 router.get('/find/:email', findIdByEmail) // 아이디 찾기
 router.post('/sign_up', check_certification_num, signUp) // 회원가입
