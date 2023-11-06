@@ -646,3 +646,17 @@ export const findScrap = async (
     next(error)
   }
 }
+
+export const checkCertificationNum = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const num: string = req.body.num
+    const certificationNum: string = await redis.get(req.body.id, true)
+    res.status(200).send(num === certificationNum)
+  } catch (error) {
+    next(error)
+  }
+}

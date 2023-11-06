@@ -36,6 +36,7 @@ router.get('/kauth/kakao', kakaoRedirect)
 router.get('/oauth/google/callback', googleOauth)
 router.get('/kauth/kakao/callback', kakaoOauth)
 router.post('/send_mail', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
+router.get('/check/certification_num', check_certification_num) // 인증번호 확인
 
 router.get('/find/:email', findIdByEmail) // 아이디 찾기
 router.post('/sign_up', check_certification_num, signUp) // 회원가입
@@ -60,11 +61,6 @@ router.get('/authorization', check_token, verifyUser)
 // 이메일 클릭 시 비밀번호 변경 주소
 // (생각해보니 이건 어차피 클라이언트에서 렌더링하고 해당 폼에서 비밀번호 변경 요청 보내면 되서 불필요)
 // router.get('/authorization2', check_token, sendChangePassword)
-
-// Todo
-router.get(':id/notice') // 알림 조회
-router.get('/sign_up/validation') // 회원가입 인증 이메일 발송요청
-router.post('/sign_up/validation') // 회원가입 이메일 인증
 
 // Password 찾기
 router.post('/password/find/id') // Todo : step1. id
