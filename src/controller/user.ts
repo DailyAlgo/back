@@ -300,7 +300,9 @@ export const updateUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const id = req.credentials.user.id.toLowerCase()
     await userService.update({
       id: id,
       nickname: req.body.nickname,
@@ -318,7 +320,9 @@ export const deleteUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const id = req.credentials.user.id.toLowerCase()
     await userService.delete(id)
     res.status(200).json({ message: 'User deleted successfully' })
   } catch (error) {
