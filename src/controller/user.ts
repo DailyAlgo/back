@@ -653,7 +653,7 @@ export const checkCertificationNum = async (
   next: NextFunction
 ) => {
   try {
-    const num: string = req.body.num
+    const num: string = req.query['num'] as string
     const certificationNum: string = await redis.get(req.body.id, true)
     res.status(200).send(num === certificationNum)
   } catch (error) {
