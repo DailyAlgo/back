@@ -492,7 +492,6 @@ export const sendSignUpEmail = async (
   next: NextFunction
 ) => {
   try {
-    console.log("Request Body : %o", req.body);
     if (!req.body.email)
       return res.status(400).json({ message: 'email이 Null 값입니다.' })
     const email = req.body.email
@@ -647,8 +646,13 @@ export const checkCertificationNum = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.body.email)
+      return res.status(400).json({ message: 'email이 Null 값입니다.' })
+    if (!req.body.num)
+      return res.status(400).json({ message: 'num이 Null 값입니다.' })
+    const email: string = req.body.email
     const num: string = req.body.num
-    const certificationNum: string = await redis.get(req.body.id, true)
+    const certificationNum: string = await redis.get(email, true)
     res.status(200).send(num === certificationNum)
   } catch (error) {
     next(error)
