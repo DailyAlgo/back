@@ -1,5 +1,9 @@
 # DailyAlgo API
 
+> GET은 query에다가,
+>
+> POST, PUT, DELETE는 body에다가 데이터를 담아 전송합니다.
+
 ## /user
 
 - GET /oauth/google
@@ -17,6 +21,12 @@
   - `5자리 난수 인증번호 메일로 전송`
   - req
     - { id, email }
+
+- POST /check/certification_num
+
+  - `5자리 난수 인증번호 확인`
+  - req
+    - { id, num }
 
 - GET /find/:email
 
@@ -93,7 +103,7 @@
   - `회원정보 수정`
   - 로그인 필요
   - req
-    - { id, nickname, intro }
+    - { nickname, intro }
 
 - DELETE /:id
 

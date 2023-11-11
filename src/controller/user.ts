@@ -493,20 +493,10 @@ export const sendSignUpEmail = async (
 ) => {
   try {
     console.log("Request Body : %o", req.body);
-    if (!req.body.id)
-      return res.status(400).json({ message: 'ID가 Null 값입니다.' })
-    // const token = jwt.sign({id: req.body.id.toLowerCase()}, secretKey, {
-    //   expiresIn: '1h',
-    // })
-    // const url = getAbsoluteURL(req, `/user/authorization?=${token}`)
+    if (!req.body.email)
+      return res.status(400).json({ message: 'email이 Null 값입니다.' })
     const email = req.body.email
     const certificationNum = generateRandomNumbers(6)
-    // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
-    // const html = renderSignUp({
-    //   data: {
-    //     token: `${url}`,
-    //   },
-    // })
     const html = renderSignUp({
       data: {
         token: `The number is ${certificationNum}`,
@@ -520,7 +510,7 @@ export const sendSignUpEmail = async (
       html: html,
     }
     await mail.sendMail(message)
-    await redis.set(`${req.body.id.toLowerCase()}`, certificationNum)
+    await redis.set(email, certificationNum)
 
     res.send(200).json({ message: 'send mail' })
   } catch (error) {
