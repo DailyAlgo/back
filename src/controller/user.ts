@@ -47,8 +47,11 @@ export const findUser = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
-    res.status(200).json(await userService.find(id, false))
+    const id = req.params['id'] !== null ? req.params['id'].toLowerCase() : req.credentials?.user.id
+    if (id === null) {
+      return res.status(400).json({ message: 'id is null' })
+    }
+    res.status(200).json(await userService.find(id.toLowerCase(), false))
   } catch (error) {
     next(error)
   }
