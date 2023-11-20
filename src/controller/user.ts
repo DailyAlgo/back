@@ -41,16 +41,30 @@ export interface GAuth extends Auth {
 
 export type Authorization = 'google' | 'kakao'
 
+export const findMySelf = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const id = req.credentials?.user.id
+    if (id === null)
+      return res.status(400).json({ message: 'id is null' })
+    res.status(200).json(await userService.find(id.toLowerCase(), false))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const findUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'] !== null ? req.params['id'].toLowerCase() : req.credentials?.user.id
-    if (id === null) {
-      return res.status(400).json({ message: 'id is null' })
-    }
+    const id = req.params['id']
     res.status(200).json(await userService.find(id.toLowerCase(), false))
   } catch (error) {
     next(error)
