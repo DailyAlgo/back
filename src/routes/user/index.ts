@@ -46,7 +46,7 @@ router.get('/check/id', checkId) // ID 중복 확인
 router.get('/check/nickname', checkNickname) // 닉네임 중복확인
 router.get('/email', sendSignUpEmail) // 이메일 발송 테스트
 router.post('/sign_in', check_password, login) // 로그인
-router.get('/', findMySelf) // 본인정보 조회
+router.get('/', check_token, findMySelf) // 본인정보 조회
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/:id', check_token, updateUser) // 회원정보 수정
 router.delete('/:id', check_token, deleteUser) // 회원탈퇴
