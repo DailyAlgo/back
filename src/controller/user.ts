@@ -510,25 +510,30 @@ export const sendSignUpEmail = async (
 ) => {
   try {
     if (!req.body.email)
-      return res.status(400).json({ message: 'email이 Null 값입니다.' })
+      return res.status(400).json({ success: false, message: 'email이 Null 값입니다.' })
     const email = req.body.email
-    const certificationNum = generateRandomNumbers(6)
-    const html = renderSignUp({
-      data: {
-        token: `The number is ${certificationNum}`,
-      },
-    })
-    const message = {
-      from: 'nodecrew nodecrew@naver.com',
-      to: `${email}`,
-      subject: 'Nodecrew Signup Email',
-      text: `The number is ${certificationNum}`,
-      html: html,
+    try {
+      await userService.findIdByEmail(email)
+      return res.status(400).json({ success: false, message: '중복된 email입니다.' })
+    } catch (error) {
+      const certificationNum = generateRandomNumbers(6)
+      const html = renderSignUp({
+        data: {
+          token: `The number is ${certificationNum}`,
+        },
+      })
+      const message = {
+        from: 'nodecrew nodecrew@naver.com',
+        to: `${email}`,
+        subject: 'Nodecrew Signup Email',
+        text: `The number is ${certificationNum}`,
+        html: html,
+      }
+      await mail.sendMail(message)
+      await redis.set(email, certificationNum)
+      
+      res.send(200).json({ success: true, message: 'send mail' })
     }
-    await mail.sendMail(message)
-    await redis.set(email, certificationNum)
-
-    res.send(200).json({ message: 'send mail' })
   } catch (error) {
     next(error)
   }

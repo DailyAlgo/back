@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS user (
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     last_login TIMESTAMP NULL COMMENT '마지막 로그인',
     PRIMARY KEY (id),
-    UNIQUE KEY (id, nickname)
+    UNIQUE KEY (id, nickname, email)
 ) COMMENT '유저';
 
 -- password
