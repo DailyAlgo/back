@@ -11,7 +11,6 @@ import {
   KakaoAuth,
   KakaoLogin,
   KakaoUserMe,
-  getAbsoluteURL,
 } from '../util/gen_url'
 import renderSignUp from '../view/render_sign_up'
 import mail from '../service/mail'

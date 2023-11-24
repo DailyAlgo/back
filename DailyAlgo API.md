@@ -241,6 +241,25 @@
   - `이메일 클릭 시 사용자 인증`
   - 로그인 필요
 
+- POST /password/reset/email
+
+  - `비밀번호 리셋 이메일 발송`
+  - req
+    - { id, email }
+
+- POST /password/reset/validate
+
+  - `비밀번호 리셋 인증번호`
+  - req
+    - { email, num }
+
+- PUT /password/reset
+
+  - `비밀전호 리셋`
+  - req
+    - { id, num, newPassword }
+
+
 
 ## /organization
 
