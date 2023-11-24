@@ -353,6 +353,8 @@ export const changePassword = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.body.newPassword)
+      return res.status(400).json({ message: 'newPassword가 Null 값입니다.' })
     await passwordService.update(req.credentials?.user.id, req.body.newPassword)
     res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
@@ -360,29 +362,23 @@ export const changePassword = async (
   }
 }
 
-export const sendChangePassword = async (
-  req: Request,
-  _: Response,
-  next: NextFunction
-) => {
-  try {
-    const token = req.headers['authorization'] || ''
-    const absoluteUrl = getAbsoluteURL(req, `/user/authorization2?=${token}`)
-    // sign up email function
-    sendChangePasswordEmail(absoluteUrl)
-  } catch (error) {
-    next(error)
-  }
-}
-
-export const findIdByEmail = async (
+export const resetPassword = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const email = req.params['email']
-    res.status(200).json(await userService.findIdByEmail(email))
+    if (!req.body.id)
+      return res.status(400).json({ message: 'id가 Null 값입니다.' })
+    if (!req.body.num)
+      return res.status(400).json({ message: 'num이 Null 값입니다.' })
+    if (!req.body.newPassword)
+      return res.status(400).json({ message: 'newPassword가 Null 값입니다.' })
+    const certificationNum: string = await redis.get(req.body.email, true)
+    if (req.body.num !== certificationNum)
+      return res.status(400).send('인증번호가 일치하지 않습니다.')
+    await passwordService.update(req.body.id, req.body.newPassword)
+    res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
     next(error)
   }
@@ -519,14 +515,14 @@ export const sendSignUpEmail = async (
       const certificationNum = generateRandomNumbers(6)
       const html = renderSignUp({
         data: {
-          token: `The number is ${certificationNum}`,
+          token: `인증번호 : ${certificationNum}`,
         },
       })
       const message = {
         from: 'nodecrew nodecrew@naver.com',
         to: `${email}`,
-        subject: 'Nodecrew Signup Email',
-        text: `The number is ${certificationNum}`,
+        subject: '[데일리알고] 회원가입 인증번호',
+        text: `인증번호 : ${certificationNum}`,
         html: html,
       }
       await mail.sendMail(message)
@@ -539,22 +535,75 @@ export const sendSignUpEmail = async (
   }
 }
 
-export const sendChangePasswordEmail = async (url: string) => {
-  // TODO: 인증 이후엔 client 에서 token 삭제해줘야함
+export const sendFindIdEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const html = renderSignUp({
-      data: {
-        token: `${url}`,
-      },
-    })
-    const message = {
-      from: 'nodecrew@naver.com',
-      to: '',
-      subject: 'Message title',
-      text: `Click this url to change password ${url}`,
-      html: html,
+    if (!req.body.email)
+      return res.status(400).json({ success: false, message: 'email이 Null 값입니다.' })
+    const email = req.body.email
+    try {
+      await userService.findIdByEmail(email)
+
+      const certificationNum = generateRandomNumbers(6)
+      const html = renderSignUp({
+        data: {
+          token: `인증번호 : ${certificationNum}`,
+        },
+      })
+      const message = {
+        from: 'nodecrew nodecrew@naver.com',
+        to: `${email}`,
+        subject: '[데일리알고] ID 찾기 인증번호',
+        text: `인증번호 : ${certificationNum}`,
+        html: html,
+      }
+      await mail.sendMail(message)
+      await redis.set(email, certificationNum)
+      
+      res.send(200).json({ success: true, message: 'send mail' })
+    } catch (error) {
+      return res.status(400).json({ success: false, message: '존재하지 않는 email입니다.' })
     }
-    await mail.sendMail(message)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const sendPasswordResetEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body.id)
+      return res.status(400).json({ success: false, message: 'id가 Null 값입니다.' })
+    if (!req.body.email)
+      return res.status(400).json({ success: false, message: 'email이 Null 값입니다.' })
+    const id = req.body.id
+    const email = req.body.email
+    if (await userService.findIdByEmail(email) !== id)
+      return res.status(400).json({ success: false, message: 'email과 id가 일치하지 않습니다.' })
+
+      const certificationNum = generateRandomNumbers(6)
+      const html = renderSignUp({
+        data: {
+          token: `인증번호 : ${certificationNum}`,
+        },
+      })
+      const message = {
+        from: 'nodecrew nodecrew@naver.com',
+        to: `${email}`,
+        subject: '[데일리알고] 비밀번호 찾기 인증번호',
+        text: `인증번호 : ${certificationNum}`,
+        html: html,
+      }
+      await mail.sendMail(message)
+      await redis.set(email, certificationNum)
+      
+      res.send(200).json({ success: true, message: 'send mail' })
   } catch (error) {
     throw error
   }
@@ -662,7 +711,50 @@ export const findScrap = async (
   }
 }
 
-export const checkCertificationNum = async (
+export const validateSignUpCertificationNum = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body.email)
+      return res.status(400).json({ message: 'email이 Null 값입니다.' })
+    if (!req.body.num)
+      return res.status(400).json({ message: 'num이 Null 값입니다.' })
+    const email: string = req.body.email
+    const num: string = req.body.num
+    const certificationNum: string = await redis.get(email, true)
+    res.status(200).send(num === certificationNum)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const validateFindIdCertificationNum = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body.email)
+      return res.status(400).json({ message: 'email이 Null 값입니다.' })
+    if (!req.body.num)
+      return res.status(400).json({ message: 'num이 Null 값입니다.' })
+    const email: string = req.body.email
+    const num: string = req.body.num
+    const certificationNum: string = await redis.get(email, true)
+    if (num === certificationNum) {
+      const id = await userService.findIdByEmail(email)
+      res.status(200).send(id)
+    } else {
+      res.status(400).send('인증번호가 일치하지 않습니다.')
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const validatePasswordResetCertificationNum = async (
   req: Request,
   res: Response,
   next: NextFunction

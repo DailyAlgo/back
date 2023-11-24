@@ -16,21 +16,31 @@
   - req : None
   - res : 리다이렉트
 
-- POST /send_mail
+- POST /sign_up/email
 
   - `5자리 난수 인증번호 메일로 전송`
   - req
     - { id, email }
 
-- POST /check/certification_num
+- POST /sign_up/validate
 
   - `5자리 난수 인증번호 확인`
   - req
     - { id, num }
 
-- GET /find/:email
+- POST /find/email
+
+  - `아이디 찾기 이메일`
+  - req
+    - { email }
+
+- POST /find/validate
 
   - `아이디 찾기`
+  - req
+    - { email, num }
+  - res
+    - id
 
 - POST /sign_up
 

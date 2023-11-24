@@ -8,7 +8,6 @@ import {
   updateUser,
   deleteUser,
   changePassword,
-  findIdByEmail,
   kakaoRedirect,
   kakaoOauth,
   checkId,
@@ -21,9 +20,13 @@ import {
   findQuestion,
   findScrap,
   verifyUser,
-  checkCertificationNum,
   findMySelf,
-  // sendChangePassword,
+  sendFindIdEmail,
+  validateSignUpCertificationNum,
+  validateFindIdCertificationNum,
+  sendPasswordResetEmail,
+  validatePasswordResetCertificationNum,
+  resetPassword
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
@@ -37,14 +40,20 @@ router.get('/oauth/google', googleRedirect)
 router.get('/kauth/kakao', kakaoRedirect)
 router.get('/oauth/google/callback', googleOauth)
 router.get('/kauth/kakao/callback', kakaoOauth)
-router.post('/send_mail', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
-router.post('/check/certification_num', checkCertificationNum) // 인증번호 확인
 
-router.get('/find/:email', findIdByEmail) // 아이디 찾기
-router.post('/sign_up', check_certification_num, signUp) // 회원가입
 router.get('/check/id', checkId) // ID 중복 확인
 router.get('/check/nickname', checkNickname) // 닉네임 중복확인
-router.get('/email', sendSignUpEmail) // 이메일 발송 테스트
+router.post('/sign_up/email', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
+router.post('/sign_up/validate', validateSignUpCertificationNum) // 인증번호 확인
+router.post('/sign_up', check_certification_num, signUp) // 회원가입
+
+router.post('/find/email', sendFindIdEmail) // 6자리 난수 인증번호 메일로 전송
+router.post('/find/validate', validateFindIdCertificationNum) // 아이디 찾기
+
+router.post('/password/reset/email', sendPasswordResetEmail) // step1 : 6자리 난수 인증번호 메일로 전송
+router.post('/password/reset/validate', validatePasswordResetCertificationNum) // step2 : 인증번호 확인
+router.put('/password/reset', resetPassword) // step3 : 새로운 비밀번호 입력
+
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/', check_token, findMySelf) // 본인정보 조회
 router.get('/:id', findUser) // 회원정보 조회
@@ -64,13 +73,5 @@ router.get('/authorization', check_token, verifyUser)
 // 이메일 클릭 시 비밀번호 변경 주소
 // (생각해보니 이건 어차피 클라이언트에서 렌더링하고 해당 폼에서 비밀번호 변경 요청 보내면 되서 불필요)
 // router.get('/authorization2', check_token, sendChangePassword)
-
-// Password 찾기
-router.post('/password/find/id') // Todo : step1. id
-router.post('/password/find/email') // Todo : step2. email -> cert_no
-router.post('/password/reset') // Todo : step3. email + cert_no -> token
-router.put('/passowrd/reset') // Todo : step4. token + new_password
-
-// Email
 
 export default router
