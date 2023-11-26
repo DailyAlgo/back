@@ -581,7 +581,7 @@ export const sendPasswordResetEmail = async (
       return res.status(400).json({ success: false, message: 'id가 Null 값입니다.' })
     if (!req.body.email)
       return res.status(400).json({ success: false, message: 'email이 Null 값입니다.' })
-    const id = req.body.id
+    const id = req.body.id.toLowerCase()
     const email = req.body.email
     if (await userService.findIdByEmail(email) !== id)
       return res.status(400).json({ success: false, message: 'email과 id가 일치하지 않습니다.' })
