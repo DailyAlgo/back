@@ -257,7 +257,7 @@
 
   - `비밀전호 리셋`
   - req
-    - { id, num, newPassword }
+    - { email, num, newPassword }
 
 
 

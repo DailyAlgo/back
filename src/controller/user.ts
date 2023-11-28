@@ -376,7 +376,8 @@ export const resetPassword = async (
     const certificationNum: string = await redis.get(req.body.email, true)
     if (req.body.num !== certificationNum)
       return res.status(400).send('인증번호가 일치하지 않습니다.')
-    await passwordService.update(req.body.id, req.body.newPassword)
+    const id = await userService.findIdByEmail(req.body.email)
+    await passwordService.update(id, req.body.newPassword)
     res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
     next(error)
