@@ -367,8 +367,8 @@ export const resetPassword = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.body.id)
-      return res.status(400).json({ message: 'id가 Null 값입니다.' })
+    if (!req.body.email)
+      return res.status(400).json({ message: 'email가 Null 값입니다.' })
     if (!req.body.num)
       return res.status(400).json({ message: 'num이 Null 값입니다.' })
     if (!req.body.newPassword)
