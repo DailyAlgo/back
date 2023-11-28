@@ -604,7 +604,7 @@ export const sendPasswordResetEmail = async (
       
       res.send(200).json({ success: true, message: 'send mail' })
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 
