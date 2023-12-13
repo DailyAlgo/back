@@ -61,10 +61,7 @@ export const findNotificationCount = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    const notifications = await notificationService.finds(req.credentials.user.id, true, offset)
-    console.log(notifications)
-    console.log(notifications.length)
+    const notifications = await notificationService.finds(req.credentials.user.id, true, 0)
     res.status(200).send(notifications.length.toString())
   } catch (error) {
     next(error)

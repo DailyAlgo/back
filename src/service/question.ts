@@ -30,6 +30,7 @@ type QuestionCreationType = {
 
 type QuestionListType = {
   total_cnt: number
+  nextIndex: number
   question_list: QuestionListItemType[]
 }
 
@@ -116,6 +117,7 @@ export class Question extends Base {
   async finds(offset: number): Promise<QuestionListType> {
     const count = await this.count()
     const limit = 10
+    const nextIndex = offset + limit
     const sql =
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
       FROM question q 
@@ -129,6 +131,7 @@ export class Question extends Base {
     const res = {
       total_cnt: count,
       question_list: rows,
+      nextIndex,
     }
     return res
   }
@@ -234,6 +237,7 @@ export class Question extends Base {
   async search(keyword: string, offset: number): Promise<QuestionListType> {
     const count = await this.seacrhCount(keyword)
     const limit = 10
+    const nextIndex = offset + limit
     keyword = '%'+keyword.trim()+'%'
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
@@ -249,6 +253,7 @@ export class Question extends Base {
     const res = {
       total_cnt: count,
       question_list: rows,
+      nextIndex,
     }
     return res
   }

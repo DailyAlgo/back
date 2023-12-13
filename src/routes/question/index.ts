@@ -38,8 +38,8 @@ router.put('/:id/like', check_token, likeQuestion) // 질문 좋아요
 router.put('/:id/scrap', check_token, scrapQuestion) // 질문 스크랩
 router.get('/:id/comment', findQuestionCommentList) // 댓글 조회
 router.post('/:id/comment', check_token, insertQuestionComment) // 댓글 작성
-router.put('/:id/comment', check_token, updateQuestionComment) // 댓글 수정
-router.delete('/:id/comment', check_token, deleteQuestionComment) // 댓글 삭제
-router.put('/:id/comment/like', check_token, likeQuestionComment) // 댓글 좋아요
+router.put('/comment/:id', check_token, updateQuestionComment) // 댓글 수정
+router.delete('/comment/:id', check_token, deleteQuestionComment) // 댓글 삭제
+router.put('/comment/:id/like', check_token, likeQuestionComment) // 댓글 좋아요
 
 export default router

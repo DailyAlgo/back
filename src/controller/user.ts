@@ -649,8 +649,9 @@ export const findFollower = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.credentials?.user?.id
     const id = req.params['id'].toLowerCase()
-    res.send(await userService.findFollower(id))
+    res.send(await userService.findFollower(id, userId))
   } catch (error) {
     next(error)
   }
@@ -662,8 +663,9 @@ export const findFollowing = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.credentials?.user?.id
     const id = req.params['id'].toLowerCase()
-    res.send(await userService.findFollowing(id))
+    res.send(await userService.findFollowing(id, userId))
   } catch (error) {
     next(error)
   }

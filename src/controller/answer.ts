@@ -66,8 +66,8 @@ export const updateAnswer = async (
       question_id: req.body.question_id,
       user_id: req.credentials.user.id,
       title: req.body.title,
-      language: req.body.language,
-      code: req.body.code,
+      language: req.body.language? req.body.language : '',
+      code: req.body.code? req.body.code : '',
       content: req.body.content,
     }, tags)
     res.status(200).json({ message: 'Answer updated successfully' })

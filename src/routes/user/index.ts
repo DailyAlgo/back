@@ -57,9 +57,9 @@ router.put('/password/reset', resetPassword) // step3 : 새로운 비밀번호 �
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/', check_token, findMySelf) // 본인정보 조회
 router.get('/:id', findUser) // 회원정보 조회
-router.put('/:id', check_token, updateUser) // 회원정보 수정
-router.delete('/:id', check_token, deleteUser) // 회원탈퇴
-router.put('/:id/password', check_password, check_token, changePassword) // 비밀번호 변경
+router.put('/', check_token, updateUser) // 회원정보 수정
+router.delete('/', check_token, deleteUser) // 회원탈퇴
+router.put('/password', check_password, check_token, changePassword) // 비밀번호 변경
 router.post('/:id/follow', check_token, followUser)
 router.delete('/:id/follow', check_token, unfollowUser)
 router.get('/:id/follower', findFollower) // 팔로워 조회

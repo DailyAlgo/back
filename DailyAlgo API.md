@@ -19,6 +19,7 @@
 - POST /sign_up/email
 
   - `5자리 난수 인증번호 메일로 전송`
+  - req : None
   - req
     - { id, email }
 
@@ -27,12 +28,14 @@
   - `5자리 난수 인증번호 확인`
   - req
     - { id, num }
+  - res : Boolean
 
 - POST /find/email
 
-  - `아이디 찾기 이메일`
+  - `아이디 찾기 이메일 전송`
   - req
     - { email }
+  - res : None
 
 - POST /find/validate
 
@@ -78,6 +81,8 @@
 
   - `회원정보 조회`
 
+  - res : None
+
   - req
 
     - {
@@ -108,43 +113,50 @@
 
       }
 
-- PUT /:id
+- PUT /
 
   - `회원정보 수정`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { nickname, intro }
+  - res : None
 
-- DELETE /:id
+- DELETE /
 
   - `회원탈퇴`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
-- PUT /:id/password
+- PUT /password
 
   - `비밀번호 변경`
-  - 로그인 필요
+  - `로그인 필요`
   - req
-    - { newPassword }
+    - { password, newPassword }
+  - res : None
 
 - PUT /:id/follow
 
   - `팔로우`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - GET /:id/follower
 
   - `팔로워 조회`
+
+  - req : None
 
   - res
 
     - [{
 
        id: string
-
        nickname: string
-
        intro?: string
+       is_following?: boolean (본인이 팔로우 중이면 True)
 
       }]
 
@@ -152,15 +164,16 @@
 
   - `팔로잉 조회`
 
+  - req : None
+
   - res
 
     - [{
 
        id: string
-
        nickname: string
-
        intro?: string
+       is_following?: boolean (본인이 팔로우 중이면 True)
 
       }]
 
@@ -168,96 +181,88 @@
 
   - `질문 조회`
 
+  - req : query ? offest (없으면 0)
+
   - res
 
-    - [{
-
-       id: string
-
-       title: string
-
-       source: string
-
-       type: string
-
-       tags: string[]
-
-       user_id: string
-
-       answer_created_time: Date
-
-      }]
+    - {
+      total_cnt: number
+      nextIndex: number
+      question_list: [{
+        id: string
+        title: string
+        source: string
+        type: string
+        tags: string[]
+        user_id: string
+        answer_created_time: Date
+        }]
+    }
 
 - GET /:id/answer
 
   - `답변 조회`
 
+  - req : query ? offest (없으면 0)
+
   - res
 
-    - [{
-
-       id: string
-
-       title: string
-
-       source: string
-
-       type: string
-
-       tags: string[]
-
-       user_id: string
-
-       answer_created_time: Date
-
-      }]
+    - {
+      total_cnt: number
+      nextIndex: number
+      question_list: [{
+        id: string
+        title: string
+        source: string
+        type: string
+        tags: string[]
+        user_id: string
+        answer_created_time: Date
+        }]
+    }
 
 - GET /:id/scrap
 
   - `스크랩 조회`
 
+  - req : query ? offest (없으면 0)
+
   - res
 
-    - [{
-
-       id: string
-
-       title: string
-
-       source: string
-
-       type: string
-
-       tags: string[]
-
-       user_id: string
-
-       answer_created_time: Date
-
-      }]
-
-- GET /authorization
-
-  - `이메일 클릭 시 사용자 인증`
-  - 로그인 필요
+    - {
+      total_cnt: number
+      nextIndex: number
+      question_list: [{
+        id: string
+        title: string
+        source: string
+        type: string
+        tags: string[]
+        user_id: string
+        answer_created_time: Date
+        }]
+    }
 
 - POST /password/reset/email
 
   - `비밀번호 리셋 이메일 발송`
   - req
     - { id, email }
+  - res : None
 
 - POST /password/reset/validate
 
   - `비밀번호 리셋 인증번호`
   - req
     - { email, num }
+  - res : T/F
 
 - PUT /password/reset
 
   - `비밀전호 리셋`
   - req
     - { email, num, newPassword }
+  - res : None
 
 
 
@@ -266,9 +271,10 @@
 - POST /
 
   - `단체 생성`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { name }
+  - res : None
 
 - GET /code
 
@@ -297,17 +303,23 @@
 - DELET /:id
 
   - `단체 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - POST /:id/join
 
   - `가입`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - DELETE /:id/withdraw
 
   - `탈퇴`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 
 
@@ -319,41 +331,34 @@
 
   - req
 
-    - query ? keyword
+    - query ? keyword & offset (없으면 0)
 
   - res
 
-    - [{
-
-       id: string
-
-       title: string
-
-       source: string
-
-       type: string
-
-       view_cnt: number
-
-       like_cnt: number
-
-       answer_cnt: number
-
-       comment_cnt: number
-
-       tags: string[]
-
-       user_id: string
-
-       created_time: Date
-
-      }]
+    - {
+      total_cnt: number
+      nextIndex: number
+      question_list: [{
+        id: string
+        title: string
+        source: string
+        type: string
+        view_cnt: number
+        like_cnt: number
+        answer_cnt: number
+        comment_cnt: number
+        tags: string[]
+        user_id: string
+        created_time: Date
+        }]
+      }
 
 - POST /tag
 
   - `신규 태그 생성`
   - req
     - { name }
+  - res : None
 
 - GET /tag
 
@@ -361,12 +366,13 @@
   - req
     - { name }
     - 해당 없을 경우 새로 생성 (즉 조회한 태그는 무조건 존재 -> POST랑 기능이 겹침)
+  - res : None
 
 - POST /
 
   - `질문 생성`
 
-  - 로그인 필요
+  - `로그인 필요`
 
   - req
 
@@ -376,14 +382,13 @@
       link: 문제 원문 링크, 
       type: 질문 유형, 
       content: 본문내용,
-
-      launguage: 언어,
-
+    launguage: 언어,
       code: 코드 영역,
-
-      tages: 태그 이름을 리스트 형태로
+    tages: 태그 이름을 리스트 형태로
       }
 
+  - res : None
+  
 - GET /
 
   - `질문 리스트 조회`
@@ -395,37 +400,31 @@
 
   - res
 
-    - [{
-
-       id: string
-
-       title: string
-
-       source: string
-
-       type: string
-
-       view_cnt: number
-
-       like_cnt: number
-
-       answer_cnt: number
-
-       comment_cnt: number
-
-       tags: string[]
-
-       user_id: string
-
-       created_time: Date
-
-      }]
+    - {
+      total_cnt: number
+      nextIndex: number
+      question_list: [{
+        id: string
+        title: string
+        source: string
+        type: string
+        view_cnt: number
+        like_cnt: number
+        answer_cnt: number
+        comment_cnt: number
+        tags: string[]
+        user_id: string
+        created_time: Date
+        }]
+      }
 
     - 10개의 글 제공
 
 - GET /:id
 
   - `질문 조회`
+
+  - req : None
 
   - res
 
@@ -473,7 +472,7 @@
 
   - `질문 수정`
 
-  - 로그인 필요
+  - `로그인 필요`
 
   - req
 
@@ -489,24 +488,34 @@
       tags
       }
 
+  - res : None
+
 - DELETE /:id
 
   - `질문 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - PUT /:id/like
 
   - `질문 좋아요`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - PUT /:id/scrap
 
   - `질문 스크랩`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - GET /:id/comment
 
   - `댓글 조회`
+
+  - req : None
 
   - res
 
@@ -531,26 +540,32 @@
 - POST /:id/comment
 
   - `댓글 작성`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { content }
+  - res : None
 
-- PUT /:id/comment
+- PUT /comment/:id
 
   - `댓글 수정`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { content }
+  - res : None
 
-- DELETE /:id/comment
+- DELETE /comment/:id
 
   - `댓글 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
-- PUT  /:id/comment/like
+- PUT  /comment/:id/like
 
   - `댓글 좋아요`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 
 
@@ -561,6 +576,7 @@
   - `신규 태그 생성`
   - req
     - { name }
+  - res : None
 
 - GET /tag
 
@@ -568,16 +584,18 @@
   - req
     - { name }
     - 해당 없을 경우 새로 생성 (즉 조회한 태그는 무조건 존재 -> POST랑 기능이 겹침)
+  - res : None
 
 - POST /
 
   - `답변 생성`
 
-  - 로그인 필요
+  - `로그인 필요`
 
   - req
 
     - {
+      question_id: question_id
       title: 제목,
       language: 언어,
       code: 코드 영역,
@@ -586,9 +604,13 @@
 
       }
 
+  - res : None
+
 - GET /:question_id
 
   - `답변 리스트 조회`
+
+  - req : None
 
   - res
 
@@ -621,7 +643,7 @@
 - PUT /:id
 
   - `답변 수정`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - {
       title,
@@ -629,20 +651,27 @@
       code,
       content
       }
+  - res : None
 
 - DELETE /:id
 
   - `답변 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - PUT /:id/like
 
   - `답변 좋아요`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 - GET /:id/comment
 
   - `답변 댓글 조회`
+
+  - req : None
 
   - res
 
@@ -667,36 +696,64 @@
 - POST /:id/comment
 
   - `댓글 생성`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { content }
+  - res : None
 
-- PUT /:id/comment
+- PUT /comment/:id
 
   - `댓글 수정`
-  - 로그인 필요
+  - `로그인 필요`
   - req
     - { content }
+  - res : None
 
-- DELETE /:id/comment
+- DELETE /comment/:id
 
   - `댓글 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
-- PUT /:id/comment/like
+- PUT /comment/:id/like
 
   - `댓글 좋아요`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None
 
 
 
 ## /notification
 
+```
+[SUBJECT / OBJECT 테이블]
+question
+question_comment
+answer
+answer_comment
+user
+```
+
+```
+[TYPE 종류]
+comment : 댓글이 달렷을 때
+answer : 답변이 달릴 시
+like : 글, 댓글 좋아요 시
+join : organization 가입 시
+follow : follow 시
+```
+
+
+
 - GET /
 
   - `알림 리스트 조회`
 
-  - 로그인 필요
+  - `로그인 필요`
+
+  - req : None
 
   - res
 
@@ -733,18 +790,22 @@
 - GET /count
 
   - `알림 여부 확인`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
   - res
     - 알림 개수
 
 - GET /:id
 
   - `알림 정보로 이동`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
   - res
     - 리다이렉트
 
 - DELETE /:id
 
   - `알림 삭제`
-  - 로그인 필요
+  - `로그인 필요`
+  - req : None
+  - res : None

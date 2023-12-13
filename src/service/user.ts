@@ -10,6 +10,7 @@ interface UserNickname {
   id: string
   nickname: string
   intro?: string
+  is_following?: boolean
 }
 
 interface UserInfo extends UserNickname {
@@ -40,7 +41,13 @@ interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
   organization_code?: string
 }
 
-interface UserQuestionListType {
+type UserQuestionListType = {
+  total_cnt: number
+  nextIndex: number
+  question_list: UserQuestionListItemType[]
+}
+
+interface UserQuestionListItemType {
   id: string
   title: string
   source: string
@@ -162,34 +169,41 @@ export class User extends Base {
   }
   
   async findFollower(
-    id: string
+    id: string,
+    user_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
-    `SELECT u.id, u.nickname, u.intro 
+    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
     FROM follow f
     INNER JOIN user u ON f.follower_id = u.id
-    WHERE f.following_id = :following_id`
-    const rows = await this._findsIfExist(sql, { following_id: id }, true)
+    LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
+    WHERE f.following_id = :target_id`
+
+    const rows = await this._findsIfExist(sql, { target_id: id, my_id: user_id }, true)
     return rows
   }
   
   async findFollowing(
-    id: string
+    id: string,
+    user_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
-    `SELECT u.id, u.nickname, u.intro 
+    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
     FROM follow f
     INNER JOIN user u ON f.following_id = u.id
-    WHERE f.follower_id = :follower_id`
-    const rows = await this._findsIfExist(sql, { follower_id: id }, true)
+    LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
+    WHERE f.follower_id = :target_id`
+    const rows = await this._findsIfExist(sql, { target_id: id, my_id: user_id }, true)
     return rows
   }
 
   async findQuestion(
     id: string,
     offset: number
-  ): Promise<UserQuestionListType[]> {
+  ): Promise<UserQuestionListType> {
+    const count = await this.questionCount(id)
     const limit = 10
+    const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
       FROM question q 
@@ -198,17 +212,34 @@ export class User extends Base {
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
-    return Promise.all(rows.map(row=>{
+    const question_list = await Promise.all(rows.map(row=>{
       const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
+    const res = {
+      total_cnt: count,
+      question_list,
+      nextIndex,
+    }
+    return res
+  }
+
+  async questionCount(user_id: string): Promise<number> {
+    const sql = 
+      `SELECT COUNT(*) 
+      FROM question q 
+      WHERE q.user_id = :user_id`
+    const row = await this._findIfExist(sql, { user_id }, false)
+    return row['COUNT(*)']
   }
 
   async findAnswer(
     id: string,
     offset: number
-  ): Promise<UserQuestionListType[]> {
+  ): Promise<UserQuestionListType> {
+    const count = await this.answerCount(id)
     const limit = 10
+    const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
       FROM answer a 
@@ -217,17 +248,36 @@ export class User extends Base {
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
-    return Promise.all(rows.map(row=>{
+    const question_list = await Promise.all(rows.map(row=>{
       const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
+    const res = {
+      total_cnt: count,
+      question_list,
+      nextIndex,
+    }
+    return res
+  }
+
+  async answerCount(user_id: string): Promise<number> {
+    const sql = 
+      `SELECT COUNT(*) 
+      FROM answer a 
+      INNER JOIN question q ON q.id = a.question_id 
+      WHERE a.user_id = :user_id 
+      GROUP BY q.id, q.title, q.source, q.type, q.user_id`
+    const row = await this._findIfExist(sql, { user_id }, false)
+    return row['COUNT(*)']
   }
 
   async findScrap(
     id: string,
     offset: number
-  ): Promise<UserQuestionListType[]> {
+  ): Promise<UserQuestionListType> {
+    const count = await this.scrapCount(id)
     const limit = 10
+    const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
       FROM scrap s
@@ -237,10 +287,28 @@ export class User extends Base {
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit }, true)
-    return Promise.all(rows.map(row=>{
+    const question_list = await Promise.all(rows.map(row=>{
       const tags = questionService.findTag(row['id'])
       return {...row, tags}
     }))
+    const res = {
+      total_cnt: count,
+      question_list,
+      nextIndex,
+    }
+    return res
+  }
+
+  async scrapCount(user_id: string): Promise<number> {
+    const sql = 
+      `SELECT COUNT(*) 
+      FROM scrap s
+      INNER JOIN question q ON q.id = s.question_id 
+      LEFT OUTER JOIN answer a ON q.id = a.question_id 
+      WHERE s.user_id = :user_id 
+      GROUP BY q.id, q.title, q.source, q.type, q.user_id`
+    const row = await this._findIfExist(sql, { user_id }, false)
+    return row['COUNT(*)']
   }
 }
 
