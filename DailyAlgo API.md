@@ -753,10 +753,12 @@ follow : follow 시
 
   - `로그인 필요`
 
-  - req : None
+  - req : query ? unreadOnly & offset
+    - unreadOnly : true면 읽지 않은 것만 보여줌
+    - offset : 없으면 0번째부터
 
   - res
-
+    - 10개씩 보여줌
     - [{
 
        id: number

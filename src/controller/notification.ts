@@ -76,7 +76,7 @@ export const findNotificationList = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const unreadOnly = req.query['unreadOnly'] ? Boolean(req.query['offset']) : true
+    const unreadOnly = req.query['unreadOnly'] ? Boolean(req.query['offset']) : false
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.status(200).json(await notificationService.finds(req.credentials.user.id, unreadOnly, offset))
   } catch (error) {
