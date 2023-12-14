@@ -4,7 +4,6 @@ import {
   deleteQuestionComment,
   findQuestion,
   findQuestionCommentList,
-  findQuestionList,
   getCache,
   insertQuestion,
   insertQuestionComment,
@@ -26,11 +25,10 @@ const router = express.Router()
 router.get('/cache', getCache)
 router.post('/cache', setCache)
 
-router.get('/search', searchQuestion) // 질문 검색
 router.post('/tag', insertQuestionTag) // 신규 태그 생성
 router.get('/tag', searchQuestionTag) // 태그 조회
 router.post('/', check_token, insertQuestion) // 질문 생성
-router.get('/', findQuestionList) // 질문 리스트 조회
+router.get('/', searchQuestion) // 질문 검색
 router.get('/:id', check_token_existence, findQuestion) // 질문 조회
 router.put('/:id', check_token, updateQuestion) // 질문 수정
 router.delete('/:id', check_token, deleteQuestion) // 질문 삭제

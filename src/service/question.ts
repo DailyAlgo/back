@@ -234,16 +234,35 @@ export class Question extends Base {
     return rows
   }
 
-  async search(keyword: string, offset: number): Promise<QuestionListType> {
+  async search(keyword: string, source: string, type: string, status: string, order: string, offset: number): Promise<QuestionListType> {
     const count = await this.seacrhCount(keyword)
     const limit = 10
     const nextIndex = offset + limit
     keyword = '%'+keyword.trim()+'%'
+    source = source === 'all' ? '%' : source
+    type = type === 'all' ? '%' : type
+    status = status === 'all' ? '1=1' : 'qi.answer_cnt = ' + status
+    switch (status) {
+      case 'all':
+        status = '1=1'
+        break
+      case 'answered':
+        status = 'qi.answer_cnt > 0'
+        break
+      case 'not_answered':
+        status = 'qi.answer_cnt = 0'
+        break
+    }
+    order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
       FROM question q 
       INNER JOIN question_info qi ON q.id = qi.question_id 
       WHERE q.title LIKE :keyword
+      AND q.source LIKE :source
+      AND q.type LIKE :type
+      AND ${status}
+      ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { keyword, limit, offset }, true)
     Promise.all(rows.map(row=>{

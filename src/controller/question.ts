@@ -242,9 +242,13 @@ export const searchQuestion = async (
   next: NextFunction
 ) => {
   try {
-    const keyword = req.query.keyword
+    const keyword = req.query.keyword ? req.query.keyword : ''
+    const source = req.query.source ? req.query.source : 'all'
+    const type = req.query.type ? req.query.type : 'all'
+    const status = req.query.status ? req.query.status : 'all'
+    const order = req.query.order ? req.query.order : 'new'
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(await questionService.search(keyword as string, offset))
+    res.status(200).json(await questionService.search(keyword as string, source as string, type as string, status as string, order as string, offset))
   } catch (error) {
     next(error)
   }
