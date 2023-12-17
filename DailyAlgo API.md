@@ -189,13 +189,21 @@
       total_cnt: number
       nextIndex: number
       question_list: [{
+
         id: string
+
         title: string
+
         source: string
+
         type: string
+        
         tags: string[]
+        
         user_id: string
+        
         answer_created_time: Date
+        
         }]
     }
 
@@ -211,13 +219,21 @@
       total_cnt: number
       nextIndex: number
       question_list: [{
+        
         id: string
+        
         title: string
+        
         source: string
+        
         type: string
+        
         tags: string[]
+        
         user_id: string
+        
         answer_created_time: Date
+        
         }]
     }
 
@@ -233,13 +249,21 @@
       total_cnt: number
       nextIndex: number
       question_list: [{
+        
         id: string
+        
         title: string
+        
         source: string
+        
         type: string
+        
         tags: string[]
+        
         user_id: string
+        
         answer_created_time: Date
+        
         }]
     }
 
@@ -339,17 +363,29 @@
       total_cnt: number
       nextIndex: number
       question_list: [{
+        
         id: string
+        
         title: string
+        
         source: string
+        
         type: string
+        
         view_cnt: number
+        
         like_cnt: number
+        
         answer_cnt: number
+        
         comment_cnt: number
+        
         tags: string[]
+        
         user_id: string
+        
         created_time: Date
+        
         }]
       }
 
@@ -377,14 +413,23 @@
   - req
 
     - {
+      
       title: 제목, 
+      
       source: 출처(백준인지 프로그래머스인지 등등), 
+      
       link: 문제 원문 링크, 
+      
       type: 질문 유형, 
+      
       content: 본문내용,
-    launguage: 언어,
+      
+      launguage: 언어,
+      
       code: 코드 영역,
-    tages: 태그 이름을 리스트 형태로
+      
+      tages: 태그 이름을 리스트 형태로
+      
       }
 
   - res : None
@@ -401,21 +446,37 @@
   - res
 
     - {
-      total_cnt: number
-      nextIndex: number
-      question_list: [{
+        
+        total_cnt: number
+        
+        nextIndex: number
+        
+        question_list: [{
+        
         id: string
+        
         title: string
+        
         source: string
+        
         type: string
+        
         view_cnt: number
+        
         like_cnt: number
+        
         answer_cnt: number
+        
         comment_cnt: number
+        
         tags: string[]
+        
         user_id: string
+        
         created_time: Date
+        
         }]
+      
       }
 
     - 10개의 글 제공
@@ -759,35 +820,43 @@ follow : follow 시
 
   - res
     - 10개씩 보여줌
-    - [{
+    - {
+        
+        total_cnt: number
+        
+        nextIndex: number
+        
+        notification_list: [{
 
-       id: number
+          id: number
 
-       is_read: boolean
+          is_read: boolean
 
-       user_id: string
+          user_id: string
 
-       type: string
+          type: string
 
-       subject?: string
+          subject?: string
 
-       subject_id?: string
+          subject_id?: string
 
-       subject_name?: string
+          subject_name?: string
 
-       object: string
+          object: string
 
-       object_id: string
+          object_id: string
 
-       object_name: string
+          object_name: string
 
-       target_url?: string
+          target_url?: string
 
-       content?: string
+          content?: string
 
-       created_time: Date
+          created_time: Date
 
-      }]
+        }]
+
+        }
 
 - GET /count
 

@@ -16,7 +16,13 @@ interface NotificationBase {
   content?: string
 }
 
-interface NotificationInfo extends NotificationBase {
+interface NotificationInfoList {
+  total_cnt: number
+  nextIndex: number
+  notification_list: NotificationInfoListItem
+}
+
+interface NotificationInfoListItem extends NotificationBase {
   id: number
   is_read: boolean
   user_id: string
@@ -37,7 +43,7 @@ export class Notification extends Base {
     super(options)
   }
 
-  async find(id: number, user_id: string, optional: boolean): Promise<NotificationInfo> {
+  async find(id: number, user_id: string, optional: boolean): Promise<NotificationInfoListItem> {
     const sql = 'SELECT * FROM notification WHERE id = :id AND user_id = :user_id'
     const row = await this._findIfExist(sql, { id, user_id }, optional)
     return {
@@ -57,8 +63,10 @@ export class Notification extends Base {
     }
   }
 
-  async finds(user_id: number, unreadOnly: boolean, offset: number): Promise<NotificationInfo[]> {
+  async finds(user_id: string, unreadOnly: boolean, offset: number): Promise<NotificationInfoList> {
+    const count = await this.count(user_id, unreadOnly)
     const limit = 10
+    const nextIndex = offset + limit
     const sql =
       `SELECT * 
       FROM notification 
@@ -67,7 +75,18 @@ export class Notification extends Base {
       ORDER BY id
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id, limit, offset }, true)
-      return rows
+    const res = {
+      total_cnt: count,
+      nextIndex,
+      notification_list: rows,
+    }
+    return res
+  }
+
+  async count(user_id: string, unreadOnly: boolean): Promise<number> {
+    const sql = `SELECT COUNT(*) FROM notification WHERE user_id = :user_id ${unreadOnly?'AND is_read = FALSE ':' '}`
+    const row = await this._findIfExist(sql, { user_id }, true)
+    return row['COUNT(*)']
   }
 
   async create(notification: NotificationBase): Promise<void> {
