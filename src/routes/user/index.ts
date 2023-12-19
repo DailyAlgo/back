@@ -53,13 +53,13 @@ router.post('/find/validate', validateFindIdCertificationNum) // 아이디 찾�
 router.post('/password/reset/email', sendPasswordResetEmail) // step1 : 6자리 난수 인증번호 메일로 전송
 router.post('/password/reset/validate', validatePasswordResetCertificationNum) // step2 : 인증번호 확인
 router.put('/password/reset', resetPassword) // step3 : 새로운 비밀번호 입력
+router.put('/password', check_password, check_token, changePassword) // 비밀번호 변경
 
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/', check_token, findMySelf) // 본인정보 조회
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/', check_token, updateUser) // 회원정보 수정
 router.delete('/', check_token, deleteUser) // 회원탈퇴
-router.put('/password', check_password, check_token, changePassword) // 비밀번호 변경
 router.post('/:id/follow', check_token, followUser)
 router.delete('/:id/follow', check_token, unfollowUser)
 router.get('/:id/follower', findFollower) // 팔로워 조회

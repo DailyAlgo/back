@@ -51,7 +51,7 @@ export const findMySelf = async (
     const id = req.credentials?.user.id
     if (id === null)
       return res.status(400).json({ message: 'id is null' })
-    res.status(200).json(await userService.find(id.toLowerCase(), false))
+    res.status(200).json(await userService.find(id, false))
   } catch (error) {
     next(error)
   }
@@ -64,7 +64,7 @@ export const findUser = async (
 ) => {
   try {
     const id = req.params['id']
-    res.status(200).json(await userService.find(id.toLowerCase(), false))
+    res.status(200).json(await userService.find(id, false))
   } catch (error) {
     next(error)
   }
@@ -77,7 +77,7 @@ export const signUp = async (
 ) => {
   try {
     await userService.create({
-      id: req.body.id.toLowerCase(),
+      id: req.body.id,
       name: req.body.name,
       nickname: req.body.nickname,
       email: req.body.email,
@@ -318,7 +318,7 @@ export const updateUser = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = req.credentials.user.id.toLowerCase()
+    const id = req.credentials.user.id
     await userService.update({
       id: id,
       nickname: req.body.nickname,
@@ -338,7 +338,7 @@ export const deleteUser = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = req.credentials.user.id.toLowerCase()
+    const id = req.credentials.user.id
     await userService.delete(id)
     res.status(200).json({ message: 'User deleted successfully' })
   } catch (error) {
@@ -582,7 +582,7 @@ export const sendPasswordResetEmail = async (
       return res.status(400).json({ success: false, message: 'id가 Null 값입니다.' })
     if (!req.body.email)
       return res.status(400).json({ success: false, message: 'email이 Null 값입니다.' })
-    const id = req.body.id.toLowerCase()
+    const id = req.body.id
     const email = req.body.email
     if (await userService.findIdByEmail(email) !== id)
       return res.status(400).json({ success: false, message: 'email과 id가 일치하지 않습니다.' })
@@ -618,7 +618,7 @@ export const followUser = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const follower = req.credentials.user.id
-    const following = req.params['id'].toLowerCase()
+    const following = req.params['id']
     await userService.follow(follower, following, true)
     res.send('success follow')
   } catch (error) {
@@ -635,7 +635,7 @@ export const unfollowUser = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const follower = req.credentials.user.id
-    const following = req.params['id'].toLowerCase()
+    const following = req.params['id']
     await userService.follow(follower, following, false)
     res.send('success unfollow')
   } catch (error) {
@@ -650,7 +650,7 @@ export const findFollower = async (
 ) => {
   try {
     const userId = req.credentials?.user?.id
-    const id = req.params['id'].toLowerCase()
+    const id = req.params['id']
     res.send(await userService.findFollower(id, userId))
   } catch (error) {
     next(error)
@@ -664,7 +664,7 @@ export const findFollowing = async (
 ) => {
   try {
     const userId = req.credentials?.user?.id
-    const id = req.params['id'].toLowerCase()
+    const id = req.params['id']
     res.send(await userService.findFollowing(id, userId))
   } catch (error) {
     next(error)
@@ -677,7 +677,7 @@ export const findQuestion = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
+    const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findQuestion(id, offset))
   } catch (error) {
@@ -691,7 +691,7 @@ export const findAnswer = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
+    const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findAnswer(id, offset))
   } catch (error) {
@@ -705,7 +705,7 @@ export const findScrap = async (
   next: NextFunction
 ) => {
   try {
-    const id = req.params['id'].toLowerCase()
+    const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
     res.send(await userService.findScrap(id, offset))
   } catch (error) {
