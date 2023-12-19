@@ -366,46 +366,6 @@
 
 ## /question
 
-- GET /search
-
-  - `질문 검색`
-
-  - req
-
-    - query ? keyword & offset (없으면 0)
-
-  - res
-
-    - {
-      total_cnt: number
-      nextIndex: number
-      question_list: [{
-        
-        id: string
-        
-        title: string
-        
-        source: string
-        
-        type: string
-        
-        view_cnt: number
-        
-        like_cnt: number
-        
-        answer_cnt: number
-        
-        comment_cnt: number
-        
-        tags: string[]
-        
-        user_id: string
-        
-        created_time: Date
-        
-        }]
-      }
-
 - POST /tag
 
   - `신규 태그 생성`
@@ -453,11 +413,21 @@
   
 - GET /
 
-  - `질문 리스트 조회`
+  - `질문 리스트 조회,검색`
 
   - req
 
-    - query ? offest
+    - query ? keyword, offest, source, type, status, order
+      - keyword : 검색어
+      - offset : 다음 검색 (10개)
+      - source : 문제출처
+        - all 인 경우 전체 조회
+      - type : 질문 타입
+        - all 인 경우 전체 조회
+      - status : 답변 여부
+        - all / answered / not_answered
+      - order : 정렬 순서
+        - 현재는 new 뿐
     - 오프셋이 없을 경우 0부터
 
   - res
