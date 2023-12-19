@@ -26,7 +26,8 @@ import {
   validateFindIdCertificationNum,
   sendPasswordResetEmail,
   validatePasswordResetCertificationNum,
-  resetPassword
+  resetPassword,
+  refreshToken
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
@@ -46,6 +47,8 @@ router.get('/check/nickname', checkNickname) // 닉네임 중복확인
 router.post('/sign_up/email', sendSignUpEmail) // 6자리 난수 인증번호 메일로 전송
 router.post('/sign_up/validate', validateSignUpCertificationNum) // 인증번호 확인
 router.post('/sign_up', check_certification_num, signUp) // 회원가입
+
+router.put('/token', refreshToken) // 토큰 갱신(프론트엔드에서 사용) -> 쿠키 사용으로 변경이 바람직함
 
 router.post('/find/email', sendFindIdEmail) // 6자리 난수 인증번호 메일로 전송
 router.post('/find/validate', validateFindIdCertificationNum) // 아이디 찾기

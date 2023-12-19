@@ -4,6 +4,16 @@
 >
 > POST, PUT, DELETE는 body에다가 데이터를 담아 전송합니다.
 
+```
+[Refresh Token]
+
+- 기존 : 토큰이 필요한 모든 요청에서, cookie의 토큰 만료시 자동으로 refresh 후 응답에 새로운 cookie를 넣어 update
+
+- 변경 : 토큰이 필요한 모든 요청에서, 요청의 토큰 만료시 Error 응답, TokenExpiredError 메시지 전송
+  - (PUT) /user/token 으로 토큰 갱신
+
+```
+
 ## /user
 
 - GET /oauth/google
@@ -287,6 +297,13 @@
   - req
     - { email, num, newPassword }
   - res : None
+
+- PUT /token
+
+  - `토큰 갱신`
+  - `로그인 필요`
+  - req : None
+  - res : { token, message }
 
 
 
