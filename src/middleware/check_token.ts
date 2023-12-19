@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import refreshTokenService from '../service/refresh_token'
-import userService from '../service/user'
+// import refreshTokenService from '../service/refresh_token'
+// import userService from '../service/user'
 
 const middleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
