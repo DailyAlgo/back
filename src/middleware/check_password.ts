@@ -3,7 +3,7 @@ import passwordService from '../service/password'
 
 const middleware = async (req: Request, _: Response, next: NextFunction) => {
   try {
-    const id = req.credentials?.user.id
+    const id = req.credentials? req.credentials.user.id : req.body.id
     const password = req.body.password
     await passwordService.compare(id, password)
     next()
