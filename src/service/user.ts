@@ -156,21 +156,35 @@ export class User extends Base {
   async follow(
     follower_id: string,
     following_id: string, 
-    type: boolean
   ): Promise<void> {
     if (follower_id === following_id) {
       throw new Error('BAD_REQUEST')
     }
-    const sql = type 
-    ? 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
-    : 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
-    type ? await this._create(sql, { follower_id, following_id }) : await this._delete(sql, { follower_id, following_id })
-    notify('user', follower_id, 'follow', 'user', following_id)
+    const follow = await this.findFollow(follower_id, following_id)
+    const sql = follow 
+    ? 'DELETE FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
+    : 'INSERT INTO follow (follower_id, following_id) VALUES (:follower_id, :following_id)'
+    if (follow) {
+      await this._delete(sql, { follower_id, following_id })
+    }
+    else {
+      await this._create(sql, { follower_id, following_id })
+      notify('user', follower_id, 'follow', 'user', following_id)
+    }
+  }
+
+  async findFollow(
+    follower_id: string,
+    following_id: string,
+  ): Promise<boolean> {
+    const sql = 'SELECT * FROM follow WHERE follower_id = :follower_id AND following_id = :following_id'
+    const row = await this._findIfExist(sql, { follower_id, following_id }, true)
+    return row['follower_id'] && row['following_id'] ? true : false
   }
   
   async findFollower(
-    id: string,
     user_id: string,
+    my_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
     `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
@@ -179,13 +193,13 @@ export class User extends Base {
     LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
     WHERE f.following_id = :target_id`
 
-    const rows = await this._findsIfExist(sql, { target_id: id, my_id: user_id }, true)
+    const rows = await this._findsIfExist(sql, { target_id: user_id, my_id }, true)
     return rows
   }
   
   async findFollowing(
-    id: string,
     user_id: string,
+    my_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
     `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
@@ -193,7 +207,7 @@ export class User extends Base {
     INNER JOIN user u ON f.following_id = u.id
     LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
     WHERE f.follower_id = :target_id`
-    const rows = await this._findsIfExist(sql, { target_id: id, my_id: user_id }, true)
+    const rows = await this._findsIfExist(sql, { target_id: user_id, my_id }, true)
     return rows
   }
 

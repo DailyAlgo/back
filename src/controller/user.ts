@@ -653,29 +653,29 @@ export const followUser = async (
       return res.status(400).json({ message: 'User Info is missing' })
     const follower = req.credentials.user.id
     const following = req.params['id']
-    await userService.follow(follower, following, true)
+    await userService.follow(follower, following)
     res.send('success follow')
   } catch (error) {
     next(error)
   }
 }
 
-export const unfollowUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (!req.credentials?.user)
-      return res.status(400).json({ message: 'User Info is missing' })
-    const follower = req.credentials.user.id
-    const following = req.params['id']
-    await userService.follow(follower, following, false)
-    res.send('success unfollow')
-  } catch (error) {
-    next(error)
-  }
-}
+// export const unfollowUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     if (!req.credentials?.user)
+//       return res.status(400).json({ message: 'User Info is missing' })
+//     const follower = req.credentials.user.id
+//     const following = req.params['id']
+//     await userService.follow(follower, following, false)
+//     res.send('success unfollow')
+//   } catch (error) {
+//     next(error)
+//   }
+// }
 
 export const findFollower = async (
   req: Request,
@@ -683,9 +683,9 @@ export const findFollower = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.credentials?.user?.id
-    const id = req.params['id']
-    res.send(await userService.findFollower(id, userId))
+    const myId = req.credentials?.user?.id || ' '
+    const targetId = req.params['id']
+    res.send(await userService.findFollower(targetId, myId))
   } catch (error) {
     next(error)
   }
@@ -697,9 +697,9 @@ export const findFollowing = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.credentials?.user?.id
-    const id = req.params['id']
-    res.send(await userService.findFollowing(id, userId))
+    const myId = req.credentials?.user?.id || ' '
+    const targetId = req.params['id']
+    res.send(await userService.findFollowing(targetId, myId))
   } catch (error) {
     next(error)
   }

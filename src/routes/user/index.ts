@@ -14,7 +14,6 @@ import {
   checkNickname,
   sendSignUpEmail,
   followUser,
-  unfollowUser,
   findFollower,
   findFollowing,
   findQuestion,
@@ -63,8 +62,9 @@ router.get('/', check_token, findMySelf) // 본인정보 조회
 router.get('/:id', findUser) // 회원정보 조회
 router.put('/', check_token, updateUser) // 회원정보 수정
 router.delete('/', check_token, deleteUser) // 회원탈퇴
-router.post('/:id/follow', check_token, followUser)
-router.delete('/:id/follow', check_token, unfollowUser)
+// router.post('/:id/follow', check_token, followUser)
+// router.delete('/:id/follow', check_token, unfollowUser)
+router.put('/:id/follow', check_token, followUser)
 router.get('/:id/follower', findFollower) // 팔로워 조회
 router.get('/:id/following', findFollowing) // 팔로잉 조회
 router.get('/:id/question', findQuestion) // 질문 조회
