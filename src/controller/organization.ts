@@ -6,6 +6,10 @@ export const findIdByCode = async (code: string): Promise<number> => {
   return (await organizationService.find(code, true)).id
 }
 
+export const findIfExistByCode = async (code: string): Promise<boolean> => {
+  return !((await organizationService.count(code)) == 0)
+}
+
 export const findOrganization = async (
   req: Request,
   res: Response,

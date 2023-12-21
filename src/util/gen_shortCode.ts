@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import { findIdByCode } from '../controller/organization'
+import { findIfExistByCode } from '../controller/organization'
 
 const getCode_6_digits = async (value: string, salt: string): Promise<string> => {
   const hash = await bcrypt.hash(value, salt)
@@ -9,7 +9,7 @@ const getCode_6_digits = async (value: string, salt: string): Promise<string> =>
 export const getOrganizationCode = async (name: string): Promise<string> => {
   const salt = await bcrypt.genSalt(3)
   let code = await getCode_6_digits(name, salt)
-  while (await findIdByCode(code) < 0) {
+  while ((await findIfExistByCode(code)) ) {
     code = await getCode_6_digits(code, salt)
   }
   return code
