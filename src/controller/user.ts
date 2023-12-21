@@ -76,6 +76,8 @@ export const signUp = async (
   next: NextFunction
 ) => {
   try {
+    if (!signUp_regex_check(req.body.id, req.body.nickname, req.body.password))
+      return res.status(400).json({ message: '잘못된 형식의 입력값입니다.' })
     await userService.create({
       id: req.body.id,
       name: req.body.name,
@@ -105,6 +107,22 @@ export const signUp = async (
   } catch (error) {
     next(error)
   }
+}
+
+const signUp_regex_check = (id: string, nickname: string, password: string) => {
+  // ID 체크
+  const id_regex = /^(?=.*?[a-zA-Z])(?=.*?[a-z])(?=.*?[0-9]).{4,12}$/
+  if (!id_regex.test(id)) return false
+
+  // 닉네임 체크
+  const nickname_regex = /^[가-힣a-zA-Z0-9]{4,12}$/
+  if (!nickname_regex.test(nickname)) return false
+
+  // 비밀번호 체크
+  const password_regex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&-]).{8,20}$/
+  if (!password_regex.test(password)) return false
+
+  return true;
 }
 
 export const login = async (
