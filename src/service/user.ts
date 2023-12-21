@@ -67,8 +67,8 @@ export class User extends Base {
   async find(id: string, optional: boolean): Promise<UserProfile> {
     const sql = 
     `SELECT u.id, u.name, u.nickname, u.intro, u.email, u.created_time, 
-    COUNT(q.id) as question_cnt, COUNT(a.id) as answer_cnt, IFNULL(SUM(q.view_cnt), 0) as view_cnt, 
-    COUNT(follower.follower_id) as follower_cnt, COUNT(following.following_id) as following_cnt
+    COUNT(DISTINCT q.id) as question_cnt, COUNT(DISTINCT a.id) as answer_cnt, IFNULL(SUM(q.view_cnt), 0) as view_cnt,
+    COUNT(DISTINCT follower.follower_id) as follower_cnt, COUNT(DISTINCT following.following_id) as following_cnt
     FROM user u
     LEFT OUTER JOIN (SELECT q.id, qi.view_cnt, q.user_id FROM question q INNER JOIN question_info qi ON q.id = qi.question_id) q ON u.id = q.user_id
     LEFT OUTER JOIN answer a ON u.id = a.user_id
