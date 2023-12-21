@@ -35,6 +35,12 @@ export class Organization extends Base {
     }
   }
 
+  async count(code: string): Promise<number> {
+    const sql = 'SELECT COUNT(*) FROM organization WHERE code = :code'
+    const row = await this._findIfExist(sql, { code }, false)
+    return row['COUNT(*)']
+  }
+
   async findById(id: number, optional: boolean): Promise<OrganizationDetail> {
     const sql = 'SELECT * FROM organization WHERE id = :id'
     const row = await this._findIfExist(sql, { id }, optional)
