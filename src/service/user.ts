@@ -28,13 +28,17 @@ interface UserProfile extends UserInfo {
   intro: string
   email: string
   created_time: Date
-  organization_names: string[]
-  organization_codes: string[]
+  organizations: OrganizationInfo[]
   question_cnt: number
   answer_cnt: number
   view_cnt: number
   follower_cnt: number
   following_cnt: number
+}
+
+interface OrganizationInfo {
+  name: string
+  code: string
 }
 
 interface UserInfoCredential extends Omit<UserInfo, 'created_time'> {
@@ -98,8 +102,9 @@ export class User extends Base {
       view_cnt: row['view_cnt'],
       follower_cnt: row['follower_cnt'],
       following_cnt: row['following_cnt'],
-      organization_names: organizations.map((organization: any) => organization['name']),
-      organization_codes: organizations.map((organization: any) => organization['code']),
+      organizations: organizations.map((organization: any) => {
+        return {'name': organization['name'], 'code': organization['code']}
+      })
     }
   }
 

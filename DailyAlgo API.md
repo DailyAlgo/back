@@ -109,9 +109,7 @@
 
        created_time: Date
 
-       organization_names: string[]
-
-       organization_codes: string[]
+       organizations: [{name, code}]
 
        question_cnt: number
 
