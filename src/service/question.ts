@@ -46,6 +46,8 @@ type QuestionListItemType = {
   tags: string[]
   user_id: string
   created_time: Date
+  is_scrap: boolean
+  is_like: boolean
 }
 
 type QuestionDetailType = {
@@ -234,7 +236,7 @@ export class Question extends Base {
     return rows
   }
 
-  async search(keyword: string, source: string, type: string, status: string, order: string, offset: number): Promise<QuestionListType> {
+  async search(keyword: string, source: string, type: string, status: string, order: string, offset: number, myId: string): Promise<QuestionListType> {
     const count = await this.seacrhCount(keyword)
     const limit = 10
     const nextIndex = offset + limit
@@ -256,15 +258,19 @@ export class Question extends Base {
     order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
+      , IF(s.user_id IS NULL, 'false', 'true') AS is_scrap
+      , IF(ql.user_id IS NULL, 'false', 'true') AS is_like
       FROM question q 
       INNER JOIN question_info qi ON q.id = qi.question_id 
+      LEFT JOIN scrap s ON q.id = s.question_id AND s.user_id = :myId
+      LEFT JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :myId
       WHERE q.title LIKE :keyword
       AND q.source LIKE :source
       AND q.type LIKE :type
       AND ${status}
       ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
-    const rows = await this._findsIfExist(sql, { keyword, limit, offset }, true)
+    const rows = await this._findsIfExist(sql, { keyword, limit, offset, myId }, true)
     Promise.all(rows.map(row=>{
       const tags = this.findTag(row['id'])
       return {...row, tags}
@@ -324,6 +330,15 @@ export class Question extends Base {
       user_id: row['user_id'],
       question_id: row['question_id'],
     }
+  }
+
+  async isLike(user_id: string, question_id: number): Promise<boolean> {
+    const sql = 'SELECT * FROM question_like WHERE user_id = :user_id AND question_id = :question_id'
+    const like = await this._findIfExist(sql, { user_id, question_id, }, true)
+    if (like < 0) {
+      return false
+    }
+    return true
   }
 
   async like(question_id: number, user_id: string): Promise<void> {

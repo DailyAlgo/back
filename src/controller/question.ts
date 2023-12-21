@@ -13,8 +13,10 @@ export const findQuestion = async (
     const id = Number(req.params['id'])
     // const question = await redis.getOrSet(String(id), ()=>questionService.find(id)) // Redis Memory 올려야 쓸 수 있음
     const question = await questionService.find(id)
-    if (req.credentials?.user)
-      question['isScrap'] = await questionService.isScrap(req.credentials.user.id, id)
+    if (req.credentials?.user) {
+      question['is_scrap'] = await questionService.isScrap(req.credentials.user.id, id)
+      question['is_like'] = await questionService.isLike(req.credentials.user.id, id)
+    }
     res.status(200).json(question)
   } catch (error) {
     next(error)
@@ -124,8 +126,9 @@ export const findQuestionCommentList = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = Number(req.params['id'])
-    res.status(200).json(await questionCommentService.finds(id))
+    res.status(200).json(await questionCommentService.finds(id, myId))
   } catch (error) {
     next(error)
   }
@@ -242,13 +245,14 @@ export const searchQuestion = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const keyword = req.query.keyword ? req.query.keyword : ''
     const source = req.query.source ? req.query.source : 'all'
     const type = req.query.type ? req.query.type : 'all'
     const status = req.query.status ? req.query.status : 'all'
     const order = req.query.order ? req.query.order : 'new'
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(await questionService.search(keyword as string, source as string, type as string, status as string, order as string, offset))
+    res.status(200).json(await questionService.search(keyword as string, source as string, type as string, status as string, order as string, offset, myId))
   } catch (error) {
     next(error)
   }

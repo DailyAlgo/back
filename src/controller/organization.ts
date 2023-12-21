@@ -29,11 +29,12 @@ export const insertOrganizatioon = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const code: string = await getOrganizationCode(req.body.name)
-    res.status(200).json(await organizationService.create({
+    await organizationService.create({
       name: req.body.name,
       code,
       master: req.credentials.user.id,
-    }))
+    })
+    res.status(200).json({ code })
   } catch (error) {
     next(error)
   }

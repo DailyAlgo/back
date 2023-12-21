@@ -711,9 +711,10 @@ export const findQuestion = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.send(await userService.findQuestion(id, offset))
+    res.send(await userService.findQuestion(id, offset, myId))
   } catch (error) {
     next(error)
   }
@@ -725,9 +726,10 @@ export const findAnswer = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.send(await userService.findAnswer(id, offset))
+    res.send(await userService.findAnswer(id, offset, myId))
   } catch (error) {
     next(error)
   }
@@ -739,9 +741,10 @@ export const findScrap = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = req.params['id']
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.send(await userService.findScrap(id, offset))
+    res.send(await userService.findScrap(id, offset, myId))
   } catch (error) {
     next(error)
   }

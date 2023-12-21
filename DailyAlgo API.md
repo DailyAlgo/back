@@ -164,9 +164,12 @@
     - [{
 
        id: string
+
        nickname: string
+
        intro?: string
-       is_following?: boolean (본인이 팔로우 중이면 True)
+
+       is_following: boolean (본인이 팔로우 중이면 True)
 
       }]
 
@@ -181,9 +184,12 @@
     - [{
 
        id: string
+
        nickname: string
+
        intro?: string
-       is_following?: boolean (본인이 팔로우 중이면 True)
+
+       is_following: boolean (본인이 팔로우 중이면 True)
 
       }]
 
@@ -213,6 +219,10 @@
         user_id: string
         
         answer_created_time: Date
+        
+        is_scrap: boolean
+        
+        is_like: boolean
         
         }]
     }
@@ -244,6 +254,8 @@
         
         answer_created_time: Date
         
+        is_like: boolean
+        
         }]
     }
 
@@ -273,6 +285,10 @@
         user_id: string
         
         answer_created_time: Date
+        
+        is_scrap: boolean
+        
+        is_like: boolean
         
         }]
     }
@@ -315,7 +331,7 @@
   - `로그인 필요`
   - req
     - { name }
-  - res : None
+  - res : { code } // 가입용 코드
 
 - GET /code
 
@@ -462,6 +478,10 @@
         
         created_time: Date
         
+        is_scrap: boolean
+        
+        is_like: boolean
+        
         }]
       
       }
@@ -511,8 +531,10 @@
        comment_cnt: number
 
        tags: string[]
-
-      isScrap: boolean (로그인 안 되어있을 경우 null)
+        
+       is_scrap: boolean
+      
+       is_like: boolean
 
       }
 
@@ -582,6 +604,8 @@
        created_time?: Date
 
        modified_time?: Date
+        
+       is_like: boolean
 
       }]
 
@@ -685,6 +709,8 @@
        modified_time?: Date
 
        tags: string[]
+        
+       is_like: boolean
 
       }]
 
@@ -738,6 +764,8 @@
        created_time?: Date
 
        modified_time?: Date
+        
+       is_like: boolean
 
       }]
 

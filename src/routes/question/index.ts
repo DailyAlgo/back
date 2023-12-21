@@ -28,13 +28,13 @@ router.post('/cache', setCache)
 router.post('/tag', insertQuestionTag) // 신규 태그 생성
 router.get('/tag', searchQuestionTag) // 태그 조회
 router.post('/', check_token, insertQuestion) // 질문 생성
-router.get('/', searchQuestion) // 질문 검색
+router.get('/', check_token_existence, searchQuestion) // 질문 검색
 router.get('/:id', check_token_existence, findQuestion) // 질문 조회
 router.put('/:id', check_token, updateQuestion) // 질문 수정
 router.delete('/:id', check_token, deleteQuestion) // 질문 삭제
 router.put('/:id/like', check_token, likeQuestion) // 질문 좋아요
 router.put('/:id/scrap', check_token, scrapQuestion) // 질문 스크랩
-router.get('/:id/comment', findQuestionCommentList) // 댓글 조회
+router.get('/:id/comment', check_token_existence, findQuestionCommentList) // 댓글 조회
 router.post('/:id/comment', check_token, insertQuestionComment) // 댓글 작성
 router.put('/comment/:id', check_token, updateQuestionComment) // 댓글 수정
 router.delete('/comment/:id', check_token, deleteQuestionComment) // 댓글 삭제

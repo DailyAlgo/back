@@ -21,8 +21,9 @@ export const findAnswerList = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const question_id = Number(req.params['question_id'])
-    res.status(200).json(await answerService.finds(question_id))
+    res.status(200).json(await answerService.finds(question_id, myId))
   } catch (error) {
     next(error)
   }
@@ -113,8 +114,9 @@ export const findAnswerCommentList = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = Number(req.params['id'])
-    res.status(200).json(await answerCommentService.finds(id))
+    res.status(200).json(await answerCommentService.finds(id, myId))
   } catch (error) {
     next(error)
   }

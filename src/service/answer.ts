@@ -37,6 +37,7 @@ interface AnswerInfo extends AnswerType {
   created_time?: Date
   modified_time?: Date
   tags: string[]
+  is_like?: boolean
 }
 
 type AnswerLikeType = {
@@ -68,10 +69,14 @@ export class Answer extends Base {
     }
   }
 
-  async finds(question_id: number): Promise<AnswerInfo[]> {
+  async finds(question_id: number, myId: string): Promise<AnswerInfo[]> {
     const sql =
-      'SELECT * FROM answer WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._findsIfExist(sql, { question_id }, true)
+      `SELECT a.*, IF(al.user_id IS NULL, 'false', 'true') AS is_like
+      FROM answer a
+      LEFT JOIN answer_like al ON a.id = al.answer_id AND al.user_id = :myId
+      WHERE a.question_id = :question_id 
+      ORDER BY a.id`
+    const rows = await this._findsIfExist(sql, { question_id, myId }, true)
     Promise.all(rows.map(row=>{
       const tags = this.findTag(row['id'])
       row = {...row, tags}

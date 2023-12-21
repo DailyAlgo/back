@@ -30,6 +30,7 @@ import {
 } from '../../controller/user'
 import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
+import check_token_existence from '../../middleware/check_token_existence'
 import check_certification_num from '../../middleware/check_certification_num'
 import { findAnswer } from '../../controller/answer'
 
@@ -65,11 +66,11 @@ router.delete('/', check_token, deleteUser) // 회원탈퇴
 // router.post('/:id/follow', check_token, followUser)
 // router.delete('/:id/follow', check_token, unfollowUser)
 router.put('/:id/follow', check_token, followUser)
-router.get('/:id/follower', findFollower) // 팔로워 조회
-router.get('/:id/following', findFollowing) // 팔로잉 조회
-router.get('/:id/question', findQuestion) // 질문 조회
-router.get('/:id/answer', findAnswer) // 답변 조회
-router.get('/:id/scrap', findScrap) // 팔로잉 조회
+router.get('/:id/follower', check_token_existence, findFollower) // 팔로워 조회
+router.get('/:id/following', check_token_existence, findFollowing) // 팔로잉 조회
+router.get('/:id/question', check_token_existence, findQuestion) // 질문 조회
+router.get('/:id/answer', check_token_existence, findAnswer) // 답변 조회
+router.get('/:id/scrap', check_token_existence, findScrap) // 팔로잉 조회
 
 // 이매일 클릭 시 사용자 인증
 router.get('/authorization', check_token, verifyUser)

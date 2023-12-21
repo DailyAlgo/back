@@ -12,6 +12,8 @@ export type QuestionCommentType = {
   like_cnt: number
   created_time?: Date
   modified_time?: Date
+  is_scrap?: boolean
+  is_like?: boolean
 }
 
 type QuestionCommentCreationType = {
@@ -44,10 +46,14 @@ export class QuestionComment extends Base {
     }
   }
 
-  async finds(question_id: number): Promise<QuestionCommentType[]> {
+  async finds(question_id: number, myId: string): Promise<QuestionCommentType[]> {
     const sql =
-      'SELECT * FROM question_comment WHERE question_id = :question_id ORDER BY id'
-    const rows = await this._findsIfExist(sql, { question_id }, true)
+      `SELECT qc.*, IF(qcl.user_id IS NULL, 'false', 'true') AS is_like
+      FROM question_comment qc
+      LEFT JOIN question_comment_like qcl ON qc.id = qcl.question_comment_id AND qcl.user_id = :myId
+      WHERE qc.question_id = :question_id 
+      ORDER BY qc.id`
+    const rows = await this._findsIfExist(sql, { question_id, myId }, true)
 
     if (rows.length == 0) {
       throw new Error('NOT_FOUND')
@@ -85,7 +91,7 @@ export class QuestionComment extends Base {
   }
 
   async findLike(id: number, user_id: string): Promise<QuestionCommentLikeType> {
-    const sql = 'SELECT * FROM question_comment_like WHERE comment_id = :id AND user_id = :user_id'
+    const sql = 'SELECT * FROM question_comment_like WHERE question_comment_id = :id AND user_id = :user_id'
     const row = await this._findIfExist(sql, { id, user_id }, true)
     return {
       user_id: row['user_id'],
@@ -99,12 +105,12 @@ export class QuestionComment extends Base {
   ): Promise<void> {
     const like = await this.findLike(id, user_id)
     if (like.comment_id && like.user_id) {
-      const sql1 = 'DELETE FROM question_comment_like WHERE comment_id = :comment_id AND user_id = :user_id'
+      const sql1 = 'DELETE FROM question_comment_like WHERE question_comment_id = :comment_id AND user_id = :user_id'
       const sql2 = 'UPDATE question_comment SET like_cnt = like_cnt-1 WHERE id = :id'
       await this._delete(sql1, { comment_id: id, user_id })
       await this._update(sql2, { id })
     } else {
-      const sql1 = 'INSERT INTO question_comment_like (comment_id, user_id) VALUES (:comment_id, :user_id)'
+      const sql1 = 'INSERT INTO question_comment_like (question_comment_id, user_id) VALUES (:comment_id, :user_id)'
       const sql2 = 'UPDATE question_comment SET like_cnt = like_cnt+1 WHERE id = :id'
       await this._create(sql1, { comment_id: id, user_id })
       await this._update(sql2, { id })
