@@ -63,21 +63,23 @@ export class Organization extends Base {
     })
   }
 
-  async delete(id: number, user_id: string): Promise<void> {
-    const sql = 'DELETE FROM organization WHERE id = :id AND master = :user_id'
+  async delete(code: string, user_id: string): Promise<void> {
+    const sql = 'DELETE FROM organization WHERE code = :code AND master = :user_id'
     await this._delete(sql, {
-      id,
+      code,
       user_id,
     })
   }
 
-  async join(id: number, user_id: string): Promise<void> {
+  async join(code: string, user_id: string): Promise<void> {
+    const id = await this.find(code, false).then((row) => row.id)
     const sql = 'INSERT INTO user_organization_map (organization_id, user_id) VALUES (:id, :user_id)'
     await this._create(sql, { id, user_id })
     notify('user', user_id, 'join', 'organization', String(id))
   }
 
-  async withdraw(id: number, user_id: string): Promise<void> {
+  async withdraw(code: string, user_id: string): Promise<void> {
+    const id = await this.find(code, false).then((row) => row.id)
     const sql = 'DELETE FROM user_organization_map WHERE organization_id = :id AND user_id = :user_id'
     await this._delete(sql, { id, user_id })
   }

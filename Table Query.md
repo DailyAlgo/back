@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS user (
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     last_login TIMESTAMP NULL COMMENT '마지막 로그인',
     PRIMARY KEY (id),
-    UNIQUE KEY (id, nickname, email)
+    UNIQUE KEY (nickname, email)
 ) COMMENT '유저';
 ```
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS organization (
     created_time DATETIME NOT NULL DEFAULT NOW() COMMENT '생성시간',
     modified_time TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '수정시간',
     PRIMARY KEY (id),
-    UNIQUE KEY (id, name)
+    UNIQUE KEY (name)
 ) COMMENT '단체';
 ```
 
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS question_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
     PRIMARY KEY (id),
-    UNIQUE KEY (id, name)
+    UNIQUE KEY (name)
 ) COMMENT '질문 태그';
 ```
 
@@ -362,7 +362,7 @@ CREATE TABLE IF NOT EXISTS answer_tag (
     id INT NOT NULL AUTO_INCREMENT COMMENT 'ID (PK)',
     name VARCHAR(10) NOT NULL COMMENT '태그명',
     PRIMARY KEY (id),
-    UNIQUE KEY (id, name)
+    UNIQUE KEY (name)
 ) COMMENT '답변 태그';
 ```
 

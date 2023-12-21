@@ -28,7 +28,8 @@ interface UserProfile extends UserInfo {
   intro: string
   email: string
   created_time: Date
-  organizations: string[]
+  organization_names: string[]
+  organization_codes: string[]
   question_cnt: number
   answer_cnt: number
   view_cnt: number
@@ -78,7 +79,7 @@ export class User extends Base {
     GROUP BY u.id, u.name, u.nickname, u.email, u.created_time`
     const row = await this._findIfExist(sql, { id: id }, optional)
     const sql_organization = 
-    `SELECT o.name
+    `SELECT o.name, o.code
     FROM user u
     LEFT OUTER JOIN user_organization_map uom ON u.id = uom.user_id
     INNER JOIN organization o ON o.id = uom.organization_id 
@@ -97,7 +98,8 @@ export class User extends Base {
       view_cnt: row['view_cnt'],
       follower_cnt: row['follower_cnt'],
       following_cnt: row['following_cnt'],
-      organizations
+      organization_names: organizations.map((organization: any) => organization['name']),
+      organization_codes: organizations.map((organization: any) => organization['code']),
     }
   }
 
@@ -127,8 +129,7 @@ export class User extends Base {
       password: user.password,
     })
     if (user.organization_code) {
-      const organization = await organizationService.find(user.organization_code, false)
-      organizationService.join(organization.id, user.id)
+      organizationService.join(user.organization_code, user.id)
     }
   }
 

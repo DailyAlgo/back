@@ -52,8 +52,8 @@ export const deleteOrganization = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.params['id'])
-    res.status(200).json(await organizationService.delete(id, req.credentials.user.id))
+    const code = req.params['code']
+    res.status(200).json(await organizationService.delete(code, req.credentials.user.id))
   } catch (error) {
     next(error)
   }
@@ -67,8 +67,8 @@ export const joinOrganization = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.params['id'])
-    res.status(200).json(await organizationService.join(id, req.credentials.user.id))
+    const code = req.params['code']
+    res.status(200).json(await organizationService.join(code, req.credentials.user.id))
   } catch (error) {
     next(error)
   }
@@ -82,8 +82,8 @@ export const withdrawOrganization = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.params['id'])
-    res.status(200).json(await organizationService.withdraw(id, req.credentials.user.id))
+    const code = req.params['code']
+    res.status(200).json(await organizationService.withdraw(code, req.credentials.user.id))
   } catch (error) {
     next(error)
   }

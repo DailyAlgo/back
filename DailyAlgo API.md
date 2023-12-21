@@ -109,7 +109,9 @@
 
        created_time: Date
 
-       organizations: string[]
+       organization_names: string[]
+
+       organization_codes: string[]
 
        question_cnt: number
 
@@ -357,21 +359,21 @@
 
       }
 
-- DELET /:id
+- DELET /:code
 
   - `단체 삭제`
   - `로그인 필요`
   - req : None
   - res : None
 
-- POST /:id/join
+- POST /:code/join
 
   - `가입`
   - `로그인 필요`
   - req : None
   - res : None
 
-- DELETE /:id/withdraw
+- DELETE /:code/withdraw
 
   - `탈퇴`
   - `로그인 필요`
