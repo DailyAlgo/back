@@ -240,7 +240,9 @@ export class Question extends Base {
     return rows
   }
 
-  async search(keyword: string, source: string, type: string, status: string, order: string, offset: number, myId: string): Promise<QuestionListType> {
+  async search(
+    keyword: string, source: string, type: string, status: string, order: string, offset: number, myId: string
+  ): Promise<QuestionListType> {
     const count = await this.seacrhCount(keyword)
     const limit = 10
     const nextIndex = offset + limit
@@ -279,6 +281,8 @@ export class Question extends Base {
       const tags = await this.findTag(row['id'])
       return {...row, tags}
     }))
+    console.log("TEST!!!")
+    console.log(question_list)
     const res = {
       total_cnt: count,
       question_list,

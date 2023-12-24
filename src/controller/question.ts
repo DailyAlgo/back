@@ -252,7 +252,7 @@ export const searchQuestion = async (
     const status = req.query.status ? req.query.status : 'all'
     const order = req.query.order ? req.query.order : 'new'
     const offset = req.query['offset'] ? Number(req.query['offset']) : 0
-    res.status(200).json(await questionService.search(keyword as string, source as string, type as string, status as string, order as string, offset, myId))
+    res.send(await questionService.search(keyword as string, source as string, type as string, status as string, order as string, offset, myId))
   } catch (error) {
     next(error)
   }
