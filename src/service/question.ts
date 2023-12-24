@@ -276,7 +276,10 @@ export class Question extends Base {
       AND ${status}
       ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
+    console.log(sql)
     const rows = await this._findsIfExist(sql, { keyword, limit, offset, myId }, true)
+    console.log("TEST!!!")
+    console.log(rows)
     const question_list = await Promise.all(rows.map(async row=>{
       const tags = await this.findTag(row['id'])
       return {...row, tags}
