@@ -207,13 +207,11 @@ export class Question extends Base {
   }
 
   async addAllTag(tags: string[], question_id: number): Promise<void> {
-    await tags.forEach(async tag => {
+    Promise.all(tags.map(async tag => {
       const exist = await this.searchTag(tag)
       if (exist.length === 0) {
-        this.createTag(tag)
+        await this.createTag(tag)
       }
-    })
-    Promise.all(tags.map(tag => {
       this.addTag(tag, question_id)
     }))
   }
