@@ -243,8 +243,6 @@ export class User extends Base {
       const tags = await questionService.findTag(row['id'])
       return {...row, tags}
     }))
-    console.log("TEST!!!")
-    console.log(question_list)
     const res = {
       total_cnt: count,
       question_list,
