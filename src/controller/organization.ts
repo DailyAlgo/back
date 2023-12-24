@@ -17,8 +17,7 @@ export const findOrganization = async (
 ) => {
   try {
     const code = req.query.code
-    const organization = await organizationService.find(code as string, false)
-    res.status(200).send(organization.name)
+    res.status(200).send(await organizationService.find(code as string, false))
   } catch (error) {
     next(error)
   }
