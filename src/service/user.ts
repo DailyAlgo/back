@@ -239,10 +239,12 @@ export class User extends Base {
       GROUP BY q.id, q.title, q.source, q.type, q.user_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
-    const question_list = await Promise.all(rows.map(row=>{
-      const tags = questionService.findTag(row['id'])
+    const question_list = await Promise.all(rows.map(async row=>{
+      const tags = await questionService.findTag(row['id'])
       return {...row, tags}
     }))
+    console.log("TEST!!!")
+    console.log(question_list)
     const res = {
       total_cnt: count,
       question_list,
