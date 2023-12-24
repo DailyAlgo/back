@@ -64,7 +64,11 @@ export const findUser = async (
 ) => {
   try {
     const id = req.params['id']
-    res.status(200).json(await userService.find(id, false))
+    const result = await userService.find(id, false)
+    if (req.credentials?.user) {
+      result['is_following'] = await userService.findFollow(req.credentials.user.id, id)
+    }
+    res.status(200).json(result)
   } catch (error) {
     next(error)
   }

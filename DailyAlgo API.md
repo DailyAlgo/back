@@ -121,6 +121,8 @@
 
        following_cnt: number
 
+       is_following?: boolean
+
       }
 
 - PUT /

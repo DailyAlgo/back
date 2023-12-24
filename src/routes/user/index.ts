@@ -60,7 +60,7 @@ router.put('/password', check_token, check_password, changePassword) // 비밀�
 
 router.post('/sign_in', check_password, login) // 로그인
 router.get('/', check_token, findMySelf) // 본인정보 조회
-router.get('/:id', findUser) // 회원정보 조회
+router.get('/:id', check_token_existence, findUser) // 회원정보 조회
 router.put('/', check_token, updateUser) // 회원정보 수정
 router.delete('/', check_token, deleteUser) // 회원탈퇴
 // router.post('/:id/follow', check_token, followUser)
