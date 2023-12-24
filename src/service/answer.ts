@@ -84,7 +84,7 @@ export class Answer extends Base {
     return rows
   }
 
-  async create(answer: AnswerCreationType, tags: number[]): Promise<void> {
+  async create(answer: AnswerCreationType, tags: string[]): Promise<void> {
     const sql =
     'INSERT INTO answer (question_id, title, user_id, language, code, content) VALUES (:question_id, :title, :user_id, :language, :code, :content)'
     const answer_id = await this._create(sql, {
@@ -100,7 +100,7 @@ export class Answer extends Base {
     notify('user', answer.user_id, 'answer', 'answer', String(answer_id))
   }
 
-  async update(answer: AnswerType, tags: number[]): Promise<void> {
+  async update(answer: AnswerType, tags: string[]): Promise<void> {
     const sql =
       'UPDATE answer SET title = :title, content = :content, language = :language, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
@@ -152,7 +152,7 @@ export class Answer extends Base {
     await this._create(sql, { name, })
   }
 
-  async addTag(tag_name: number, answer_id: number): Promise<void> {
+  async addTag(tag_name: string, answer_id: number): Promise<void> {
     const sql = `INSERT INTO answer_tag_map 
     (tag_id, answer_id) 
     (
@@ -166,7 +166,13 @@ export class Answer extends Base {
     })
   }
 
-  async addAllTag(tags: number[], answer_id: number): Promise<void> {
+  async addAllTag(tags: string[], answer_id: number): Promise<void> {
+    tags.forEach(async tag => {
+      const exist = await this.searchTag(tag)
+      if (exist.length === 0) {
+        this.createTag(tag)
+      }
+    })
     Promise.all(tags.map(tag => {
       this.addTag(tag, answer_id)
     }))

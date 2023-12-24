@@ -17,6 +17,7 @@ import {
   findFollower,
   findFollowing,
   findQuestion,
+  findAnswer,
   findScrap,
   verifyUser,
   findMySelf,
@@ -32,7 +33,6 @@ import check_password from '../../middleware/check_password'
 import check_token from '../../middleware/check_token'
 import check_token_existence from '../../middleware/check_token_existence'
 import check_certification_num from '../../middleware/check_certification_num'
-import { findAnswer } from '../../controller/answer'
 
 const router = express.Router()
 

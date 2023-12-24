@@ -44,7 +44,7 @@ export const insertQuestion = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const tags: number[] = req.body.tags
+    const tags: string[] = req.body.tags
     await questionService.create({
       title: req.body.title,
       user_id: req.credentials.user.id,
@@ -70,7 +70,7 @@ export const updateQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    const tags: number[] = req.body.tags
+    const tags: string[] = req.body.tags
     await questionService.update({
       id,
       title: req.body.title,
