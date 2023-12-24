@@ -126,13 +126,13 @@ export class Question extends Base {
       INNER JOIN question_info qi ON q.id = qi.question_id 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { offset, limit }, true)
-    await Promise.all(rows.map(row=>{
-      const tags = this.findTag(row['id'])
+    const question_list = await  Promise.all(rows.map(async row=>{
+      const tags = await this.findTag(row['id'])
       row = {...row, tags}
     }))
     const res = {
       total_cnt: count,
-      question_list: rows,
+      question_list,
       nextIndex,
     }
     return res
@@ -277,14 +277,10 @@ export class Question extends Base {
       ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { keyword, source, type, status, order, limit, offset, myId }, true)
-    console.log("TEST!!!")
-    console.log(rows)
     const question_list = await Promise.all(rows.map(async row=>{
       const tags = await this.findTag(row['id'])
       return {...row, tags}
     }))
-    console.log("TEST!!!")
-    console.log(question_list)
     const res = {
       total_cnt: count,
       question_list,

@@ -77,11 +77,11 @@ export class Answer extends Base {
       WHERE a.question_id = :question_id 
       ORDER BY a.id`
     const rows = await this._findsIfExist(sql, { question_id, myId }, true)
-    Promise.all(rows.map(row=>{
-      const tags = this.findTag(row['id'])
+    const result = await Promise.all(rows.map(async row=>{
+      const tags = await this.findTag(row['id'])
       row = {...row, tags}
     }))
-    return rows
+    return result
   }
 
   async create(answer: AnswerCreationType, tags: string[]): Promise<void> {
