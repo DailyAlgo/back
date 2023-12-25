@@ -228,7 +228,7 @@ export class User extends Base {
     const limit = 10
     const nextIndex = offset + limit
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
+      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) as answer_created_time 
        , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
        , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
       FROM question q 
@@ -269,7 +269,7 @@ export class User extends Base {
     const limit = 10
     const nextIndex = offset + limit
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
+      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) as answer_created_time 
         , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
         , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
       FROM answer a 
