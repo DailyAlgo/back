@@ -220,7 +220,7 @@
         
         user_id: string
         
-        answer_created_time: Date
+        question_created_time: Date
         
         is_scrap: boolean
         
@@ -254,7 +254,7 @@
         
         user_id: string
         
-        answer_created_time: Date
+        question_created_time: Date
         
         is_like: boolean
         
@@ -286,7 +286,7 @@
         
         user_id: string
         
-        answer_created_time: Date
+        question_created_time: Date
         
         is_scrap: boolean
         

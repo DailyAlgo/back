@@ -59,7 +59,7 @@ interface UserQuestionListItemType {
   type: string
   tags: string[]
   user_id: string
-  answer_created_time: Date
+  question_created_time: Date
   is_scrap: boolean
   is_like: boolean
 }
@@ -228,15 +228,14 @@ export class User extends Base {
     const limit = 10
     const nextIndex = offset + limit
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) as answer_created_time 
+      `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
        , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
        , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
       FROM question q 
-      LEFT OUTER JOIN answer a ON q.id = a.question_id 
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       WHERE q.user_id = :user_id 
-      GROUP BY q.id, q.title, q.source, q.type, q.user_id 
+      GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
@@ -269,15 +268,14 @@ export class User extends Base {
     const limit = 10
     const nextIndex = offset + limit
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) as answer_created_time 
+      `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
         , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
         , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
       FROM answer a 
-      INNER JOIN question q ON q.id = a.question_id 
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       WHERE a.user_id = :user_id 
-      GROUP BY q.id, q.title, q.source, q.type, q.user_id 
+      GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
@@ -312,16 +310,15 @@ export class User extends Base {
     const limit = 10
     const nextIndex = offset + limit
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, q.user_id, MAX(a.created_time) 
+      `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
         , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
         , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
       FROM scrap s
       INNER JOIN question q ON q.id = s.question_id 
-      LEFT OUTER JOIN answer a ON q.id = a.question_id 
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       LEFT OUTER JOIN scrap ss ON q.id = ss.question_id AND ss.user_id = :my_id
       WHERE s.user_id = :user_id 
-      GROUP BY q.id, q.title, q.source, q.type, q.user_id 
+      GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
