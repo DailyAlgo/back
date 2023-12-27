@@ -195,7 +195,7 @@ export class User extends Base {
     my_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
-    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN 'true' ELSE 'false' END as is_following
+    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
     FROM follow f
     INNER JOIN user u ON f.follower_id = u.id
     LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
@@ -210,7 +210,7 @@ export class User extends Base {
     my_id: string,
   ): Promise<UserNickname[]> {
     const sql = 
-    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN 'true' ELSE 'false' END as is_following
+    `SELECT u.id, u.nickname, u.intro, CASE WHEN ff.follower_id IS NOT NULL THEN true ELSE false END as is_following
     FROM follow f
     INNER JOIN user u ON f.following_id = u.id
     LEFT JOIN follow ff ON ff.following_id = u.id AND ff.follower_id = :my_id
@@ -229,8 +229,8 @@ export class User extends Base {
     const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
-       , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
-       , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
+       , CASE WHEN s.question_id IS NOT NULL THEN true ELSE false END as is_scrap
+       , CASE WHEN ql.question_id IS NOT NULL THEN true ELSE false END as is_like
       FROM question q 
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
@@ -269,8 +269,8 @@ export class User extends Base {
     const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
-        , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
-        , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
+        , CASE WHEN s.question_id IS NOT NULL THEN true ELSE false END as is_scrap
+        , CASE WHEN ql.question_id IS NOT NULL THEN true ELSE false END as is_like
       FROM answer a 
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
@@ -311,8 +311,8 @@ export class User extends Base {
     const nextIndex = offset + limit
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, q.user_id, q.created_time as question_created_time
-        , CASE WHEN s.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_scrap
-        , CASE WHEN ql.question_id IS NOT NULL THEN 'true' ELSE 'false' END as is_like
+        , CASE WHEN s.question_id IS NOT NULL THEN true ELSE false END as is_scrap
+        , CASE WHEN ql.question_id IS NOT NULL THEN true ELSE false END as is_like
       FROM scrap s
       INNER JOIN question q ON q.id = s.question_id 
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id

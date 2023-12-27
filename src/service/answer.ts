@@ -71,7 +71,7 @@ export class Answer extends Base {
 
   async finds(question_id: number, myId: string): Promise<AnswerInfo[]> {
     const sql =
-      `SELECT a.*, IF(al.user_id IS NULL, 'false', 'true') AS is_like
+      `SELECT a.*, IF(al.user_id IS NULL, false, true) AS is_like
       FROM answer a
       LEFT JOIN answer_like al ON a.id = al.answer_id AND al.user_id = :myId
       WHERE a.question_id = :question_id 

@@ -58,7 +58,7 @@ export class AnswerComment extends Base {
 
   async finds(answer_id: number, myId: string): Promise<AnswerCommentType[]> {
     const sql =
-      `SELECT ac.*, IF(acl.user_id IS NULL, 'false', 'true') AS is_like
+      `SELECT ac.*, IF(acl.user_id IS NULL, false, true) AS is_like
       FROM answer_comment ac
       LEFT JOIN answer_comment_like acl ON ac.id = acl.answer_comment_id AND acl.user_id = :myId
       WHERE ac.answer_id = :answer_id 

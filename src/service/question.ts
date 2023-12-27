@@ -264,8 +264,8 @@ export class Question extends Base {
     order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
-      , IF(s.user_id IS NULL, 'false', 'true') AS is_scrap
-      , IF(ql.user_id IS NULL, 'false', 'true') AS is_like
+      , IF(s.user_id IS NULL, false, true) AS is_scrap
+      , IF(ql.user_id IS NULL, false, true) AS is_like
       FROM question q 
       INNER JOIN question_info qi ON q.id = qi.question_id 
       LEFT JOIN scrap s ON q.id = s.question_id AND s.user_id = :myId
