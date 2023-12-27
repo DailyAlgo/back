@@ -162,11 +162,9 @@ export const updateQuestionComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.body.id)
-    const question_id = Number(req.params['id'])
+    const id = Number(req.params['id'])
     await questionCommentService.update({
       id,
-      question_id,
       user_id: req.credentials.user.id,
       content: req.body.content,
       like_cnt: -1,
@@ -185,7 +183,7 @@ export const deleteQuestionComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.body.id)
+    const id = Number(req.params['id'])
     await questionCommentService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
@@ -201,7 +199,8 @@ export const likeQuestionComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await questionCommentService.like(req.body.id, req.credentials.user.id)
+    const id = Number(req.params['id'])
+    await questionCommentService.like(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment liked successfully' })
   } catch (error) {
     next(error)
@@ -266,7 +265,7 @@ export const scrapQuestion = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-      const question_id = Number(req.body.id)
+      const question_id = Number(req.params['id'])
     await questionService.scrap(req.credentials.user.id, question_id)
     res.status(200).json({ message: 'Question scrapped successfully' })
   } catch (error) {

@@ -12,7 +12,7 @@ export const redirectNotification = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.query.id)
+    const id = Number(req.params['id'])
     const notification = await notificationService.find(id, req.credentials.user.id, false)
     notificationService.read(id, req.credentials.user.id)
     switch (notification.object) {

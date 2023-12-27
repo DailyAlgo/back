@@ -101,7 +101,8 @@ export const likeAnswer = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await answerService.like(req.body.id, req.credentials.user.id)
+    const id = Number(req.params['id'])
+    await answerService.like(id, req.credentials.user.id)
     res.status(200).json({ message: 'Answer liked successfully' })
   } catch (error) {
     next(error)
@@ -150,11 +151,9 @@ export const updateAnswerComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.body.id)
-    const answer_id = Number(req.params['id'])
+    const id = Number(req.params['id'])
     await answerCommentService.update({
       id,
-      answer_id,
       user_id: req.credentials.user.id,
       content: req.body.content,
       like_cnt: -1,
@@ -173,7 +172,7 @@ export const deleteAnswerComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    const id = Number(req.body.id)
+    const id = Number(req.params['id'])
     await answerCommentService.delete(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment deleted successfully' })
   } catch (error) {
@@ -189,7 +188,8 @@ export const likeAnswerComment = async (
   try {
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
-    await answerCommentService.like(req.body.id, req.credentials.user.id)
+    const id = Number(req.params['id'])
+    await answerCommentService.like(id, req.credentials.user.id)
     res.status(200).json({ message: 'Comment liked successfully' })
   } catch (error) {
     next(error)

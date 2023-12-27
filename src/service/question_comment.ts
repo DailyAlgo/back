@@ -16,6 +16,17 @@ export type QuestionCommentType = {
   is_like?: boolean
 }
 
+export type QuestionCommentUpdateType = {
+  id: number
+  user_id: string
+  content: string
+  like_cnt: number
+  created_time?: Date
+  modified_time?: Date
+  is_scrap?: boolean
+  is_like?: boolean
+}
+
 type QuestionCommentCreationType = {
   question_id: number
   user_id: string
@@ -74,7 +85,7 @@ export class QuestionComment extends Base {
     notify('user', comment.user_id, 'comment', 'question_comment', String(id))
   }
 
-  async update(comment: QuestionCommentType): Promise<void> {
+  async update(comment: QuestionCommentUpdateType): Promise<void> {
     const sql = 'UPDATE question_comment SET content = :content WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       content: comment.content,
