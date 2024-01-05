@@ -310,14 +310,16 @@ export class Question extends Base {
     }
   }
 
-  async scrap(user_id: string, question_id: number): Promise<void> {
+  async scrap(user_id: string, question_id: number): Promise<boolean> {
     const scrap = await this.findScrap(user_id, question_id)
     if (scrap.question_id && scrap.user_id) {
       const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
       await this._delete(sql, { user_id, question_id, })
+      return false
     } else {
       const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
       await this._create(sql, { user_id, question_id, })
+      return true
     }
   }
 
@@ -348,16 +350,18 @@ export class Question extends Base {
     return true
   }
 
-  async like(question_id: number, user_id: string): Promise<void> {
+  async like(question_id: number, user_id: string): Promise<boolean> {
     const like = await this.findLike(question_id, user_id)
     if (like.question_id && like.user_id) {
       const sql = 'DELETE FROM question_like WHERE user_id = :user_id AND question_id = :question_id'
       await this._delete(sql, { user_id, question_id, })
       await questionInfoService.like(question_id, user_id, false)
+      return false
     } else {
       const sql = 'INSERT INTO question_like (user_id, question_id) VALUES (:user_id, :question_id)'
       await this._create(sql, { user_id, question_id, })
       await questionInfoService.like(question_id, user_id, true)
+      return true
     }
   }
 }

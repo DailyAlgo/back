@@ -102,8 +102,12 @@ export const likeAnswer = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await answerService.like(id, req.credentials.user.id)
-    res.status(200).json({ message: 'Answer liked successfully' })
+    const isLike = await answerService.like(id, req.credentials.user.id)
+    if (isLike) {
+      res.status(200).json({ message: 'Answer unliked successfully' })
+    } else {
+      res.status(200).json({ message: 'Answer liked successfully' })
+    }
   } catch (error) {
     next(error)
   }
@@ -189,8 +193,12 @@ export const likeAnswerComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await answerCommentService.like(id, req.credentials.user.id)
-    res.status(200).json({ message: 'Comment liked successfully' })
+    const isLike = await answerCommentService.like(id, req.credentials.user.id)
+    if (isLike) {
+      res.status(200).json({ message: 'Comment unliked successfully' })
+    } else {
+      res.status(200).json({ message: 'Comment liked successfully' })
+    }
   } catch (error) {
     next(error)
   }

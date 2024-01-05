@@ -113,8 +113,13 @@ export const likeQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionService.like(id, req.credentials.user.id)
-    res.status(200).json({ message: 'Question liked successfully' })
+    const isLike = await questionService.like(id, req.credentials.user.id)
+    if (isLike) {
+      res.status(200).json({ message: 'Question unliked successfully' })
+    }
+    else {
+      res.status(200).json({ message: 'Question liked successfully' })
+    }
   } catch (error) {
     next(error)
   }
@@ -200,8 +205,13 @@ export const likeQuestionComment = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const id = Number(req.params['id'])
-    await questionCommentService.like(id, req.credentials.user.id)
-    res.status(200).json({ message: 'Comment liked successfully' })
+    const isLike = await questionCommentService.like(id, req.credentials.user.id)
+    if (isLike) {
+      res.status(200).json({ message: 'Comment unliked successfully' })
+    }
+    else {
+      res.status(200).json({ message: 'Comment liked successfully' })
+    }
   } catch (error) {
     next(error)
   }
@@ -266,8 +276,13 @@ export const scrapQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
       const question_id = Number(req.params['id'])
-    await questionService.scrap(req.credentials.user.id, question_id)
-    res.status(200).json({ message: 'Question scrapped successfully' })
+    const isScrap = await questionService.scrap(req.credentials.user.id, question_id)
+    if (isScrap) {
+      res.status(200).json({ message: 'Question unscrapped successfully' })
+    }
+    else {
+      res.status(200).json({ message: 'Question scrapped successfully' })
+    }
   } catch (error) {
     next(error)
   }

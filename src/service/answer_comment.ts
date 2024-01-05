@@ -111,19 +111,21 @@ export class AnswerComment extends Base {
     }
   }
 
-  async like(id: number, user_id: string): Promise<void> {
+  async like(id: number, user_id: string): Promise<boolean> {
     const like = await this.findLike(id, user_id)
     if (like.user_id && like.comment_id) {
       const sql1 = 'DELETE FROM answer_comment_like WHERE answer_comment_id = :answer_comment_id AND user_id = :user_id'
       const sql2 = 'UPDATE answer_comment SET like_cnt = like_cnt-1 WHERE id = :id'
       await this._delete(sql1, { comment_id: id, user_id })
       await this._update(sql2, { id })
+      return false
     } else {
       const sql1 = 'INSERT INTO answer_comment_like (answer_comment_id, user_id) VALUES (:comment_id, :user_id)'
       const sql2 = 'UPDATE answer_comment SET like_cnt = like_cnt+1 WHERE id = :id'
       await this._create(sql1, { comment_id: id, user_id })
       await this._update(sql2, { id })
       notify('user', user_id, 'like', 'answer_comment', String(id))
+      return true
     }
   }
 }
