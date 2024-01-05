@@ -313,11 +313,11 @@ export class Question extends Base {
   async scrap(user_id: string, question_id: number): Promise<void> {
     const scrap = await this.findScrap(user_id, question_id)
     if (scrap.question_id && scrap.user_id) {
-      const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
-      await this._create(sql, { user_id, question_id, })
-    } else {
       const sql = 'DELETE FROM scrap WHERE user_id = :user_id AND question_id = :question_id'
       await this._delete(sql, { user_id, question_id, })
+    } else {
+      const sql = 'INSERT INTO scrap (user_id, question_id) VALUES (:user_id, :question_id)'
+      await this._create(sql, { user_id, question_id, })
     }
   }
 
