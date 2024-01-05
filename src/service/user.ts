@@ -236,6 +236,7 @@ export class User extends Base {
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       WHERE q.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
+      ORDER BY q.id DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
@@ -276,6 +277,7 @@ export class User extends Base {
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       WHERE a.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
+      ORDER BY a.id DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
@@ -319,6 +321,7 @@ export class User extends Base {
       LEFT OUTER JOIN scrap ss ON q.id = ss.question_id AND ss.user_id = :my_id
       WHERE s.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
+      ORDER BY s.id DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
