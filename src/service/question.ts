@@ -144,7 +144,7 @@ export class Question extends Base {
     return row['COUNT(*)']
   }
 
-  async create(question: QuestionCreationType, tags: string[]): Promise<void> {
+  async create(question: QuestionCreationType, tags: string[]): Promise<number> {
     const sql =
       'INSERT INTO question (title, user_id, source, link, type, content, language, code) VALUES (:title, :user_id, :source, :link, :type, :content, :language, :code)'
     const question_id = await this._create(sql, {
@@ -159,6 +159,7 @@ export class Question extends Base {
     })
     questionInfoService.create(question_id)
     this.addAllTag(tags, question_id)
+    return question_id
   }
 
   async update(question: QuestionType, tags: string[]): Promise<void> {

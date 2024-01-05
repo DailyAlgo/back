@@ -45,7 +45,7 @@ export const insertQuestion = async (
     if (!req.credentials?.user)
       return res.status(400).json({ message: 'User Info is missing' })
     const tags: string[] = req.body.tags
-    await questionService.create({
+    const question_id: number = await questionService.create({
       title: req.body.title,
       user_id: req.credentials.user.id,
       source: req.body.source,
@@ -55,7 +55,7 @@ export const insertQuestion = async (
       language: req.body.language ? req.body.language : '',
       code: req.body.code ? req.body.code : '',
     }, tags)
-    res.status(200).json({ message: 'Question created successfully' })
+    res.status(200).json({ message: 'Question created successfully', question_id })
   } catch (error) {
     next(error)
   }

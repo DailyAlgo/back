@@ -427,7 +427,7 @@
       
       }
 
-  - res : None
+  - res : { question_id, message }
   
 - GET /
 
