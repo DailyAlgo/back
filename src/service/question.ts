@@ -175,8 +175,8 @@ export class Question extends Base {
       id: question.id,
       user_id: question.user_id,
     })
-    this.removeAllTag(question.id)
-    this.addAllTag(tags, question.id)
+    await this.removeAllTag(question.id)
+    await this.addAllTag(tags, question.id)
   }
 
   async delete(id: number, user_id: string): Promise<void> {
@@ -217,7 +217,7 @@ export class Question extends Base {
   }
 
   async removeAllTag(question_id: number): Promise<void> {
-    const sql = 'DELETE FROM answer_tag_map WHERE question_id = :question_id'
+    const sql = 'DELETE FROM question_tag_map WHERE question_id = :question_id'
     await this._delete(sql, { question_id })
   }
 
