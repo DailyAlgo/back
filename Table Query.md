@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS question (
     user_id VARCHAR(30) NOT NULL COMMENT '작성자',
     source VARCHAR(50) NOT NULL COMMENT '출처',
     link VARCHAR(255) NOT NULL COMMENT '문제링크',
-    type VARCHAR(10) NOT NULL COMMENT '질문 유형',
+    type VARCHAR(50) NOT NULL COMMENT '질문 유형',
     language VARCHAR(10) NOT NULL COMMENT '언어',
     code VARCHAR(3000) NULL COMMENT '코드',
     content VARCHAR(3000) NOT NULL COMMENT '내용',
