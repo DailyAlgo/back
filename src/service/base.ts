@@ -80,6 +80,17 @@ export abstract class Base {
     }
   }
 
+  protected async _updateAll(
+    sql: string,
+    values: { [param: string]: string | boolean | Date | number | null | undefined | string[] }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+
+    if (result.affectedRows === 0) {
+      throw new Error('UPDATE FAILED')
+    }
+  }
+
   protected async _delete(
     sql: string,
     values: { [param: string]: string | boolean | Date | number }
@@ -87,6 +98,17 @@ export abstract class Base {
     const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
 
     if (result.affectedRows !== 1) {
+      throw new Error('DELETE FAILED')
+    }
+  }
+
+  protected async _deleteAll(
+    sql: string,
+    values: { [param: string]: string | boolean | Date | number }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+
+    if (result.affectedRows === 0) {
       throw new Error('DELETE FAILED')
     }
   }
