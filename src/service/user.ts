@@ -273,6 +273,7 @@ export class User extends Base {
         , CASE WHEN s.question_id IS NOT NULL THEN true ELSE false END as is_scrap
         , CASE WHEN ql.question_id IS NOT NULL THEN true ELSE false END as is_like
       FROM answer a 
+      INNER JOIN question q ON q.id = a.question_id
       LEFT OUTER JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :my_id
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       WHERE a.user_id = :user_id 
@@ -298,7 +299,7 @@ export class User extends Base {
       FROM answer a 
       INNER JOIN question q ON q.id = a.question_id 
       WHERE a.user_id = :user_id 
-      GROUP BY q.id, q.title, q.source, q.type, q.user_id`
+      GROUP BY a.user_id`
     const row = await this._findIfExist(sql, { user_id }, false)
     return row['COUNT(*)']
   }
@@ -321,7 +322,7 @@ export class User extends Base {
       LEFT OUTER JOIN scrap ss ON q.id = ss.question_id AND ss.user_id = :my_id
       WHERE s.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
-      ORDER BY s.id DESC
+      ORDER BY s.created_time DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{
@@ -343,7 +344,7 @@ export class User extends Base {
       INNER JOIN question q ON q.id = s.question_id 
       LEFT OUTER JOIN answer a ON q.id = a.question_id 
       WHERE s.user_id = :user_id 
-      GROUP BY q.id, q.title, q.source, q.type, q.user_id`
+      GROUP BY s.user_id`
     const row = await this._findIfExist(sql, { user_id }, false)
     return row['COUNT(*)']
   }
