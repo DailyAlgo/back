@@ -435,7 +435,7 @@
 
   - req
 
-    - query ? keyword, offest, source, type, status, order
+    - query ? keyword, offest, source, type, status, order, tag
       - keyword : 검색어
       - offset : 다음 검색 (10개)
       - source : 문제출처
@@ -446,6 +446,8 @@
         - all / answered / not_answered
       - order : 정렬 순서
         - 현재는 new 뿐
+      - tag : 태그
+        - 정확히 일치하는 태그 검색
     - 오프셋이 없을 경우 0부터
 
   - res

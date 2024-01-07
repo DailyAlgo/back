@@ -243,9 +243,9 @@ export class Question extends Base {
   }
 
   async search(
-    keyword: string, source: string, type: string, status: string, order: string, offset: number, myId: string
+    keyword: string, source: string, type: string, status: string, order: string, offset: number, myId: string, tag: string
   ): Promise<QuestionListType> {
-    const count = await this.seacrhCount(keyword)
+    const count = await this.seacrhCount(keyword, source, type, status, tag)
     const limit = 10
     const nextIndex = offset + limit
     keyword = '%'+keyword.trim()+'%'
@@ -263,6 +263,9 @@ export class Question extends Base {
         break
     }
     order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
+    tag = tag === 'all' ? '%' : tag
+    // const tagCondition = "'" + tags.join("','") + "'"
+    // const findTags = tags.length > 0 ? 'AND qt.name IN (:tagCondition)' : 'AND (1=1 OR qt.name = :tagCondition))'
     const sql = 
       `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, u.nickname as user_nickname, q.created_time 
       , IF(s.user_id IS NULL, false, true) AS is_scrap
@@ -272,13 +275,16 @@ export class Question extends Base {
       INNER JOIN user u ON q.user_id = u.id
       LEFT JOIN scrap s ON q.id = s.question_id AND s.user_id = :myId
       LEFT JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :myId
+      INNER JOIN question_tag_map qtm ON q.id = qtm.question_id
+      INNER JOIN question_tag qt ON qtm.tag_id = qt.id
       WHERE q.title LIKE :keyword
       AND q.source LIKE :source
       AND q.type LIKE :type
       AND ${status}
+      AND qt.name LIKE :tag
       ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
-    const rows = await this._findsIfExist(sql, { keyword, source, type, status, order, limit, offset, myId }, true)
+    const rows = await this._findsIfExist(sql, { keyword, source, type, status, order, limit, offset, myId, tag }, true)
     const question_list = await Promise.all(rows.map(async row=>{
       const tags = await this.findTag(row['id'])
       return {...row, tags}
@@ -291,14 +297,37 @@ export class Question extends Base {
     return res
   }
 
-  async seacrhCount(keyword: string): Promise<number> {
+  async seacrhCount(keyword: string, source: string, type: string, status: string, tag: string): Promise<number> {
     keyword = '%'+keyword.trim()+'%'
+    source = source === 'all' ? '%' : source
+    type = type === 'all' ? '%' : type
+    switch (status) {
+      case 'all':
+        status = '1=1'
+        break
+      case 'answered':
+        status = 'qi.answer_cnt > 0'
+        break
+      case 'not_answered':
+        status = 'qi.answer_cnt = 0'
+        break
+    }
+    // const tagCondition = "'" + tags.join("','") + "'"
+    // const findTags = tags.length > 0 ? 'AND qt.name IN (:tagCondition)' : 'AND (1=1 OR qt.name = :tagCondition))'
+    tag = tag === 'all' ? '%' : tag
     const sql = 
       `SELECT COUNT(*) 
       FROM question q 
       INNER JOIN question_info qi ON q.id = qi.question_id 
-      WHERE q.title LIKE :keyword`
-    const row = await this._findIfExist(sql, { keyword }, false)
+      LEFT JOIN question_tag_map qtm ON q.id = qtm.question_id
+      LEFT JOIN question_tag qt ON qtm.tag_id = qt.id
+      WHERE q.title LIKE :keyword
+      AND q.source LIKE :source
+      AND q.type LIKE :type
+      AND ${status}
+      AND qt.name LIKE :tag
+      `
+    const row = await this._findIfExist(sql, { keyword, source, type, status, tag}, false)
     return row['COUNT(*)']
   }
 
