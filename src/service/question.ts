@@ -37,6 +37,7 @@ type QuestionListType = {
 type QuestionListItemType = {
   id: string
   title: string
+  nickname: string
   source: string
   type: string
   view_cnt: number
@@ -250,7 +251,6 @@ export class Question extends Base {
     keyword = '%'+keyword.trim()+'%'
     source = source === 'all' ? '%' : source
     type = type === 'all' ? '%' : type
-    status = status === 'all' ? '1=1' : 'qi.answer_cnt = ' + status
     switch (status) {
       case 'all':
         status = '1=1'
@@ -264,11 +264,12 @@ export class Question extends Base {
     }
     order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
     const sql = 
-      `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
+      `SELECT q.id, q.title, u.nickname, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
       , IF(s.user_id IS NULL, false, true) AS is_scrap
       , IF(ql.user_id IS NULL, false, true) AS is_like
       FROM question q 
       INNER JOIN question_info qi ON q.id = qi.question_id 
+      INNER JOIN user u ON q.user_id = u.id
       LEFT JOIN scrap s ON q.id = s.question_id AND s.user_id = :myId
       LEFT JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :myId
       WHERE q.title LIKE :keyword

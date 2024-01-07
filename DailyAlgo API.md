@@ -477,6 +477,8 @@
         tags: string[]
         
         user_id: string
+
+        user_nickname: string
         
         created_time: Date
         
