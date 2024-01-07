@@ -36,8 +36,7 @@ type QuestionListType = {
 
 type QuestionListItemType = {
   id: string
-  title: string
-  nickname: string
+  title: SVGStringList
   source: string
   type: string
   view_cnt: number
@@ -46,6 +45,7 @@ type QuestionListItemType = {
   comment_cnt: number
   tags: string[]
   user_id: string
+  user_nickname: string
   created_time: Date
   is_scrap: boolean
   is_like: boolean
@@ -264,7 +264,7 @@ export class Question extends Base {
     }
     order = order === 'new' ? 'q.id DESC' : 'q.id ASC'
     const sql = 
-      `SELECT q.id, q.title, u.nickname, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, q.created_time 
+      `SELECT q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, u.nickname as user_nickname, q.created_time 
       , IF(s.user_id IS NULL, false, true) AS is_scrap
       , IF(ql.user_id IS NULL, false, true) AS is_like
       FROM question q 
