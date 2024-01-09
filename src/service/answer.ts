@@ -81,6 +81,7 @@ export class Answer extends Base {
       const tags = await this.findTag(row['id'])
       row = {...row, tags}
     }))
+    console.log(result)
     return result
   }
 
