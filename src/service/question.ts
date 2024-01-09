@@ -275,13 +275,14 @@ export class Question extends Base {
       INNER JOIN user u ON q.user_id = u.id
       LEFT JOIN scrap s ON q.id = s.question_id AND s.user_id = :myId
       LEFT JOIN question_like ql ON q.id = ql.question_id AND ql.user_id = :myId
-      INNER JOIN question_tag_map qtm ON q.id = qtm.question_id
-      INNER JOIN question_tag qt ON qtm.tag_id = qt.id
+      LEFT JOIN question_tag_map qtm ON q.id = qtm.question_id
+      LEFT JOIN question_tag qt ON qtm.tag_id = qt.id
       WHERE q.title LIKE :keyword
       AND q.source LIKE :source
       AND q.type LIKE :type
       AND ${status}
       AND qt.name LIKE :tag
+      GROUP BY q.id, q.title, q.source, q.type, qi.view_cnt, qi.like_cnt, qi.answer_cnt, qi.comment_cnt, q.user_id, u.nickname, q.created_time 
       ORDER BY ${order}
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { keyword, source, type, status, order, limit, offset, myId, tag }, true)
@@ -316,16 +317,20 @@ export class Question extends Base {
     // const findTags = tags.length > 0 ? 'AND qt.name IN (:tagCondition)' : 'AND (1=1 OR qt.name = :tagCondition))'
     tag = tag === 'all' ? '%' : tag
     const sql = 
-      `SELECT COUNT(*) 
-      FROM question q 
-      INNER JOIN question_info qi ON q.id = qi.question_id 
-      LEFT JOIN question_tag_map qtm ON q.id = qtm.question_id
-      LEFT JOIN question_tag qt ON qtm.tag_id = qt.id
-      WHERE q.title LIKE :keyword
-      AND q.source LIKE :source
-      AND q.type LIKE :type
-      AND ${status}
-      AND qt.name LIKE :tag
+      `SELECT COUNT(*)
+      FROM (
+        SELECT q.id 
+        FROM question q 
+        INNER JOIN question_info qi ON q.id = qi.question_id 
+        LEFT JOIN question_tag_map qtm ON q.id = qtm.question_id
+        LEFT JOIN question_tag qt ON qtm.tag_id = qt.id
+        WHERE q.title LIKE :keyword
+        AND q.source LIKE :source
+        AND q.type LIKE :type
+        AND ${status}
+        AND qt.name LIKE :tag
+        GROUP BY q.id
+        ) AS q
       `
     const row = await this._findIfExist(sql, { keyword, source, type, status, tag}, false)
     return row['COUNT(*)']
