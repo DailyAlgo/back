@@ -603,6 +603,8 @@
 
        user_id: string
 
+       user_nickname: string
+
        content: string
 
        like_cnt: number
@@ -762,6 +764,8 @@
        answer_id: number
 
        user_id: string
+
+       user_name: string
 
        content: string
 

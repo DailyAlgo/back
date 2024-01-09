@@ -8,6 +8,7 @@ export type QuestionCommentType = {
   id: number
   question_id: number
   user_id: string
+  user_nickname: string
   content: string
   like_cnt: number
   created_time?: Date
@@ -44,12 +45,16 @@ export class QuestionComment extends Base {
   }
 
   async find(id: number): Promise<QuestionCommentType> {
-    const sql = 'SELECT * FROM question_comment WHERE id = :id'
+    const sql = `SELECT qc.*, u.nickname as user_nickname
+      FROM question_comment qc
+      INNER JOIN user u ON qc.user_id = u.id
+      WHERE qc.id = :id`
     const row = await this._findIfExist(sql, { id: id }, false)
     return {
       id: row['id'],
       question_id: row['question_id'],
       user_id: row['user_id'],
+      user_nickname: row['user_nickname'],
       content: row['content'],
       like_cnt: row['like_cnt'],
       created_time: row['created_time'],
@@ -59,8 +64,9 @@ export class QuestionComment extends Base {
 
   async finds(question_id: number, myId: string): Promise<QuestionCommentType[]> {
     const sql =
-      `SELECT qc.*, IF(qcl.user_id IS NULL, false, true) AS is_like
+      `SELECT qc.*, u.nickname as user_nickname, IF(qcl.user_id IS NULL, false, true) AS is_like
       FROM question_comment qc
+      INNER JOIN user u ON qc.user_id = u.id
       LEFT JOIN question_comment_like qcl ON qc.id = qcl.question_comment_id AND qcl.user_id = :myId
       WHERE qc.question_id = :question_id 
       ORDER BY qc.id`
