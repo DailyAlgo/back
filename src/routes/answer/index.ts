@@ -8,7 +8,7 @@ const router = express.Router()
 router.post('/tag', insertAnswerTag) // 신규 태그 생성
 router.get('/tag', searchAnswerTag) // 태그 조회 (없으면 생성)
 router.post('/', check_token, insertAnswer) // 답변 생성
-router.get('/detail/:question_id', check_token_existence, findAnswer) // 답변 리스트 조회
+router.get('/detail/:answer_id', check_token_existence, findAnswer) // 답변 리스트 조회
 router.get('/:question_id', check_token_existence, findAnswerList) // 답변 리스트 조회
 router.put('/:id', check_token, updateAnswer) // 답변 수정
 router.delete('/:id', check_token, deleteAnswer) // 답변 삭제

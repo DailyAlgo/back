@@ -9,7 +9,7 @@ export const findAnswer = async (
 ) => {
   try {
     const myId = req.credentials?.user?.id || ' '
-    const id = Number(req.params['id'])
+    const id = Number(req.params['answer_id'])
     res.status(200).json(await answerService.find(id, myId))
   } catch (error) {
     next(error)
