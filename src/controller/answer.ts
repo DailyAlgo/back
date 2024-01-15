@@ -8,8 +8,9 @@ export const findAnswer = async (
   next: NextFunction
 ) => {
   try {
+    const myId = req.credentials?.user?.id || ' '
     const id = Number(req.params['id'])
-    res.status(200).json(await answerService.find(id))
+    res.status(200).json(await answerService.find(id, myId))
   } catch (error) {
     next(error)
   }

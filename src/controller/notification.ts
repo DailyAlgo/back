@@ -28,14 +28,14 @@ export const redirectNotification = async (
       }
       case 'answer': {
         const object_id: number = Number(notification.object_id)
-        const answer = await answerService.find(object_id)
+        const answer = await answerService.find(object_id, ' ')
         res.status(200).redirect(`/question/${answer.question_id}`)
         break
       }
       case 'answer_comment': {
         const object_id: number = Number(notification.object_id)
         const answerComment = await answerCommentService.find(object_id)
-        const answer = await answerService.find(answerComment.answer_id)
+        const answer = await answerService.find(answerComment.answer_id, ' ')
         res.status(200).redirect(`/question/${answer.question_id}`)
         break
       }

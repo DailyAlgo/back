@@ -79,7 +79,7 @@ export class AnswerComment extends Base {
   }
 
   async create(comment: AnswerCommentCreationType): Promise<void> {
-    const question_id = (await answerService.find(comment.answer_id)).question_id
+    const question_id = (await answerService.find(comment.answer_id, ' ')).question_id
     const sql =
       'INSERT INTO answer_comment (answer_id, user_id, content) VALUES (:answer_id, :user_id, :content)'
     const id = await this._create(sql, {
@@ -102,7 +102,7 @@ export class AnswerComment extends Base {
 
   async delete(id: number, user_id: string): Promise<void> {
     const answer_id = (await this.find(id)).answer_id
-    const question_id = (await answerService.find(answer_id)).question_id
+    const question_id = (await answerService.find(answer_id, ' ')).question_id
     const sql = 'DELETE FROM answer_comment WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, { id, user_id })
     questionInfoService.renew(question_id)

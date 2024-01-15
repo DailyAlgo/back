@@ -278,7 +278,7 @@ export class User extends Base {
       LEFT OUTER JOIN scrap s ON q.id = s.question_id AND s.user_id = :my_id
       WHERE a.user_id = :user_id 
       GROUP BY q.id, q.title, q.source, q.type, q.user_id, q.created_time 
-      ORDER BY a.id DESC
+      ORDER BY q.id DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id: id, offset, limit, my_id }, true)
     const question_list = await Promise.all(rows.map(async row=>{

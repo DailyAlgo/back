@@ -686,6 +686,42 @@
 
   - res : None
 
+- GET /detail/:answer_id
+
+  - req : None
+
+  - res
+
+    - {
+
+       id: number
+
+       question_id: number
+
+       title: string
+
+       user_id: string
+
+       user_nickname: string
+
+       language: string
+
+       code: string
+
+       content: string
+
+       like_cnt: number
+
+       created_time?: Date
+
+       modified_time?: Date
+
+       tags: string[]
+        
+       is_like: boolean
+       
+      }
+
 - GET /:question_id
 
   - `답변 리스트 조회`
@@ -703,6 +739,8 @@
        title: string
 
        user_id: string
+
+       user_nickname: string
 
        language: string
 

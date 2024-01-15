@@ -30,6 +30,7 @@ interface AnswerInfo extends AnswerType {
   question_id: number
   title: string
   user_id: string
+  user_nickname: string
   language: string
   code: string
   content: string
@@ -50,29 +51,37 @@ export class Answer extends Base {
     super(options)
   }
 
-  async find(id: number): Promise<AnswerInfo> {
-    const sql = 'SELECT * FROM answer WHERE id = :id'
-    const row = await this._findIfExist(sql, { id: id }, false)
+  async find(id: number, myId: string): Promise<AnswerInfo> {
+    const sql = 
+    `SELECT a.*, IF(al.user_id IS NULL, false, true) AS is_like, u.nickname AS user_nickname
+    FROM answer a
+    INNER JOIN user u ON a.user_id = u.id
+    LEFT JOIN answer_like al ON a.id = al.answer_id AND al.user_id = :myId
+    WHERE a.id = :id`
+    const row = await this._findIfExist(sql, { id, myId }, false)
     const tags = await this.findTag(row['id'])
     return {
       id: row['id'],
       question_id: row['question_id'],
       title: row['title'],
       user_id: row['user_id'],
+      user_nickname: row['user_nickname'],
       language: row['language'],
       code: row['code'],
       content: row['content'],
       like_cnt: row['like_cnt'],
       created_time: row['created_time'],
       modified_time: row['modified_time'],
+      is_like: row['is_like'],
       tags,
     }
   }
 
   async finds(question_id: number, myId: string): Promise<AnswerInfo[]> {
     const sql =
-      `SELECT a.*, IF(al.user_id IS NULL, false, true) AS is_like
+      `SELECT a.*, IF(al.user_id IS NULL, false, true) AS is_like, u.nickname AS user_nickname
       FROM answer a
+      INNER JOIN user u ON a.user_id = u.id
       LEFT JOIN answer_like al ON a.id = al.answer_id AND al.user_id = :myId
       WHERE a.question_id = :question_id 
       ORDER BY a.id`
@@ -116,7 +125,7 @@ export class Answer extends Base {
   }
 
   async delete(id: number, user_id: string): Promise<void> {
-    const question_id = (await this.find(id)).question_id
+    const question_id = (await this.find(id, ' ')).question_id
     const sql = 'DELETE FROM answer WHERE id = :id AND user_id = :user_id'
     await this._delete(sql, { id, user_id })
     questionInfoService.renew(question_id)
