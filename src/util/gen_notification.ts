@@ -51,7 +51,7 @@ export const notify = async (
     }
     case 'answer': {
       const id = Number(object_id)
-      const answer = await answerService.find(id)
+      const answer = await answerService.find(id, ' ')
       const question = await questionService.find(answer.question_id)
       object_name = question.title
       user_id = question.user_id
@@ -63,7 +63,7 @@ export const notify = async (
     case 'answer_comment': {
       const id = Number(object_id)
       const answer_comment = await answerCommentService.find(id)
-      const answer = await answerService.find(answer_comment.answer_id)
+      const answer = await answerService.find(answer_comment.answer_id, ' ')
       const question = await questionService.find(answer.question_id)
       object_name = question.title
       user_id = answer.user_id
