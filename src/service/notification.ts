@@ -72,7 +72,7 @@ export class Notification extends Base {
       FROM notification 
       WHERE user_id = :user_id 
       ${unreadOnly?'AND is_read = FALSE ':' '}
-      ORDER BY id
+      ORDER BY id DESC
       LIMIT :limit OFFSET :offset`
     const rows = await this._findsIfExist(sql, { user_id, limit, offset }, true)
     const res = {
