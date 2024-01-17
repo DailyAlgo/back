@@ -1,9 +1,10 @@
 import express from 'express'
 import check_token from '../../middleware/check_token'
-import { deleteNotification, findNotificationCount, findNotificationList, redirectNotification } from '../../controller/notification'
+import { deleteNotification, findNotificationCount, findNotificationList, readNotificationAll, redirectNotification } from '../../controller/notification'
 
 const router = express.Router()
 
+router.put('/readAll', check_token, readNotificationAll) // 알림 전체 읽음
 router.get('/count', check_token, findNotificationCount) // 알림 확인
 router.get('/', check_token, findNotificationList) // 알림 리스트 조회
 router.get('/:id', check_token, redirectNotification) // 알림 이동

@@ -922,6 +922,13 @@ follow : follow 시
 
         }
 
+- PUT /readAll
+
+  - `알림 전체 읽음`
+  - `로그인 필요`
+  - req : None
+  - res : None
+
 - GET /count
 
   - `알림 여부 확인`

@@ -117,6 +117,11 @@ export class Notification extends Base {
     const sql = 'UPDATE notification SET is_read = TRUE WHERE id = :id AND user_id = :user_id'
     await this._update(sql, { id, user_id })
   }
+
+  async readAll(user_id: string): Promise<void> {
+    const sql = 'UPDATE notification SET is_read = TRUE WHERE user_id = :user_id'
+    await this._update(sql, { user_id })
+  }
 }
 
 export default new Notification(getConfig().db)

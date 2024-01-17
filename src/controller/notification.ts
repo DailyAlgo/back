@@ -53,6 +53,37 @@ export const redirectNotification = async (
   }
 }
 
+export const readNotification = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+  ) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    const id = Number(req.params['id'])
+    await notificationService.read(id, req.credentials.user.id)
+    res.status(200).json({ message: 'Notification read successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const readNotificationAll = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+  ) => {
+  try {
+    if (!req.credentials?.user)
+      return res.status(400).json({ message: 'User Info is missing' })
+    await notificationService.readAll(req.credentials.user.id)
+    res.status(200).json({ message: 'Notification read successfully' })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const findNotificationCount = async (
   req: Request,
   res: Response,
