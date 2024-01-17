@@ -769,7 +769,8 @@
       title,
       language,
       code,
-      content
+      content,
+      tags
       }
   - res : None
 
