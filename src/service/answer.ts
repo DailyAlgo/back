@@ -120,8 +120,8 @@ export class Answer extends Base {
       id: answer.id,
       user_id: answer.user_id,
     })
-    this.removeAllTag(answer.id)
-    this.addAllTag(tags, answer.id)
+    await this.removeAllTag(answer.id)
+    await this.addAllTag(tags, answer.id)
   }
 
   async delete(id: number, user_id: string): Promise<void> {
