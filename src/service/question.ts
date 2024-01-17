@@ -220,7 +220,7 @@ export class Question extends Base {
 
   async removeAllTag(question_id: number): Promise<void> {
     const sql = 'DELETE FROM question_tag_map WHERE question_id = :question_id'
-    await this._deleteAll(sql, { question_id })
+    await this._deleteIfExist(sql, { question_id })
   }
 
   async findTag(question_id: number): Promise<string[]> {

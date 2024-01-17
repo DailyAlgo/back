@@ -112,4 +112,15 @@ export abstract class Base {
       throw new Error('DELETE FAILED')
     }
   }
+
+  protected async _deleteIfExist(
+    sql: string,
+    values: { [param: string]: string | boolean | Date | number }
+  ): Promise<void> {
+    const [result] = await this.promisePool.query<ResultSetHeader>(sql, values)
+
+    if (result.affectedRows < 0) {
+      throw new Error('DELETE FAILED')
+    }
+  }
 }
