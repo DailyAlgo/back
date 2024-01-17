@@ -111,7 +111,7 @@ export class Answer extends Base {
 
   async update(answer: AnswerType, tags: string[]): Promise<void> {
     const sql =
-      'UPDATE answer SET title = :title, content = :content, language = :language, code = :code, like_cnt = :like_cnt WHERE id = :id AND user_id = :user_id'
+      'UPDATE answer SET title = :title, content = :content, language = :language, code = :code WHERE id = :id AND user_id = :user_id'
     await this._update(sql, {
       title: answer.title,
       language: answer.language,
