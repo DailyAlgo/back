@@ -120,7 +120,7 @@ export class Notification extends Base {
 
   async readAll(user_id: string): Promise<void> {
     const sql = 'UPDATE notification SET is_read = TRUE WHERE user_id = :user_id'
-    await this._update(sql, { user_id })
+    await this._updateAll(sql, { user_id })
   }
 }
 
