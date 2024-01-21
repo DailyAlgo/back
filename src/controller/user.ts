@@ -191,6 +191,9 @@ export const refreshToken = async (
         res.status(400).json({ message: 'Token is invalid' })
       }
     }
+    else {
+      next(error)
+    }
   }
 }
 
