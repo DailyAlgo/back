@@ -169,31 +169,27 @@ export const refreshToken = async (
   const bearerToken = token.slice(7)
   try {
     jwt.verify(bearerToken, 'DA_JWT')
-    res.status(400).json({ message: 'Token is valid' })
-  } catch (error) {
-    if (error instanceof Error && error.message === 'TokenExpiredError') {
-      const refresh = await refreshTokenService.find(bearerToken, true)
-      const currentTime = new Date();
-      if (refresh && refresh.expiration_time > currentTime) {
-        const user = await userService.find(refresh.user_id, false)
-        const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
-        const token = jwt.sign(
-          user,
-          'DA_JWT',
-          {
-            expiresIn: '1h',
-          }
-        )
-        refreshTokenService.update(refresh.id, token, expiration_time)
-        res.status(200).json({ message: 'Token is refreshed', token })
-      }
-      else {
-        res.status(400).json({ message: 'Token is invalid' })
-      }
+    const refresh = await refreshTokenService.find(bearerToken, true)
+    const currentTime = new Date();
+
+    if (refresh && refresh.expiration_time > currentTime) {
+      const user = await userService.find(refresh.user_id, false)
+      const expiration_time = new Date(currentTime.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7일 뒤
+      const token = jwt.sign(
+        user,
+        'DA_JWT',
+        {
+          expiresIn: '1h',
+        }
+      )
+      refreshTokenService.update(refresh.id, token, expiration_time)
+      res.status(200).json({ message: 'Token is refreshed', token })
     }
     else {
-      next(error)
+      res.status(400).json({ message: 'Token is invalid' })
     }
+  } catch (error) {
+    next(error)
   }
 }
 
