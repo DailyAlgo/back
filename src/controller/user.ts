@@ -171,10 +171,7 @@ export const refreshToken = async (
     jwt.verify(bearerToken, 'DA_JWT')
     res.status(400).json({ message: 'Token is valid' })
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message)
-    }
-    if (error instanceof Error && error.message === 'TokenExpiredError') {
+    if (error instanceof Error && error.message === 'jwt expired') {
       const refresh = await refreshTokenService.find(bearerToken, true)
       const currentTime = new Date();
       if (refresh && refresh.expiration_time > currentTime) {
