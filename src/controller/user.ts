@@ -18,7 +18,8 @@ import refreshTokenService from '../service/refresh_token'
 import redis from '../service/redis'
 
 const oauth = getConfig().oauth
-const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
+// const LOGIN_REDIRECT_URL = 'http://localhost:3000' // 개발 중
+const LOGIN_REDIRECT_URL = 'http://dailyalgo.kr/sign-in' // 개발 중
 // TODO: DOTENV 분리
 const secretKey = 'DA_JWT'
 
