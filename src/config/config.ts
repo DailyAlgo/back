@@ -63,7 +63,7 @@ export type Config = {
 
 const isDev = process.env.NODE_ENV !== 'production'
 const SERVER_URL = isDev ? 'http://localhost:8080' : process.env.SERVER_URL
-const whiteList = ["http://localhost", "http://13.209.184.61"]
+const whiteList = ["http://localhost", "http://13.209.184.61", "http://dailyalgo.kr", "http://dailyalgo.co.kr", "https://dailyalgo.kr", "https://dailyalgo.co.kr"]
 const getConfig = (): Config => ({
   server: {
     host: SERVER_URL,
