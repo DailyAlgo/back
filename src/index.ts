@@ -22,7 +22,16 @@ app.listen(port, () => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 // app.use(cors(getConfig().cors.options)) // WhiteList는 더 알아보고 수정이 필요(지금 안 됨)
-app.use(cors({origin: ['http://localhost:3000','http://dailyalgo.kr','http://dailyalgo.co.kr','https://dailyalgo.kr','https://dailyalgo.co.kr'], credentials: true}))
+app.use(cors({origin: ['http://localhost:3000',
+'http://dailyalgo.kr',
+'http://dailyalgo.co.kr',
+'http://www.dailyalgo.kr',
+'http://www.dailyalgo.co.kr',
+'https://dailyalgo.kr',
+'https://dailyalgo.co.kr',
+'https://www.dailyalgo.kr',
+'https://www.dailyalgo.co.kr',
+], credentials: true}))
 
 console.log('init middleware')
 
